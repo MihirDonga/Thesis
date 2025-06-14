@@ -1,35 +1,31 @@
 `include "uvm_macros.svh"
 import uvm_pkg::*;
+
 class apbuart_config_test extends apbuart_base_test;
-	`uvm_component_utils(apbuart_config_test)
+  `uvm_component_utils(apbuart_config_test)
 
-	apbuart_config_seq apbuart_config_sq; // all configuration for write and read configuration
+  apbuart_config_seq apbuart_config_sq;
 
-	function new (string name="apbuart_config_test", uvm_component parent= null);
-	  	super.new(name, parent);
-	endfunction
+  function new(string name="apbuart_config_test", uvm_component parent=null);
+    super.new(name, parent);
+  endfunction
 
-	extern virtual function void build_phase(uvm_phase phase);
-	extern virtual task run_phase(uvm_phase phase);
+  virtual function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    apbuart_config_sq = apbuart_config_seq::type_id::create("apbuart_config_sq", this);
+  endfunction
+
+  virtual task run_phase(uvm_phase phase);
+    repeat(cfg.loop_time) begin
+      set_config_params(9600, 8, 3, 1, 1);
+      cfg.print();
+      set_apbconfig_params(2, 1);
+      apb_cfg.print();
+      phase.raise_objection(this);
+      apbuart_config_sq.start(env_sq.v_sqr);
+      phase.drop_objection(this);
+    end
+    phase.phase_done.set_drain_time(this, 20);
+  endtask
 
 endclass
-
-function void apbuart_config_test::build_phase (uvm_phase phase);
-	super.build_phase(phase);
-	apbuart_config_sq  = apbuart_config_seq::type_id::create("apbuart_config_sq",this);
-endfunction
-
-task apbuart_config_test::run_phase(uvm_phase phase);
-	repeat(cfg.loop_time)
-	begin
-		set_config_params(9600,8,3,1,1); // Baud Rate , Frame Len , Parity , Stop Bit , Randomize Flag (1 for random , 0 for directed)
-		cfg.print();
-		set_apbconfig_params(2,1);		 // Slave Bus Address , Randomize Flag (1 for random , 0 for directed)
-		apb_cfg.print();
-		phase.raise_objection(this);
-		apbuart_config_sq.start(env_sq.v_sqr);
-		phase.drop_objection(this);
-	end
-  phase.phase_done.set_drain_time(this, 20);		//Tells UVM to wait 20 time units before finishing the test after dropping the last objection.
-    
-endtask
