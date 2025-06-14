@@ -1,3 +1,4 @@
+`include "Defines.sv"
 module apb_uart
 (
   input 	logic PCLK,
