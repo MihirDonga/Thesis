@@ -1,7 +1,7 @@
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 class apbuart_data_compare_test extends apbuart_base_test;
-    `uvm_component_utils (apbuart_data_compare_test)
+    `uvm_component_utils(apbuart_data_compare_test)
 
     apbuart_config_seq          apbuart_confg_sq;
     apbuart_singlebeat_seq 	    apbuart_transmt_sq;

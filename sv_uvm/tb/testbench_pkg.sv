@@ -1,4 +1,7 @@
+
 // testbench_pkg.sv
+`ifndef TESTBENCH_PKG_SV
+`define TESTBENCH_PKG_SV
 package testbench_pkg;
   import uvm_pkg::*;
   `include "uvm_macros.svh"
@@ -40,3 +43,5 @@ package testbench_pkg;
 
 
 endpackage : testbench_pkg
+
+`endif

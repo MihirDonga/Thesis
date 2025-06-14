@@ -1,5 +1,5 @@
 class config_apbuart extends uvm_sequence #(apb_transaction);
-	`uvm_object_utils (config_apbuart)
+	`uvm_object_utils(config_apbuart)
 
 	apb_transaction apbuart_sq;
 	uart_config 	cfg;
