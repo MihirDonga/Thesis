@@ -9,7 +9,7 @@ module apb_uart_tb;
   logic [31:0] PWDATA;
   logic [31:0] PADDR;
   logic RX;
-  logic [32:0] PRDATA;
+  logic [31:0] PRDATA;
   logic PREADY;
   logic PSLVERR;
   logic Tx;
