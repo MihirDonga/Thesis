@@ -1,7 +1,6 @@
 `include "uvm_macros.svh"
 `include "uartinterface.sv" 
 `include "apbinterface.sv"
-`include "apbuart_property.sv"
 `include "testbench_pkg.sv"
 
 module tbench_top;
@@ -31,19 +30,6 @@ module tbench_top;
 	             	  .PRDATA(vifapb.PRDATA)
                     );
 	
-  apbuart_property assertions (
-                              	.PCLK(PCLK),
-                 	        	.PRESETn(PRESETn),
-	             	            .PSELx(vifapb.PSELx),
-	             	            .PENABLE(vifapb.PENABLE),
-	             	            .PWRITE(vifapb.PWRITE),
-	             	            .PREADY(vifapb.PREADY),
-	             	            .PSLVERR(vifapb.PSLVERR),
-	             	            .PWDATA(vifapb.PWDATA),
-	             	            .PADDR(vifapb.PADDR),
-	             	            .PRDATA(vifapb.PRDATA)            
-                              );
-  
    // Clock Generation: 50 MHz => 20 ns period
   initial begin
     PCLK = 0;

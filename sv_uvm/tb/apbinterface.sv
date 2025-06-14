@@ -1,6 +1,9 @@
+ifndef APB_IF_SV
+`define APB_IF_SV
+
 interface apb_if (input PCLK, input PRESETn);
 
-  //Signals Declaration 
+  //Signals Declaration
     logic           PSELx;
     logic           PENABLE;
     logic           PWRITE;
@@ -12,31 +15,33 @@ interface apb_if (input PCLK, input PRESETn);
 
   //clocking blocks
   clocking driver_cb @(posedge PCLK);
-    default input #1 output #1;	
-	output 	PSELx;
-	output 	PENABLE;
-	output 	PWRITE;
-	output 	PWDATA;
-	output 	PADDR;
- 	input  	PRDATA;
-	input  	PREADY;
-	input  	PSLVERR;
+    default input #1 output #1;
+        output  PSELx;
+        output  PENABLE;
+        output  PWRITE;
+        output  PWDATA;
+        output  PADDR;
+        input   PRDATA;
+        input   PREADY;
+        input   PSLVERR;
   endclocking
-  
+
   clocking monitor_cb @(posedge PCLK);
     default input #1 output #1;
-	input	PSELx;
-	input	PENABLE;
-	input	PWRITE;
-	input	PWDATA;
-	input	PADDR;
- 	input	PRDATA;
-	input	PREADY;
-	input	PSLVERR;
+        input   PSELx;
+        input   PENABLE;
+        input   PWRITE;
+        input   PWDATA;
+        input   PADDR;
+        input   PRDATA;
+        input   PREADY;
+        input   PSLVERR;
   endclocking
-  
+
   //modports
   modport DRIVER  (clocking driver_cb , input PCLK,PRESETn);
   modport MONITOR (clocking monitor_cb , input PCLK,PRESETn);
 
 endinterface
+
+`endif

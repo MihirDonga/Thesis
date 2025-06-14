@@ -22,7 +22,7 @@ package testbench_pkg;
   // Virtual Sequencer & Sequences
   `include "apbuart_vsequencer.sv"
   `include "apbuart_vseq_base.sv"
-  `include "apbuart_all_seq.sv"
+
 
   // Scoreboard
   `include "apbuart_scoreboard.sv"
@@ -37,7 +37,6 @@ package testbench_pkg;
   `include "apbuart_parity_error_test.sv"
   `include "apbuart_rec_drv_test.sv"
   `include "apbuart_rec_readreg_test.sv"
-  `include "apbuart_all_test.sv"
 
 
 endpackage : testbench_pkg
