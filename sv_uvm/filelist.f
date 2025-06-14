@@ -1,4 +1,4 @@
-ncdir+.
+-ncdir.
 +incdir+./tb
 +incdir+./rtl
 
