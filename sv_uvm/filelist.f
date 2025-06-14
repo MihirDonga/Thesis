@@ -1,3 +1,10 @@
++sv
++incdir+./rtl
++access+rwc
+-coverage all
+-covdut apb_uart_tb
+-covoverwrite
+-covwork cov_work
 +incdir+./tb
 +incdir+./rtl
 
