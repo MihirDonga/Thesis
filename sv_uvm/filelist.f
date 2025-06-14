@@ -9,7 +9,6 @@ rtl/apb_uart_top.sv
 rtl/tick_generator.sv
 rtl/uart_rx_BB.sv
 rtl/uart_transmitter.sv
-rtl/design.sv
 
 // tb/apbinterface.sv
 // tb/uartinterface.sv
