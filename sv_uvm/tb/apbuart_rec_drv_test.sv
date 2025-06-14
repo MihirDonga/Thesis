@@ -6,7 +6,7 @@ class apbuart_rec_drv_test extends apbuart_base_test;
     apbuart_config_seq      apbuart_confg_sq;
     apbuart_recdrv_seq 	    apbuart_drv_sq;
     
-    function new (string name, uvm_component parent= null);
+    function new (string name="apbuart_rec_drv_test", uvm_component parent= null);
       	super.new(name, parent);
     endfunction
 
@@ -26,10 +26,10 @@ task apbuart_rec_drv_test::run_phase(uvm_phase phase);
     begin
         set_config_params(9600,8,3,1,0); // Baud Rate , Frame Len , Parity , Stop Bit , Randomize Flag (1 for random , 0 for directed)
         cfg.print();
-        phase.raise_objection (.obj(this));
+        phase.raise_objection (this);
         apbuart_confg_sq.start(env_sq.v_sqr);
         apbuart_drv_sq.start(env_sq.v_sqr);
-        phase.drop_objection(.obj(this));
+        phase.drop_objection(this);
     end
     phase.phase_done.set_drain_time(this, 20);
 endtask

@@ -29,10 +29,10 @@ task apbuart_data_compare_test::run_phase(uvm_phase phase);
     cfg.print();
     set_apbconfig_params(2,1);		 // Slave Bus Address , Randomize Flag (1 for random , 0 for directed)
 		apb_cfg.print();
-    phase.raise_objection (.obj(this));
+    phase.raise_objection (this);
     apbuart_confg_sq.start(env_sq.v_sqr);
   	apbuart_transmt_sq.start(env_sq.v_sqr);
-    phase.drop_objection(.obj(this));
+    phase.drop_objection(this);
   end
   	phase.phase_done.set_drain_time(this, 75000*7);
 endtask
