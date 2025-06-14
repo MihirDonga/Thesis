@@ -1,6 +1,6 @@
 `include "uvm_macros.svh"
 import uvm_pkg::*;
-lass apbuart_base_test extends uvm_test;
+class apbuart_base_test extends uvm_test;
 	`uvm_component_utils(apbuart_base_test)
 
    	apbuart_env 	env_sq;
