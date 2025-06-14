@@ -1,7 +1,7 @@
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 class apbuart_config_test extends apbuart_base_test;
-	`uvm_component_utils(apbuart_config_test)
+	`uvm_component_utils(apbuart_config_test);
 
 	apbuart_config_seq apbuart_config_sq; // all configuration for write and read configuration
 

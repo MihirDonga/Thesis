@@ -1,4 +1,4 @@
-ifndef APB_IF_SV
+`ifndef APB_IF_SV
 `define APB_IF_SV
 
 interface apb_if(input PCLK, input PRESETn);

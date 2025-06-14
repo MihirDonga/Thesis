@@ -1,11 +1,11 @@
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 class apbuart_base_test extends uvm_test;
-	`uvm_component_utils(apbuart_base_test)
+	`uvm_component_utils(apbuart_base_test);
 
-   	apbuart_env 	env_sq;
-	uart_config		cfg;
-	apb_config		apb_cfg;
+   	apbuart_env env_sq;
+	uart_config	cfg;
+	apb_config apb_cfg;
 	
   	function new (string name="apbuart_base_test", uvm_component parent = null);
     	super.new(name,parent);

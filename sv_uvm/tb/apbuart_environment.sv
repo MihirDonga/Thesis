@@ -1,20 +1,19 @@
 class apbuart_env extends uvm_env;
   
-	`uvm_component_utils(apbuart_env)
+	`uvm_component_utils(apbuart_env);
 
     // ---------------------------------------
     //  agent and scoreboard instance
     // ---------------------------------------
     apb_agent           apb_agnt;
     uart_agent          uart_agnt;
-//     clk_rst_agent       clk_agnt;
     apbuart_scoreboard  apbuart_scb;
     vsequencer          v_sqr;
     
     // --------------------------------------- 
     //  Calling the constructor
     // ---------------------------------------
-    function new(string name, uvm_component parent);
+    function new(string name="apbuart_env", uvm_component parent);
         super.new(name, parent);
     endfunction : new
 
@@ -31,7 +30,6 @@ function void apbuart_env::build_phase(uvm_phase phase);
   	super.build_phase(phase);
     apb_agnt        = apb_agent::type_id::create("apb_agnt", this);
     uart_agnt       = uart_agent::type_id::create("uart_agnt", this);
-//     clk_agnt        = clk_rst_agent::type_id::create("clk_agnt", this);  
   	apbuart_scb     = apbuart_scoreboard::type_id::create("apbuart_scb", this);
     v_sqr           = vsequencer::type_id::create("v_sqr",this);
 endfunction : build_phase

@@ -1,11 +1,11 @@
 `include "uvm_macros.svh"
 import uvm_pkg::*;
 class apbuart_free_error_test extends apbuart_base_test;
-    `uvm_component_utils (apbuart_free_error_test)
+    `uvm_component_utils (apbuart_free_error_test);
 
     apbuart_NoError_seq  apbuart_no_err_sq; // all configuration for write and read configuration
 
-    function new (string name, uvm_component parent= null);
+    function new (string name="apbuart_free_error_test", uvm_component parent= null);
       	super.new(name, parent);
     endfunction
     
