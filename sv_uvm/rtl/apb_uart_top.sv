@@ -1,4 +1,3 @@
-`include "Defines.sv"
 `include "apb_slave.sv"
 `include "apb_uart.sv"
 module apb_uart_top (

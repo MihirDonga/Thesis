@@ -1,7 +1,6 @@
 `include "tick_generator.sv"
 `include "uart_rx_BB.sv"
 `include "uart_transmitter.sv"
-`include "Defines.sv"
 module apb_uart
 (
   input 	logic PCLK,

@@ -1,4 +1,3 @@
-`include "Defines.sv"
 module uart_rx_BB (
 		input	logic			rx_tick,
 		input	logic			PRESETn,
