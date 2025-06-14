@@ -53,7 +53,7 @@ module tbench_top;
   
 
   initial
-    run_test(); // built in func...you can give test name as argument
+    run_test("apbuart_base_test"); // built in func...you can give test name as argument
 endmodule
 
 
