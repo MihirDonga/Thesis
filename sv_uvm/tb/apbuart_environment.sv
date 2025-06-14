@@ -1,6 +1,6 @@
 class apbuart_env extends uvm_env;
   
-	`uvm_component_utils(apbuart_env);
+	`uvm_component_utils(apbuart_env)
 
     // ---------------------------------------
     //  agent and scoreboard instance
