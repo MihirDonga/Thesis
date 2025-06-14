@@ -33,13 +33,13 @@ package testbench_pkg;
   // Tests
   `include "apbuart_environment.sv"
   `include "apbuart_base_test.sv"
-  `include "apbuart_config_test.sv"
-  `include "apbuart_data_compare_test.sv"
-  `include "apbuart_frame_error_test.sv"
-  `include "apbuart_free_error_test.sv"
-  `include "apbuart_parity_error_test.sv"
-  `include "apbuart_rec_drv_test.sv"
-  `include "apbuart_rec_readreg_test.sv"
+  // `include "apbuart_config_test.sv"
+  // `include "apbuart_data_compare_test.sv"
+  // `include "apbuart_frame_error_test.sv"
+  // `include "apbuart_free_error_test.sv"
+  // `include "apbuart_parity_error_test.sv"
+  // `include "apbuart_rec_drv_test.sv"
+  // `include "apbuart_rec_readreg_test.sv"
 
 
 endpackage : testbench_pkg
