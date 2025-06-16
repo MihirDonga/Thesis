@@ -212,7 +212,10 @@
 // 		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
 // 	end
 // endfunction
-covergroup uart_config_cg;
+
+class apbuart_scoreboard extends uvm_scoreboard;
+
+	covergroup uart_config_cg;
 		option.per_instance = 1;
 
 		// Baud rate coverage
@@ -254,7 +257,7 @@ covergroup uart_config_cg;
 	endgroup
 
 	covergroup tx_cg;
-	coverpoint PWDATA {
+	coverpoint pwdata {
 		bins low = {[0:100]};       // example bin ranges, adjust as needed
 		bins mid = {[101:1000]};
 		bins high = {[1001:2**32-1]};
@@ -262,14 +265,14 @@ covergroup uart_config_cg;
 	endgroup
 
 	covergroup rx_cg;
-			rx_cp: coverpoint PRDATA {
+			rx_cp: coverpoint prdata {
 			bins zero        = {32'h00000000};        // exactly zero
 			bins low_range   = {[32'h00000001:32'h0FFFFFFF]};  // low values
 			bins mid_range   = {[32'h10000000:32'h7FFFFFFF]};  // middle values
 			bins high_range  = {[32'h80000000:32'hFFFFFFFF]};  // high values
 			}
 
-		error_cp: coverpoint PSLVERR {
+		error_cp: coverpoint pslerr {
 			bins error = {1};
 			bins no_error = {0};
 		}
@@ -277,7 +280,6 @@ covergroup uart_config_cg;
 		error_cross: cross rx_cp, error_cp;
 	endgroup
 
-class apbuart_scoreboard extends uvm_scoreboard;
 
 	uart_config_cg config_cov;
 	tx_cg tx_cov;
@@ -315,6 +317,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	logic [31:0] frame_len_reg;
 	logic [31:0] parity_reg;
 	logic [31:0] stopbit_reg;
+
  
   	// ------------------------------------------------------------------------------
   	//  port to recive packets from monitor first argument is transation type and 
