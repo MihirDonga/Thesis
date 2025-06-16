@@ -1,5 +1,3 @@
-`include "uvm_macros.svh"
-import uvm_pkg::*;
 class apbuart_parity_error_test extends apbuart_base_test;
     `uvm_component_utils(apbuart_parity_error_test)
 
