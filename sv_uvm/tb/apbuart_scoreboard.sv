@@ -212,10 +212,7 @@
 // 		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
 // 	end
 // endfunction
-
-class apbuart_scoreboard extends uvm_scoreboard;
-
-	covergroup uart_config_cg;
+covergroup uart_config_cg;
 		option.per_instance = 1;
 
 		// Baud rate coverage
@@ -280,6 +277,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		error_cross: cross rx_cp, error_cp;
 	endgroup
 
+class apbuart_scoreboard extends uvm_scoreboard;
 
 	uart_config_cg config_cov;
 	tx_cg tx_cov;
