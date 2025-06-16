@@ -17,12 +17,8 @@ rtl/tick_generator.sv
 rtl/uart_rx_BB.sv
 rtl/uart_transmitter.sv
 
-// tb/apb_uart_tb.sv
 tb/apbinterface.sv
 tb/uartinterface.sv
-
-// tb/uart_cov_pkg.sv
-// tb/apb_cov_pkg.sv
 
 // tb/apb_transaction.sv
 // tb/uart_transaction.sv
@@ -65,6 +61,6 @@ tb/testbench_pkg.sv
 // tb/apbuart_config_test.sv
 
 // Top level testbench
-// tb/testbench.sv
+tb/testbench.sv
 
 
