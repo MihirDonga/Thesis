@@ -215,6 +215,17 @@
 
 class apbuart_scoreboard extends uvm_scoreboard;
 
+	
+	// Registers to store configuration data
+
+	logic [31:0] baud_rate_reg;
+	logic [31:0] frame_len_reg;
+	logic [31:0] parity_reg;
+	logic [31:0] stopbit_reg;
+	logic [31:0] PWDATA;  // Added for tx_cg
+    logic [31:0] PRDATA;  // Added for rx_cg
+    logic PSLVERR;
+ 
 	covergroup uart_config_cg;
 		option.per_instance = 1;
 
@@ -311,14 +322,6 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	// Handle to  a cfg class
   	uart_config cfg;   
 
-	// Registers to store configuration data
-
-	logic [31:0] baud_rate_reg;
-	logic [31:0] frame_len_reg;
-	logic [31:0] parity_reg;
-	logic [31:0] stopbit_reg;
-
- 
   	// ------------------------------------------------------------------------------
   	//  port to recive packets from monitor first argument is transation type and 
   	//  other is defining which subscriber is attached
