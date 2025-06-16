@@ -12,6 +12,9 @@ class uart_monitor extends uvm_monitor;
 	logic [3:0]  n_sb;
 	} uart_cov_data_t;
 
+	 // ✅ Coverage instance
+  	uart_cov_type_t uart_cov;
+	
 	// ✅ Covergroup definition
 	covergroup uart_cov_type_t with function sample(uart_cov_data_t data);
 
@@ -58,8 +61,6 @@ class uart_monitor extends uvm_monitor;
   	// ---------------------------------------
   	uvm_analysis_port #(uart_transaction) item_collected_port_mon;
    
-  	 // ✅ Coverage instance
-  	uart_cov_type_t uart_cov;
   
   	// ------------------------------------------------------------------------
   	// The following property holds the transaction information currently

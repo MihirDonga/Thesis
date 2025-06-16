@@ -13,6 +13,10 @@ class apb_monitor extends uvm_monitor;
     bit        PSLVERR;
   } apb_cov_data_t;
 
+  
+  // Covergroup instance
+  apb_cov_type_t apb_cov;
+  
   // Covergroup definition (now samples a struct)
   covergroup apb_cov_type_t with function sample(apb_cov_data_t data);
 
@@ -86,9 +90,6 @@ class apb_monitor extends uvm_monitor;
   
   // Transaction being captured
   apb_transaction trans_collected; 
-
-  // Covergroup instance
-  apb_cov_type_t apb_cov;
 
   // Constructor
   function new (string name, uvm_component parent);
