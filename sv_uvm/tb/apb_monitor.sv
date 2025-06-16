@@ -164,7 +164,7 @@ function new(string name = "uart_monitor", uvm_component parent = null);
     super.new(name, parent);
     trans_collected = new();
     item_collected_port_mon = new("item_collected_port_mon", this);
-    cov = new(); // 
+    apb_cov = new(); // 
   endfunction
 
 

@@ -199,7 +199,7 @@ class uart_monitor extends uvm_monitor;
       super.new(name, parent);
       trans_collected = new();
       item_collected_port_mon = new("item_collected_port_mon", this);
-      cov = new();
+      uart_cov = new();
     endfunction
   
 	extern virtual function void build_phase(uvm_phase phase);
