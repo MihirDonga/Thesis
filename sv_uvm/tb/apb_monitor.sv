@@ -13,12 +13,15 @@ class apb_monitor extends uvm_monitor;
     bit        PSLVERR;
   } apb_cov_data_t;
 
-  
-  // Covergroup instance
-  apb_cov_type_t apb_cov;
-  
+
   // Covergroup definition (now samples a struct)
-  covergroup apb_cov_type_t with function sample(apb_cov_data_t data);
+  covergroup apb_cov_type_t with function sample(
+      input bit        PWRITE,
+      input bit [31:0] PADDR,
+      input bit [31:0] PWDATA,
+      input bit [31:0] PRDATA,
+      input bit        PSLVERR
+    );
 
     option.per_instance = 1; 
     
@@ -81,6 +84,8 @@ class apb_monitor extends uvm_monitor;
     
   endgroup
 
+  // Covergroup instance
+  apb_cov_type_t apb_cov;
 
   // Virtual Interface
   virtual apb_if vifapb;
@@ -132,8 +137,13 @@ class apb_monitor extends uvm_monitor;
       cov_data.PSLVERR = trans_collected.PSLVERR;
 
       // Sample the covergroup with the struct
-      apb_cov.sample(cov_data);
-
+      apb_cov.sample(
+              cov_data.PWRITE,
+              cov_data.PADDR,
+              cov_data.PWDATA,
+              cov_data.PRDATA,
+              cov_data.PSLVERR
+            );
       // Log the transaction
       `uvm_info(get_type_name(), {"APB Monitor :: Transaction Collected:\n", trans_collected.sprint()}, UVM_HIGH);
       

@@ -12,11 +12,14 @@ class uart_monitor extends uvm_monitor;
 	logic [3:0]  n_sb;
 	} uart_cov_data_t;
 
-	 // ✅ Coverage instance
-  	uart_cov_type_t uart_cov;
-	
+
 	// ✅ Covergroup definition
-	covergroup uart_cov_type_t with function sample(uart_cov_data_t data);
+	covergroup uart_cov_type_t with function sample(
+		input logic [31:0] transmitter_reg,
+		input logic        parity_en,
+		input logic [6:0]  frame_len,
+		input logic [3:0]  n_sb
+	);
 
 	option.per_instance = 1;
 	
@@ -47,6 +50,9 @@ class uart_monitor extends uvm_monitor;
 
 
 	endgroup
+
+	// ✅ Coverage instance
+  	uart_cov_type_t uart_cov;
 
   	// ---------------------------------------
   	//  Virtual Interface
@@ -158,17 +164,25 @@ task uart_monitor::monitor_and_send ();
 		begin
 			repeat(cfg.baud_rate)@(posedge vifuart.PCLK); // wait for parity bit
 		end
-      trans_collected.transmitter_reg=receive_reg;
-       // ✅ Sample coverage
-     
-      cov_data.transmitter_reg = trans_collected.transmitter_reg;
-      cov_data.parity_en = parity_en;
-      cov_data.frame_len = cfg.frame_len;
-      cov_data.n_sb = cfg.n_sb;
-      uart_cov.sample(cov_data);
+       
+		trans_collected.transmitter_reg=receive_reg;
+        
+		// ✅ Sample coverage
+     	cov_data.transmitter_reg = trans_collected.transmitter_reg;
+		cov_data.parity_en       = parity_en;
+		cov_data.frame_len       = cfg.frame_len;
+		cov_data.n_sb            = cfg.n_sb;
+
+		uart_cov.sample(
+			cov_data.transmitter_reg,
+			cov_data.parity_en,
+			cov_data.frame_len,
+			cov_data.n_sb
+		);
+
+		item_collected_port_mon.write(trans_collected); // It sends the transaction non-blocking and it sends to all connected export 
+		receive_reg = 32'hx;
 	end
-	item_collected_port_mon.write(trans_collected); // It sends the transaction non-blocking and it sends to all connected export 
-	receive_reg = 32'hx;
 endtask
       
  // Utility task to print coverage summary
