@@ -4,14 +4,6 @@ class uart_monitor extends uvm_monitor;
   
 	`uvm_component_utils(uart_monitor)
 
-	// ✅ Coverage struct
-	typedef struct {
-	logic [31:0] transmitter_reg;
-	logic        parity_en;
-	logic [6:0]  frame_len;
-	logic [3:0]  n_sb;
-	} uart_cov_data_t;
-
 	// ✅ Coverage instance
   	uart_cov_type_t uart_cov;
 
@@ -53,7 +45,14 @@ class uart_monitor extends uvm_monitor;
 
 	endgroup
 
-
+	// ✅ Coverage struct
+	typedef struct {
+	logic [31:0] transmitter_reg;
+	logic        parity_en;
+	logic [6:0]  frame_len;
+	logic [3:0]  n_sb;
+	} uart_cov_data_t;
+	
   	// ---------------------------------------
   	//  Virtual Interface
   	// ---------------------------------------

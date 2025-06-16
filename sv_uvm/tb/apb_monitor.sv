@@ -4,15 +4,6 @@ class apb_monitor extends uvm_monitor;
   
   `uvm_component_utils(apb_monitor)
   
-  // Define a struct to hold transaction data for the covergroup
-  typedef struct {
-    bit        PWRITE;
-    bit [31:0] PADDR;
-    bit [31:0] PWDATA;
-    bit [31:0] PRDATA;
-    bit        PSLVERR;
-  } apb_cov_data_t;
-
   // Covergroup instance
   apb_cov_type_t apb_cov;
 
@@ -86,6 +77,14 @@ class apb_monitor extends uvm_monitor;
     
   endgroup
 
+  // Define a struct to hold transaction data for the covergroup
+  typedef struct {
+    bit        PWRITE;
+    bit [31:0] PADDR;
+    bit [31:0] PWDATA;
+    bit [31:0] PRDATA;
+    bit        PSLVERR;
+  } apb_cov_data_t;
 
 
   // Virtual Interface
