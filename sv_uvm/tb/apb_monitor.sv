@@ -14,7 +14,7 @@ typedef struct {
 } apb_cov_data_t;
 
 // Covergroup definition (now samples a struct)
-covergroup apb_cov_type_t with function sample(input apb_cov_data_t data);
+covergroup apb_cov_type_t with function sample(apb_cov_data_t data);
 
   option.per_instance = 1; 
   

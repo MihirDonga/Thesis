@@ -13,7 +13,7 @@ typedef struct {
 } uart_cov_data_t;
 
 // ✅ Covergroup definition
-covergroup uart_cov_type_t with function sample(input uart_cov_data_t data);
+covergroup uart_cov_type_t with function sample(uart_cov_data_t data);
 
   option.per_instance = 1;
   
