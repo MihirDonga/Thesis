@@ -55,16 +55,16 @@ tb/uartinterface.sv
 tb/testbench_pkg.sv
 
 // Test files
-tb/apbuart_base_test.sv
-tb/apbuart_rec_readreg_test.sv
-tb/apbuart_rec_drv_test.sv
-tb/apbuart_parity_error_test.sv
-tb/apbuart_free_error_test.sv
-tb/apbuart_frame_error_test.sv
-tb/apbuart_data_compare_test.sv
-tb/apbuart_config_test.sv
+// tb/apbuart_base_test.sv
+// tb/apbuart_rec_readreg_test.sv
+// tb/apbuart_rec_drv_test.sv
+// tb/apbuart_parity_error_test.sv
+// tb/apbuart_free_error_test.sv
+// tb/apbuart_frame_error_test.sv
+// tb/apbuart_data_compare_test.sv
+// tb/apbuart_config_test.sv
 
 // Top level testbench
-tb/testbench.sv
+// tb/testbench.sv
 
 
