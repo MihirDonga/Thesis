@@ -268,7 +268,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	endgroup
 
 	covergroup tx_cg;
-		coverpoint pwdata {
+		coverpoint transmitter_reg {
 			bins low = {[0:100]};       // example bin ranges, adjust as needed
 			bins mid = {[101:1000]};
 			bins high = {[1001:2**32-1]};
@@ -276,7 +276,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	endgroup
 
 	covergroup rx_cg;
-		rx_cp: coverpoint prdata {
+		rx_cp: coverpoint payload {
 			bins zero        = {32'h00000000};        // exactly zero
 			bins low_range   = {[32'h00000001:32'h0FFFFFFF]};  // low values
 			bins mid_range   = {[32'h10000000:32'h7FFFFFFF]};  // middle values
