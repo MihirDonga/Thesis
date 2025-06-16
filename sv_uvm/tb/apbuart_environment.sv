@@ -19,7 +19,7 @@ class apbuart_env extends uvm_env;
 
     extern virtual function void build_phase(uvm_phase phase);
     extern virtual function void connect_phase(uvm_phase phase);
-    extern virtual function void final_phase(uvm_phase phase);
+    // extern virtual function void final_phase(uvm_phase phase);
     // extern task print_all_coverages();
 endclass : apbuart_env
 
@@ -48,12 +48,12 @@ function void apbuart_env::connect_phase(uvm_phase phase);
     uvm_config_db#(uart_sequencer)::set(this,"*","uart_sqr",uart_agnt.sequencer);
 endfunction : connect_phase
 
-function void apbuart_env::final_phase(uvm_phase phase);
-  super.final_phase(phase);
-  fork
-    print_all_coverages(); // spawn a task safely
-  join_none
-endfunction
+// function void apbuart_env::final_phase(uvm_phase phase);
+//   super.final_phase(phase);
+//   fork
+//     print_all_coverages(); // spawn a task safely
+//   join_none
+// endfunction
        
 // task apbuart_env::print_all_coverages();
 //   if (apb_agnt != null && apb_agnt.monitor != null)
