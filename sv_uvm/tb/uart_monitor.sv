@@ -51,7 +51,7 @@ endgroup
   	virtual uart_if vifuart;
 
 	// Handle to  a cfg class
-  	uart_config 	cfg; 
+  	uart_config cfg; 
   	// ---------------------------------------
   	// analysis port, to send the transaction
   	// to scoreboard
