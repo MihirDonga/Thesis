@@ -167,41 +167,32 @@ import apb_cov_pkg::*;
 class uart_monitor extends uvm_monitor;
   `uvm_component_utils(uart_monitor)
 
-  // Virtual Interface
   virtual uart_if vifuart;
-
-  // Analysis port
   uvm_analysis_port #(uart_transaction) item_collected_port_mon;
-
-  // Configuration object
   uart_config cfg;
-
-  // Transaction objects
   uart_transaction trans_collected;
 
-  // Internal signals
   logic [6:0] count, count1;
   logic [31:0] receive_reg;
   logic [6:0] LT;
   logic parity_en;
 
-  // Coverage struct
   typedef struct {
     logic [31:0] transmitter_reg;
-    logic        parity_en;
-    logic [6:0]  frame_len;
-    logic [3:0]  n_sb;
+    logic parity_en;
+    logic [6:0] frame_len;
+    logic [3:0] n_sb;
   } uart_cov_data_t;
 
-  // Covergroup with external sampling
+  // ✅ Covergroup defined inside the class
   covergroup uart_fcov with function sample(uart_cov_data_t data);
     option.per_instance = 1;
 
     TRANSMITTER_REG: coverpoint data.transmitter_reg {
-      bins all_zero    = {32'h0000_0000};
-      bins all_ones    = {32'hFFFF_FFFF};
+      bins all_zero = {32'h0000_0000};
+      bins all_ones = {32'hFFFF_FFFF};
       bins alternating = {32'hAAAAAAAA, 32'h55555555};
-      bins misc        = default;
+      bins misc = default;
     }
 
     PARITY_EN: coverpoint data.parity_en {
@@ -225,26 +216,23 @@ class uart_monitor extends uvm_monitor;
     PARITY_X_FRAME: cross PARITY_EN, FRAME_LEN;
   endgroup
 
-  uart_fcov cov;
+  uart_fcov cov; // ✅ Now legal since covergroup is defined above
 
-  // Constructor
   function new(string name = "uart_monitor", uvm_component parent = null);
     super.new(name, parent);
     trans_collected = new();
     item_collected_port_mon = new("item_collected_port_mon", this);
-    cov = new();
+    cov = new(); // ✅ Proper instantiation
   endfunction
 
-  // Build phase
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
     if (!uvm_config_db#(uart_config)::get(this, "", "cfg", cfg))
-      `uvm_fatal("NOCFG", "Configuration handle (cfg) must be set via config DB.");
+      `uvm_fatal("NOCFG", "Configuration must be set");
     if (!uvm_config_db#(virtual uart_if)::get(this, "", "vifuart", vifuart))
-      `uvm_fatal("NOVIF", "Virtual interface (vifuart) must be set via config DB.");
+      `uvm_fatal("NOVIF", "Virtual interface must be set");
   endfunction
 
-  // Run phase
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
     forever begin
@@ -254,32 +242,31 @@ class uart_monitor extends uvm_monitor;
     end
   endtask
 
-  // Configuration settings
   function void cfg_settings();
     parity_en = cfg.parity[1];
-    case (cfg.frame_len)
+    case(cfg.frame_len)
       5: LT = 7;
       6: LT = 6;
       7: LT = 5;
       8: LT = 4;
       9: LT = 4;
-      default: `uvm_error(get_type_name(), "Invalid frame length in configuration.")
+      default: `uvm_error(get_type_name(), "Incorrect frame length selected")
     endcase
   endfunction
 
-  // Monitor and coverage logic
   task monitor_and_send();
     uart_cov_data_t cov_data;
     count = 0;
+    count1 = 1;
 
     for (int i = 0; i < LT; i++) begin
-      wait (!`MONUART_IF.Tx);  // Start bit
+      wait(!vifuart.Tx);  // Wait for start bit
       cfg_settings();
 
       repeat(cfg.baud_rate/2) @(posedge vifuart.PCLK);
       repeat(cfg.frame_len) begin
         repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
-        receive_reg[count] = `MONUART_IF.Tx;
+        receive_reg[count] = vifuart.Tx;
         count++;
       end
 
@@ -292,24 +279,19 @@ class uart_monitor extends uvm_monitor;
 
       trans_collected.transmitter_reg = receive_reg;
 
-      // Populate coverage struct
       cov_data.transmitter_reg = receive_reg;
       cov_data.parity_en       = parity_en;
       cov_data.frame_len       = cfg.frame_len;
       cov_data.n_sb            = cfg.n_sb;
 
-      // Sample coverage
       cov.sample(cov_data);
-
-      // Send transaction
       item_collected_port_mon.write(trans_collected);
       receive_reg = 32'hx;
     end
   endtask
 
-  // Coverage report
   function void print_coverage_UART_summary();
     real coverage = cov.get_inst_coverage();
-    `uvm_info("UART_COVERAGE", $sformatf("UART Functional Coverage: %0.2f%%", coverage), UVM_MEDIUM)
+    `uvm_info("COVERAGE", $sformatf("UART Coverage: %0.2f%%", coverage), UVM_MEDIUM)
   endfunction
 endclass
