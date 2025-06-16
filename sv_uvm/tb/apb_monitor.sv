@@ -1,5 +1,9 @@
 `define MONAPB_IF vifapb.MONITOR.monitor_cb
 
+class apb_monitor extends uvm_monitor;
+  
+  `uvm_component_utils(apb_monitor)
+  
 // Define a struct to hold transaction data for the covergroup
 typedef struct {
   bit        PWRITE;
@@ -10,7 +14,7 @@ typedef struct {
 } apb_cov_data_t;
 
 // Covergroup definition (now samples a struct)
-covergroup apb_cov_type_t with function sample(apb_cov_data_t data);
+covergroup apb_cov_type_t;
 
   option.per_instance = 1; 
   
@@ -65,16 +69,15 @@ covergroup apb_cov_type_t with function sample(apb_cov_data_t data);
     bins error = {1};
     
   }
-// 	cross cp_pwrite, cp_paddr, cp_pdata_7_5, cp_data_3_0, cp_data_4, cp_pwada, cp_prdata, cp_pslverr;
+// Example meaningful cross coverage
+    // cross cp_pwrite, cp_paddr {
+    //   ignore_bins read_only  = binsof(cp_paddr.special_ranges) && binsof(cp_pwrite.write);
+    // }
  
   
 endgroup
 
 
-class apb_monitor extends uvm_monitor;
-  
-  `uvm_component_utils(apb_monitor)
-  
   // Virtual Interface
   virtual apb_if vifapb;
 
