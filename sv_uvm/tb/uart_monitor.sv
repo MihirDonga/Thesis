@@ -1,6 +1,5 @@
 `define MONUART_IF vifuart.MONITOR.monitor_cb
-`include "uart_config.sv"
-`include "uart_transaction.sv"
+
 class uart_monitor extends uvm_monitor;
   
 	`uvm_component_utils(uart_monitor)
@@ -14,7 +13,7 @@ typedef struct {
 } uart_cov_data_t;
 
 // ✅ Covergroup definition
-covergroup uart_cov_type_t;
+covergroup uart_cov_type_t with function sample(input uart_cov_data_t data);
 
   option.per_instance = 1;
   
