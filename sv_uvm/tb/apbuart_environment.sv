@@ -20,7 +20,7 @@ class apbuart_env extends uvm_env;
     extern virtual function void build_phase(uvm_phase phase);
     extern virtual function void connect_phase(uvm_phase phase);
     extern virtual function void final_phase(uvm_phase phase);
-    extern task print_all_coverages();
+    // extern task print_all_coverages();
 endclass : apbuart_env
 
 // --------------------------------------------------------------
@@ -55,17 +55,17 @@ function void apbuart_env::final_phase(uvm_phase phase);
   join_none
 endfunction
        
-task apbuart_env::print_all_coverages();
-  if (apb_agnt != null && apb_agnt.monitor != null)
-    apb_agnt.monitor.print_coverage_APB_summary();
-  else
-    `uvm_warning("APB_MONITOR_NULL", "APB monitor instance is null. Cannot print coverage.")
+// task apbuart_env::print_all_coverages();
+//   if (apb_agnt != null && apb_agnt.monitor != null)
+//     apb_agnt.monitor.print_coverage_APB_summary();
+//   else
+//     `uvm_warning("APB_MONITOR_NULL", "APB monitor instance is null. Cannot print coverage.")
 
-  if (uart_agnt != null && uart_agnt.monitor != null)
-    uart_agnt.monitor.print_coverage_UART_summary();
-  else
-    `uvm_warning("UART_MONITOR_NULL", "UART monitor instance is null. Cannot print coverage.")
-endtask
+//   if (uart_agnt != null && uart_agnt.monitor != null)
+//     uart_agnt.monitor.print_coverage_UART_summary();
+//   else
+//     `uvm_warning("UART_MONITOR_NULL", "UART monitor instance is null. Cannot print coverage.")
+// endtask
 
 
       
