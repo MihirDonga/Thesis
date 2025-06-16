@@ -5,9 +5,7 @@
 package testbench_pkg;
   import uvm_pkg::*;
   `include "uvm_macros.svh"
-  // `include "uart_cov_pkg.sv"
-  // `include "apb_cov_pkg.sv"
-
+ 
   // UART
   `include "uart_config.sv"
   `include "apb_config.sv"
