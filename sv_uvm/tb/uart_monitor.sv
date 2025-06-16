@@ -1,4 +1,5 @@
 `define MONUART_IF vifuart.MONITOR.monitor_cb
+import uart_cov_pkg::*;
 
 class uart_monitor extends uvm_monitor;
   

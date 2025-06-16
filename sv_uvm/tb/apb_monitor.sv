@@ -1,4 +1,5 @@
 `define MONAPB_IF vifapb.MONITOR.monitor_cb
+import apb_cov_pkg::*;
 
 class apb_monitor extends uvm_monitor;
   
