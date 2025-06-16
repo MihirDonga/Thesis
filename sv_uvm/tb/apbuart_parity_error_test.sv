@@ -5,7 +5,7 @@ class apbuart_parity_error_test extends apbuart_base_test;
 
     apbuart_parityError_seq  apbuart_part_err_sq; // all configuration for write and read configuration
     
-    function new (string nam = "apbuart_parity_error_test", uvm_component parent= null);
+    function new (string name = "apbuart_parity_error_test", uvm_component parent= null);
       	super.new(name, parent);
     endfunction
 
