@@ -21,32 +21,32 @@ rtl/uart_transmitter.sv
 tb/apbinterface.sv
 tb/uartinterface.sv
 
-tb/apb_transaction.sv
-tb/uart_transaction.sv
+// tb/apb_transaction.sv
+// tb/uart_transaction.sv
 
-// UART agent files
-tb/uart_monitor.sv
-tb/uart_driver.sv
-tb/uart_sequencer.sv
-tb/uart_sequence.sv
-tb/uart_config.sv
-tb/uart_agent.sv
+// // UART agent files
+// tb/uart_monitor.sv
+// tb/uart_driver.sv
+// tb/uart_sequencer.sv
+// tb/uart_sequence.sv
+// tb/uart_config.sv
+// tb/uart_agent.sv
 
-// APB agent files
-tb/apb_monitor.sv
-tb/apb_driver.sv
-tb/apb_sequencer.sv
-tb/apb_sequence.sv
-tb/apb_config.sv
-tb/apb_agent.sv
-tb/apb_transaction.sv
+// // APB agent files
+// tb/apb_monitor.sv
+// tb/apb_driver.sv
+// tb/apb_sequencer.sv
+// tb/apb_sequence.sv
+// tb/apb_config.sv
+// tb/apb_agent.sv
+// tb/apb_transaction.sv
 
-tb/apbuart_scoreboard.sv
-tb/apbuart_vsequencer.sv
-tb/apbuart_environment.sv
+// tb/apbuart_scoreboard.sv
+// tb/apbuart_vsequencer.sv
+// tb/apbuart_environment.sv
 
-// UVM sequencer and scoreboard files
-tb/apbuart_vseq_base.sv
+// // UVM sequencer and scoreboard files
+// tb/apbuart_vseq_base.sv
 
 // Testbench package and UVM components
 tb/testbench_pkg.sv
