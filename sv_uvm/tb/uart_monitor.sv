@@ -12,6 +12,8 @@ class uart_monitor extends uvm_monitor;
 	logic [3:0]  n_sb;
 	} uart_cov_data_t;
 
+	// ✅ Coverage instance
+  	uart_cov_type_t uart_cov;
 
 	// ✅ Covergroup definition
 	covergroup uart_cov_type_t with function sample(
@@ -51,8 +53,6 @@ class uart_monitor extends uvm_monitor;
 
 	endgroup
 
-	// ✅ Coverage instance
-  	uart_cov_type_t uart_cov;
 
   	// ---------------------------------------
   	//  Virtual Interface
