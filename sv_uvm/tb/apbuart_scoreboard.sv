@@ -222,9 +222,9 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	logic [31:0] frame_len_reg;
 	logic [31:0] parity_reg;
 	logic [31:0] stopbit_reg;
-	logic [31:0] PWDATA;  // Added for tx_cg
-    logic [31:0] PRDATA;  // Added for rx_cg
-    logic PSLVERR;
+	logic [31:0] pwdata;  // Added for tx_cg
+    logic [31:0] prdata;  // Added for rx_cg
+    logic pslverr;
  
 	covergroup uart_config_cg;
 		option.per_instance = 1;
@@ -268,25 +268,25 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	endgroup
 
 	covergroup tx_cg;
-	coverpoint pwdata {
-		bins low = {[0:100]};       // example bin ranges, adjust as needed
-		bins mid = {[101:1000]};
-		bins high = {[1001:2**32-1]};
-	}
+		coverpoint pwdata {
+			bins low = {[0:100]};       // example bin ranges, adjust as needed
+			bins mid = {[101:1000]};
+			bins high = {[1001:2**32-1]};
+		}
 	endgroup
 
 	covergroup rx_cg;
-			rx_cp: coverpoint prdata {
+		rx_cp: coverpoint prdata {
 			bins zero        = {32'h00000000};        // exactly zero
 			bins low_range   = {[32'h00000001:32'h0FFFFFFF]};  // low values
 			bins mid_range   = {[32'h10000000:32'h7FFFFFFF]};  // middle values
 			bins high_range  = {[32'h80000000:32'hFFFFFFFF]};  // high values
-			}
-
-		error_cp: coverpoint pslerr {
-			bins error = {1};
-			bins no_error = {0};
 		}
+
+		error_cp: coverpoint pslverr {
+				bins error = {1};
+				bins no_error = {0};
+			}
 
 		error_cross: cross rx_cp, error_cp;
 	endgroup
