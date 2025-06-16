@@ -1,5 +1,5 @@
-// `define MONUART_IF vifuart.MONITOR.monitor_cb
-// import uart_cov_pkg::*;
+`define MONUART_IF vifuart.MONITOR.monitor_cb
+import uart_cov_pkg::*;
 
 // class uart_monitor extends uvm_monitor;
   
@@ -187,23 +187,20 @@
     
 //   endtask
 // //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-`define MONUART_IF vifuart.MONITOR.monitor_cb
-
 class uart_monitor extends uvm_monitor;
   `uvm_component_utils(uart_monitor)
   
+  // Virtual Interface
+  virtual uart_if vifuart;
+  
   // Analysis port
   uvm_analysis_port #(uart_transaction) item_collected_port_mon;
-  
-  // Virtual interface
-  virtual uart_if vifuart;
   
   // Configuration handle
   uart_config cfg;
   
   // Transaction objects
   uart_transaction trans_collected;
-  uart_transaction cov_data;  // For coverage sampling
   
   // Internal signals
   logic [6:0] count, count1;
@@ -211,26 +208,31 @@ class uart_monitor extends uvm_monitor;
   logic [6:0] LT;
   logic parity_en;
   
+  // Coverage struct (internal to monitor)
+  typedef struct {
+    logic [31:0] transmitter_reg;
+    logic parity_en;
+    logic [6:0] frame_len;
+    logic [3:0] n_sb;
+  } uart_cov_data_t;
+  
   // Covergroup definition
-  covergroup uart_fcov;
+  covergroup uart_fcov with function sample(uart_cov_data_t data);
     option.per_instance = 1;
     
-    // Transmitter register coverage
-    TRANSMITTER_REG: coverpoint cov_data.transmitter_reg {
+    TRANSMITTER_REG: coverpoint data.transmitter_reg {
       bins all_zero = {32'h0000_0000};
       bins all_ones = {32'hFFFF_FFFF};
       bins alternating = {32'hAAAAAAAA, 32'h55555555};
       bins misc = default;
     }
     
-    // Parity enable coverage
-    PARITY_EN: coverpoint cov_data.parity_en {
+    PARITY_EN: coverpoint data.parity_en {
       bins disabled = {0};
       bins enabled = {1};
     }
     
-    // Frame length coverage
-    FRAME_LEN: coverpoint cov_data.frame_len {
+    FRAME_LEN: coverpoint data.frame_len {
       bins len5 = {5};
       bins len6 = {6};
       bins len7 = {7};
@@ -238,113 +240,106 @@ class uart_monitor extends uvm_monitor;
       bins len9 = {9};
     }
     
-    // Stop bits coverage
-    STOP_BITS: coverpoint cov_data.n_sb {
+    STOP_BITS: coverpoint data.n_sb {
       bins one_stop = {0};
       bins two_stop = {1};
     }
     
     // Cross coverage
-    PARITY_X_FRAME_LEN: cross PARITY_EN, FRAME_LEN;
+    PARITY_X_FRAME: cross PARITY_EN, FRAME_LEN;
   endgroup
   
-  // Standard UVM methods
-  extern function new(string name="uart_monitor", uvm_component parent);
-  extern function void build_phase(uvm_phase phase);
-  extern task run_phase(uvm_phase phase);
-  extern function void cfg_settings();
-  extern task monitor_and_send();
-  extern function void report_phase(uvm_phase phase);
+  uart_fcov cov;
   
-endclass: uart_monitor
-
-// Constructor
-function uart_monitor::new(string name, uvm_component parent);
-  super.new(name, parent);
-  trans_collected = new();
-  item_collected_port_mon = new("item_collected_port_mon", this);
-  uart_fcov = new();  // Initialize covergroup
-endfunction
-
-// Build phase
-function void uart_monitor::build_phase(uvm_phase phase);
-  super.build_phase(phase);
-  if(!uvm_config_db#(uart_config)::get(this, "", "cfg", cfg))
-    `uvm_fatal("NOCFG", "Configuration must be set");
-  if(!uvm_config_db#(virtual uart_if)::get(this, "", "vifuart", vifuart))
-    `uvm_fatal("NOVIF", "Virtual interface must be set");
-endfunction
-
-// Run phase
-task uart_monitor::run_phase(uvm_phase phase);
-  super.run_phase(phase);
-  forever begin
-    @(posedge vifuart.PCLK);
-    cfg_settings();  // Update settings
-    monitor_and_send();
-  end
-endtask
-
-// Monitor and send task
-task uart_monitor::monitor_and_send();
-  count = 0;
-  count1 = 1;
-
-  for(int i=0; i<LT; i++) begin
-    wait(!`MONUART_IF.Tx);  // Wait for start bit
-    cfg_settings();
-    
-    // Receive data bits
-    repeat(cfg.baud_rate/2) @(posedge vifuart.PCLK);
-    repeat(cfg.frame_len) begin
-      repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
-      receive_reg[count] = `MONUART_IF.Tx;
-      count = count + 1;
+  // Constructor with default values
+  function new(string name = "uart_monitor", uvm_component parent = null);
+    super.new(name, parent);
+    trans_collected = new();
+    item_collected_port_mon = new("item_collected_port_mon", this);
+    cov = new();
+  endfunction
+  
+  // Build phase
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+    if(!uvm_config_db#(uart_config)::get(this, "", "cfg", cfg))
+      `uvm_fatal("NOCFG", "Configuration must be set");
+    if(!uvm_config_db#(virtual uart_if)::get(this, "", "vifuart", vifuart))
+      `uvm_fatal("NOVIF", "Virtual interface must be set");
+  endfunction
+  
+  // Run phase
+  task run_phase(uvm_phase phase);
+    super.run_phase(phase);
+    forever begin
+      @(posedge vifuart.PCLK);
+      cfg_settings();
+      monitor_and_send();
     end
-    
-    // Receive parity bit if enabled
-    if(parity_en) begin
-      repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
-    end
-    
-    // Receive stop bits
-    repeat(cfg.n_sb+1) begin
-      repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
-    end
-    
-    // Store received data
-    trans_collected.transmitter_reg = receive_reg;
-    
-    // Prepare coverage data
-    cov_data = trans_collected;
-    cov_data.parity_en = parity_en;
-    cov_data.frame_len = cfg.frame_len;
-    cov_data.n_sb = cfg.n_sb;
-    
-    // Sample coverage
-    uart_fcov.sample();
-    
-    // Send transaction
-    item_collected_port_mon.write(trans_collected);
-    receive_reg = 32'hx;
-  end
-endtask
+  endtask
+  
+  // Configuration settings
+  function void cfg_settings();
+    parity_en = cfg.parity[1];
+    case(cfg.frame_len)
+      5: LT = 7;
+      6: LT = 6;
+      7: LT = 5;
+      8: LT = 4;
+      9: LT = 4;
+      default: `uvm_error(get_type_name(), "Incorrect frame length selected")
+    endcase
+  endfunction
+  
+  // Monitor and send task
+  task monitor_and_send();
+    uart_cov_data_t cov_data;
+    count = 0;
+    count1 = 1;
 
-// Configuration settings
-function void uart_monitor::cfg_settings();
-  parity_en = cfg.parity[1];
-  case(cfg.frame_len)
-    5: LT = 7;
-    6: LT = 6;
-    7: LT = 5;
-    8: LT = 4;
-    9: LT = 4;
-    default: `uvm_error(get_type_name(), "Incorrect frame length selected")
-  endcase
-endfunction
-
-// Report phase
-function void uart_monitor::report_phase(uvm_phase phase);
-  real coverage = uart_fcov.get_inst_coverage();
-  `uvm_info(get_type_name(), $sformatf("UART Monitor Coverage: %0.2f%%", coverage), UVM_MEDIUM)
-endfunction
+    for(int i=0; i<LT; i++) begin
+      wait(!`MONUART_IF.Tx);  // Wait for start bit
+      cfg_settings();
+      
+      // Receive data
+      repeat(cfg.baud_rate/2) @(posedge vifuart.PCLK);
+      repeat(cfg.frame_len) begin
+        repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
+        receive_reg[count] = `MONUART_IF.Tx;
+        count++;
+      end
+      
+      // Handle parity if enabled
+      if(parity_en) begin
+        repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
+      end
+      
+      // Handle stop bits
+      repeat(cfg.n_sb+1) begin
+        repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
+      end
+      
+      // Store and send transaction
+      trans_collected.transmitter_reg = receive_reg;
+      
+      // Prepare coverage data
+      cov_data.transmitter_reg = receive_reg;
+      cov_data.parity_en = parity_en;
+      cov_data.frame_len = cfg.frame_len;
+      cov_data.n_sb = cfg.n_sb;
+      
+      // Sample coverage
+      cov.sample(cov_data);
+      
+      // Send transaction
+      item_collected_port_mon.write(trans_collected);
+      receive_reg = 32'hx;
+    end
+  endtask
+  
+  // Coverage report method (now properly declared)
+  function void print_coverage_UART_summary();
+    real coverage = cov.get_inst_coverage();
+    `uvm_info("COVERAGE", $sformatf("UART Coverage: %0.2f%%", coverage), UVM_MEDIUM)
+  endfunction
+endclass

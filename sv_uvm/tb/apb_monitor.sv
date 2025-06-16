@@ -1,5 +1,5 @@
-// `define MONAPB_IF vifapb.MONITOR.monitor_cb
-// import apb_cov_pkg::*;
+`define MONAPB_IF vifapb.MONITOR.monitor_cb
+import apb_cov_pkg::*;
 
 // class apb_monitor extends uvm_monitor;
   
@@ -162,140 +162,154 @@
 //     `uvm_info("APB_MONITOR", $sformatf("APB Covergroup coverage: %0.2f%%", coverage_percentage), UVM_LOW)
 //   endtask
 // endclass
-`define MONAPB_IF vifapb.MONITOR.monitor_cb
+`define MONUART_IF vifuart.MONITOR.monitor_cb
 
-class apb_monitor extends uvm_monitor;
-  `uvm_component_utils(apb_monitor)
-  
+class uart_monitor extends uvm_monitor;
+  `uvm_component_utils(uart_monitor)
+
   // Virtual Interface
-  virtual apb_if vifapb;
+  virtual uart_if vifuart;
 
   // Analysis port
-  uvm_analysis_port #(apb_transaction) item_collected_port_mon;
-  
+  uvm_analysis_port #(uart_transaction) item_collected_port_mon;
+
+  // Configuration object
+  uart_config cfg;
+
   // Transaction objects
-  apb_transaction trans_collected;
-  apb_transaction cov_data;  // For coverage sampling
-  
-  // Covergroup definition
-  covergroup apb_fcov;
+  uart_transaction trans_collected;
+
+  // Internal signals
+  logic [6:0] count, count1;
+  logic [31:0] receive_reg;
+  logic [6:0] LT;
+  logic parity_en;
+
+  // Coverage struct
+  typedef struct {
+    logic [31:0] transmitter_reg;
+    logic        parity_en;
+    logic [6:0]  frame_len;
+    logic [3:0]  n_sb;
+  } uart_cov_data_t;
+
+  // Covergroup with external sampling
+  covergroup uart_fcov with function sample(uart_cov_data_t data);
     option.per_instance = 1;
-    
-    // PWRITE coverage
-    PWRITE_CP: coverpoint cov_data.PWRITE {
-      bins read  = {0};
-      bins write = {1};
+
+    TRANSMITTER_REG: coverpoint data.transmitter_reg {
+      bins all_zero    = {32'h0000_0000};
+      bins all_ones    = {32'hFFFF_FFFF};
+      bins alternating = {32'hAAAAAAAA, 32'h55555555};
+      bins misc        = default;
     }
-    
-    // PADDR coverage
-    PADDR_CP: coverpoint cov_data.PADDR {
-      bins addr_ranges[4] = {[32'h0000_0000 : 32'h0000_000C]};
-      bins special_ranges = {[32'h0000_0100 : 32'h0000_01FF], 
-                            [32'h0000_0200 : 32'h0000_02FF]};
-      bins other = default;
+
+    PARITY_EN: coverpoint data.parity_en {
+      bins disabled = {0};
+      bins enabled  = {1};
     }
-    
-    // PWDATA coverage - frame_len bits [7:5]
-    FRAME_LEN_CP: coverpoint cov_data.PWDATA[7:5] {
-      bins frame_5 = {3'b101};
-      bins frame_6 = {3'b110};
-      bins frame_7 = {3'b111};
-      bins frame_8 = {3'b000};
+
+    FRAME_LEN: coverpoint data.frame_len {
+      bins len5 = {5};
+      bins len6 = {6};
+      bins len7 = {7};
+      bins len8 = {8};
+      bins len9 = {9};
     }
-    
-    // PWDATA coverage - parity bits [3:0]
-    PARITY_CP: coverpoint cov_data.PWDATA[3:0] {
-      bins none    = {0};
-      bins odd     = {1};
-      bins even    = {2};
-      bins unknown = {[3:15]};
-    }
-    
-    // PWDATA coverage - stop bit [4]
-    STOP_BIT_CP: coverpoint cov_data.PWDATA[4] {
+
+    STOP_BITS: coverpoint data.n_sb {
       bins one_stop = {0};
       bins two_stop = {1};
     }
-    
-    // PWDATA coverage - baud rate [31:8]
-    BAUD_RATE_CP: coverpoint cov_data.PWDATA {
-      bins common_baud = {4800,9600,14400,19200,38400,57600,115200,128000};
-      bins special_codes = {0,63};
-      bins misc = default;
-    }
-    
-    // PRDATA coverage
-    PRDATA_CP: coverpoint cov_data.PRDATA {
-      bins zero = {32'h0000_0000};
-      bins ones = {32'hFFFF_FFFF};
-      bins misc = default;
-    }
-    
-    // PSLVERR coverage
-    PSLVERR_CP: coverpoint cov_data.PSLVERR {
-      bins ok    = {0};
-      bins error = {1};
-    }
-    
-    // Cross coverage examples
-    WRITE_X_ADDR: cross PWRITE_CP, PADDR_CP {
-      ignore_bins read_only = binsof(PWRITE_CP.read) && binsof(PADDR_CP.special_ranges);
-    }
-    
-    FRAME_X_PARITY: cross FRAME_LEN_CP, PARITY_CP;
+
+    PARITY_X_FRAME: cross PARITY_EN, FRAME_LEN;
   endgroup
-  
+
+  uart_fcov cov;
+
   // Constructor
-  function new(string name, uvm_component parent);
+  function new(string name = "uart_monitor", uvm_component parent = null);
     super.new(name, parent);
     trans_collected = new();
     item_collected_port_mon = new("item_collected_port_mon", this);
-    apb_fcov = new();  // Initialize covergroup
+    cov = new();
   endfunction
-  
+
   // Build phase
   function void build_phase(uvm_phase phase);
     super.build_phase(phase);
-    if(!uvm_config_db#(virtual apb_if)::get(this, "", "vifapb", vifapb))
-      `uvm_fatal("NOVIF", "Virtual interface must be set");
+    if (!uvm_config_db#(uart_config)::get(this, "", "cfg", cfg))
+      `uvm_fatal("NOCFG", "Configuration handle (cfg) must be set via config DB.");
+    if (!uvm_config_db#(virtual uart_if)::get(this, "", "vifuart", vifuart))
+      `uvm_fatal("NOVIF", "Virtual interface (vifuart) must be set via config DB.");
   endfunction
-  
+
   // Run phase
   task run_phase(uvm_phase phase);
     super.run_phase(phase);
     forever begin
-      // Wait for a transaction
-      wait(`MONAPB_IF.PSELx && `MONAPB_IF.PENABLE);
-      wait(`MONAPB_IF.PREADY || `MONAPB_IF.PSLVERR);
-      
-      @(posedge vifapb.PCLK);
-      
-      // Capture transaction data
-      trans_collected.PSLVERR = `MONAPB_IF.PSLVERR;
-      trans_collected.PWRITE = `MONAPB_IF.PWRITE;
-      trans_collected.PWDATA = `MONAPB_IF.PWDATA;
-      trans_collected.PADDR = `MONAPB_IF.PADDR;
-      trans_collected.PRDATA = `MONAPB_IF.PRDATA;
-      trans_collected.PREADY = `MONAPB_IF.PREADY;
-      
-      // Prepare coverage data
-      cov_data = trans_collected;
-      
-      // Sample coverage
-      apb_fcov.sample();
-      
-      // Log and send transaction
-      `uvm_info(get_type_name(), $sformatf("APB Transaction:\n%s", trans_collected.sprint()), UVM_HIGH);
-      item_collected_port_mon.write(trans_collected);
-      
-      // Wait for transaction completion
-      wait(!`MONAPB_IF.PREADY);
+      @(posedge vifuart.PCLK);
+      cfg_settings();
+      monitor_and_send();
     end
   endtask
-  
-  // Coverage report
-  task print_coverage_APB_summary();
-    real coverage = apb_fcov.get_inst_coverage();
-    `uvm_info("APB_COVERAGE", $sformatf("APB Coverage: %0.2f%%", coverage), UVM_MEDIUM)
+
+  // Configuration settings
+  function void cfg_settings();
+    parity_en = cfg.parity[1];
+    case (cfg.frame_len)
+      5: LT = 7;
+      6: LT = 6;
+      7: LT = 5;
+      8: LT = 4;
+      9: LT = 4;
+      default: `uvm_error(get_type_name(), "Invalid frame length in configuration.")
+    endcase
+  endfunction
+
+  // Monitor and coverage logic
+  task monitor_and_send();
+    uart_cov_data_t cov_data;
+    count = 0;
+
+    for (int i = 0; i < LT; i++) begin
+      wait (!`MONUART_IF.Tx);  // Start bit
+      cfg_settings();
+
+      repeat(cfg.baud_rate/2) @(posedge vifuart.PCLK);
+      repeat(cfg.frame_len) begin
+        repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
+        receive_reg[count] = `MONUART_IF.Tx;
+        count++;
+      end
+
+      if (parity_en)
+        repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
+
+      repeat(cfg.n_sb + 1) begin
+        repeat(cfg.baud_rate) @(posedge vifuart.PCLK);
+      end
+
+      trans_collected.transmitter_reg = receive_reg;
+
+      // Populate coverage struct
+      cov_data.transmitter_reg = receive_reg;
+      cov_data.parity_en       = parity_en;
+      cov_data.frame_len       = cfg.frame_len;
+      cov_data.n_sb            = cfg.n_sb;
+
+      // Sample coverage
+      cov.sample(cov_data);
+
+      // Send transaction
+      item_collected_port_mon.write(trans_collected);
+      receive_reg = 32'hx;
+    end
   endtask
+
+  // Coverage report
+  function void print_coverage_UART_summary();
+    real coverage = cov.get_inst_coverage();
+    `uvm_info("UART_COVERAGE", $sformatf("UART Functional Coverage: %0.2f%%", coverage), UVM_MEDIUM)
+  endfunction
 endclass
