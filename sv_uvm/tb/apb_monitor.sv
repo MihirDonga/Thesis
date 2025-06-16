@@ -4,88 +4,89 @@ class apb_monitor extends uvm_monitor;
   
   `uvm_component_utils(apb_monitor)
   
-  // Covergroup instance
-  apb_cov_type_t apb_cov;
+  // // Define a struct to hold transaction data for the covergroup
+  // typedef struct {
+  //   bit        PWRITE;
+  //   bit [31:0] PADDR;
+  //   bit [31:0] PWDATA;
+  //   bit [31:0] PRDATA;
+  //   bit        PSLVERR;
+  // } apb_cov_data_t;
 
-  // Covergroup definition (now samples a struct)
-  covergroup apb_cov_type_t with function sample(
-      input bit        PWRITE,
-      input bit [31:0] PADDR,
-      input bit [31:0] PWDATA,
-      input bit [31:0] PRDATA,
-      input bit        PSLVERR
-    );
 
-    option.per_instance = 1; 
+  // // Covergroup definition (now samples a struct)
+  // covergroup apb_cov_type_t with function sample(
+  //     input bit        PWRITE,
+  //     input bit [31:0] PADDR,
+  //     input bit [31:0] PWDATA,
+  //     input bit [31:0] PRDATA,
+  //     input bit        PSLVERR
+  //   );
+
+  //   option.per_instance = 1; 
     
-    cp_pwrite: coverpoint data.PWRITE {
-      bins read  = {0};
-      bins write = {1};
-    }
+  //   cp_pwrite: coverpoint data.PWRITE {
+  //     bins read  = {0};
+  //     bins write = {1};
+  //   }
 
-    cp_paddr : coverpoint data.PADDR {
-      bins addr[4]   = {[32'h0000_0000 : 32'h0000_000C]};
-      bins ranges[4] = {[32'h0000_0100 : 32'h0000_01FF], [32'h0000_0200 : 32'h0000_02FF]};
-      bins other     = default;
-    }
+  //   cp_paddr : coverpoint data.PADDR {
+  //     bins addr[4]   = {[32'h0000_0000 : 32'h0000_000C]};
+  //     bins ranges[4] = {[32'h0000_0100 : 32'h0000_01FF], [32'h0000_0200 : 32'h0000_02FF]};
+  //     bins other     = default;
+  //   }
 
-    // Decode frame_len from PWDATA[7:5]
-    cp_pdata_7_5 : coverpoint data.PWDATA[7:5] {
-      bins frame_5 = {3'b101};
-      bins frame_6 = {3'b110};
-      bins frame_7 = {3'b111};
-      bins frame_8 = {3'b000}; // Assuming wrap-around
-    }
+  //   // Decode frame_len from PWDATA[7:5]
+  //   cp_pdata_7_5 : coverpoint data.PWDATA[7:5] {
+  //     bins frame_5 = {3'b101};
+  //     bins frame_6 = {3'b110};
+  //     bins frame_7 = {3'b111};
+  //     bins frame_8 = {3'b000}; // Assuming wrap-around
+  //   }
 
-    // Decode parity from PWDATA[3:0]
-    cp_data_3_0 : coverpoint data.PWDATA[3:0] {
-      bins none    = {0};
-      bins odd     = {1};
-      bins even    = {2};
-      bins unknown = {3};
-    }
+  //   // Decode parity from PWDATA[3:0]
+  //   cp_data_3_0 : coverpoint data.PWDATA[3:0] {
+  //     bins none    = {0};
+  //     bins odd     = {1};
+  //     bins even    = {2};
+  //     bins unknown = {3};
+  //   }
 
-    // Decode n_sb from PWDATA[4]
-    cp_data_4 : coverpoint data.PWDATA[4] {
-      bins one_stop = {0};
-      bins two_stop = {1};
-    }
+  //   // Decode n_sb from PWDATA[4]
+  //   cp_data_4 : coverpoint data.PWDATA[4] {
+  //     bins one_stop = {0};
+  //     bins two_stop = {1};
+  //   }
 
-    // Baud rate in PWDATA[31:8]
-    cp_pwada : coverpoint data.PWDATA {
-      bins common_baud = {4800,9600,14400,19200,38400,57600,115200,128000,63,0};
-      bins reserved     = {63, 0}; // Any special codes
-      bins misc         = default;
-    }
+  //   // Baud rate in PWDATA[31:8]
+  //   cp_pwada : coverpoint data.PWDATA {
+  //     bins common_baud = {4800,9600,14400,19200,38400,57600,115200,128000,63,0};
+  //     bins reserved     = {63, 0}; // Any special codes
+  //     bins misc         = default;
+  //   }
 
-    cp_prdata : coverpoint data.PRDATA {
-      bins zero = {32'h0000_0000};
-      bins ones = {32'hFFFF_FFFF};
-      bins misc = default;
-    }
+  //   cp_prdata : coverpoint data.PRDATA {
+  //     bins zero = {32'h0000_0000};
+  //     bins ones = {32'hFFFF_FFFF};
+  //     bins misc = default;
+  //   }
 
-    cp_pslverr : coverpoint data.PSLVERR {
-      bins ok    = {0};
-      bins error = {1};
+  //   cp_pslverr : coverpoint data.PSLVERR {
+  //     bins ok    = {0};
+  //     bins error = {1};
       
-    }
-  // Example meaningful cross coverage
-      // cross cp_pwrite, cp_paddr {
-      //   ignore_bins read_only  = binsof(cp_paddr.special_ranges) && binsof(cp_pwrite.write);
-      // }
+  //   }
+  // // Example meaningful cross coverage
+  //     // cross cp_pwrite, cp_paddr {
+  //     //   ignore_bins read_only  = binsof(cp_paddr.special_ranges) && binsof(cp_pwrite.write);
+  //     // }
   
     
-  endgroup
+  // endgroup
 
-  // Define a struct to hold transaction data for the covergroup
-  typedef struct {
-    bit        PWRITE;
-    bit [31:0] PADDR;
-    bit [31:0] PWDATA;
-    bit [31:0] PRDATA;
-    bit        PSLVERR;
-  } apb_cov_data_t;
 
+  // Covergroup instance
+  apb_cov_type_t apb_cov;
 
   // Virtual Interface
   virtual apb_if vifapb;
