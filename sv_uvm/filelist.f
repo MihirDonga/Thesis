@@ -21,8 +21,8 @@ rtl/uart_transmitter.sv
 tb/apbinterface.sv
 tb/uartinterface.sv
 
-tb/uart_cov_pkg.sv
-tb/apb_cov_pkg.sv
+// tb/uart_cov_pkg.sv
+// tb/apb_cov_pkg.sv
 
 // tb/apb_transaction.sv
 // tb/uart_transaction.sv
