@@ -323,24 +323,18 @@ class apbuart_scoreboard extends uvm_scoreboard;
 
 		// Baud rate coverage
 		baud_cp: coverpoint baud_rate_reg {
-			bins b4800   = {4800};
-			bins b9600   = {9600};
-			bins b19200  = {19200};
-			bins b38400  = {38400};
-			bins b57600  = {57600};
-			bins b115200 = {115200};
-			bins b128000   = {128000};
-			bins b63   = {63};
-			bins b0   = {0};
+			bins common_rates[] = {4800, 9600, 19200, 38400, 57600, 115200, 128000};
+			bins special_cases  = {0, 63};
+			bins low_rates      = {[1:4799]};
+			bins high_rates     = {[128001:32'hFFFF_FFFF]};
+			illegal_bins invalid = {[64:4799], [128001:32'hFFFF_FFFF]};
 		}
 
 		// Frame length (5–8 bits)
 		frame_cp: coverpoint frame_len_reg {
-			bins f5 = {5};
-			bins f6 = {6};
-			bins f7 = {7};
-			bins f8 = {8};
+			bins valid_lengths[] = {5, 6, 7, 8};
 			illegal_bins illegal_frame = default;
+			bins len_transitions[] = (5=>6=>7=>8), (8=>7=>6=>5);
 		}
 
 		// Parity (assume 0=none, 1=even, 2=odd)
@@ -349,17 +343,21 @@ class apbuart_scoreboard extends uvm_scoreboard;
 			bins even = {1};
 			bins odd  = {2};
 			illegal_bins bad_stop = default;
+			// Parity transitions
+        	bins parity_trans[] = (0=>1=>2), (2=>1=>0);
 		}
 
 		// Stop bits (assume 1 or 2)
 		stopbit_cp: coverpoint stopbit_reg {
-			bins one = {1};
-			bins two = {2};
+			bins one = {1} iff (len inside {5,6,7,8});
+        	bins two = {2} iff (len inside {5,6,7,8});
+        	illegal_bins invalid = default;
 		}
 
 		// Cross config coverage
 		cfg_cross: cross baud_cp, frame_cp, parity_cp, stopbit_cp{ignore_bins illegal_combos = binsof(baud_cp) intersect {0, 63} && binsof(stopbit_cp) intersect {2};}
-		// baud_parity_cross: cross baud_cp, parity_cp;
+		baud_parity_cross: cross baud_cp, parity_cp;
+		baud_frame_cross: cross baud_cp, frame_cp
 	endgroup
 
 	// covergroup tx_cg;
