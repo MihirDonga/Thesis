@@ -577,7 +577,7 @@ endfunction
   
 function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt, uart_transaction uart_pkt);  
 	 
-	if(apb_pkt.PWDATA == uart_pkt.transmitter_reg) 
+	if(apb_pkt.PWDATA == uart_pkt.transmitter_reg) begin
     	`uvm_info(get_type_name(),$sformatf("------ :: Transmission Data Packet Match :: ------"),UVM_LOW)
 		 // Assign data for coverage
 		tx_cg.apb_data  = apb_pkt.PWDATA;
@@ -585,8 +585,10 @@ function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt,
 
 		tx_cg.sample();
 		tx_sample_count++;
-  	else
+	end
+  	else begin
       	`uvm_error(get_type_name(),$sformatf("------ :: Transmission Data Packet MisMatch :: ------"))
+	end
 	`uvm_info(get_type_name(),$sformatf("Expected Transmission Data Value : %0h Actual Transmission Data Value: %0h",apb_pkt.PWDATA,uart_pkt.transmitter_reg),UVM_LOW)   
 	`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
 	
