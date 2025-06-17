@@ -360,8 +360,10 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		// Cross config coverage
 		cfg_cross: cross baud_cp, frame_cp, parity_cp, stopbit_cp;
 		baud_parity_cross: cross baud_cp, parity_cp;
-		// baud_fram_cross: cross baud_cp, frame_cp;
-		stop_fram_cross: cross stopbit_cp, frame_cp;
+		baud_fram_cross: cross baud_cp, frame_cp;
+		baud_fram_parity_cross: cross baud_cp, frame_cp,parity_cp;
+		baud_fram_sto_cross: cross baud_cp, frame_cp, stopbit_cp;
+		// stop_fram_cross: cross stopbit_cp, frame_cp;
 	endgroup
 
 	// covergroup tx_cg;
