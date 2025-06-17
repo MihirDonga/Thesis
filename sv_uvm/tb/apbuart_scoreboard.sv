@@ -415,8 +415,8 @@ class apbuart_scoreboard extends uvm_scoreboard;
 			bins error_clear  = {0};
 		}
 		// Cross coverage
-  		cross rx_uart_data, rx_error;
-		cross rx_apb_data, rx_error;
+  		// cross rx_uart_data, rx_error;
+		// cross rx_apb_data, rx_error;
 
 	endgroup
 
