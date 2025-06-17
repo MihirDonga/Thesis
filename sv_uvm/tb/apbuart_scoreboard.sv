@@ -472,8 +472,8 @@ endfunction : write_monapb
 task apbuart_scoreboard::run_phase(uvm_phase phase);
 	apb_transaction 	apb_pkt_mon;
 	uart_transaction 	uart_pkt_mon;
-  	apb_transaction 	apb_pkt_drv;
-	uart_transaction 	uart_pkt_drv;
+  	// apb_transaction 	apb_pkt_drv;
+	// uart_transaction 	uart_pkt_drv;
     
     forever 
     begin
