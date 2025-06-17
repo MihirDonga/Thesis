@@ -388,8 +388,8 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	//  recived from monitor and driver
   	// ---------------------------------------
   	apb_transaction 	pkt_qu_monapb[$];
-	uart_transaction 	pkt_qu_monuart[$];
-	uart_transaction 	pkt_qu_drvuart[$];  
+	// uart_transaction 	pkt_qu_monuart[$];
+	// uart_transaction 	pkt_qu_drvuart[$];  
 
 	// Handle to  a cfg class
   	uart_config cfg;   
@@ -403,8 +403,8 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	//  other is defining which subscriber is attached
   	// ------------------------------------------------------------------------------
     uvm_analysis_imp_monapb 	#(apb_transaction, apbuart_scoreboard)		item_collected_export_monapb;
-	uvm_analysis_imp_monuart 	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_monuart;
-	uvm_analysis_imp_drvuart  	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_drvuart;  
+	// uvm_analysis_imp_monuart 	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_monuart;
+	// uvm_analysis_imp_drvuart  	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_drvuart;  
 
   	//---------------------------------------
   	// new - constructor
