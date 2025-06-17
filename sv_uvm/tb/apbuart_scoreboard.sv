@@ -351,7 +351,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		stopbit_cp: coverpoint stopbit_reg {
 			bins one = {1};
         	bins two = {2};
-        	illegal_bins invalid_with_len = (stop == 2 && !(len inside {5,6,7,8}));
+        	illegal_bins invalid = default;
 		}
 
 		// Cross config coverage
