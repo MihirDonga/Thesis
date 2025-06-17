@@ -377,7 +377,6 @@ class apbuart_scoreboard extends uvm_scoreboard;
 			bins high_values[]   = {[32'h8000_0000:32'hFFFF_FFFF]};
 			bins corner_values[] = {32'h0000_0000, 32'hFFFF_FFFF, 32'hAAAA_AAAA, 32'h5555_5555, 32'hDEAD_BEEF};
 		}
-
 		// Coverpoint for UART transmitted data
 		coverpoint uart_data {
 			bins low_values[]    = {[32'h0000_0000:32'h0000_00FF]};
