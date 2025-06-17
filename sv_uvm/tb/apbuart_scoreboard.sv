@@ -304,7 +304,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 
 	`uvm_analysis_imp_decl(_monapb)
 	`uvm_analysis_imp_decl(_monuart) 
-	// `uvm_analysis_imp_decl(_drvuart) 
+	`uvm_analysis_imp_decl(_drvuart) 
 
 	`uvm_component_utils(apbuart_scoreboard)
   
@@ -315,7 +315,9 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	logic [31:0] parity_reg;
 	logic [31:0] stopbit_reg;
 	logic [31:0] apb_data;  // Added for tx_cg
-    logic [31:0] uart_data;  // Added for rx_cg
+    logic [31:0] uart_data;  // Added for tx_cg
+	logic [31:0] rx_apb_data;  // Added for rx_cg
+    logic [31:0] rx_uart_data;  // Added for rx_cg
  
 	covergroup uart_config_cg;
 		option.per_instance = 1;
@@ -389,21 +391,32 @@ class apbuart_scoreboard extends uvm_scoreboard;
 
 	endgroup
 
-	// covergroup rx_cg;
-	// 	rx_cp: coverpoint uart_pkt.payload {
-	// 		bins zero        = {32'h00000000};        // exactly zero
-	// 		bins low_range   = {[32'h00000001:32'h0FFFFFFF]};  // low values
-	// 		bins mid_range   = {[32'h10000000:32'h7FFFFFFF]};  // middle values
-	// 		bins high_range  = {[32'h80000000:32'hFFFFFFFF]};  // high values
-	// 	}
+	covergroup tx_cg with function sample(logic [31:0] rx_apb_data, logic [31:0] rx_uart_data, bit error_bit);
+		option.per_instance = 1;
+		// Coverpoint for APB write data
+		coverpoint rx_apb_data {
+			// Binning ranges based on 32-bit width
+			bins low_values[]    = {[32'h0000_0000:32'h0000_00FF]};
+			bins mid_values[]    = {[32'h0000_0100:32'h7FFF_FFFF]};
+			bins high_values[]   = {[32'h8000_0000:32'hFFFF_FFFF]};
+			bins corner_values[] = {32'h0000_0000, 32'hFFFF_FFFF, 32'hAAAA_AAAA, 32'h5555_5555, 32'hDEAD_BEEF};
+		}
+		// Coverpoint for UART transmitted data
+		coverpoint rx_uart_data {
+			bins low_values[]    = {[32'h0000_0000:32'h0000_00FF]};
+			bins mid_values[]    = {[32'h0000_0100:32'h7FFF_FFFF]};
+			bins high_values[]   = {[32'h8000_0000:32'hFFFF_FFFF]};
+			bins corner_values[] = {32'h0000_0000, 32'hFFFF_FFFF, 32'hAAAA_AAAA, 32'h5555_5555, 32'hDEAD_BEEF};
+		}
 
-	// 	// error_cp: coverpoint pslverr {
-	// 	// 		bins error = {1};
-	// 	// 		bins no_error = {0};
-	// 	// 	}
+		coverpoint rx_error {
+			bins error_set    = {1};
+			bins error_clear  = {0};
+		}
+		// Cross coverage
+  		cross rx_apb_data, rx_uart_data, rx_error;
 
-	// 	// error_cross: cross rx_cp, error_cp;
-	// endgroup
+	endgroup
 
   	// ---------------------------------------
   	//  declaring pkt_qu to store the pkt's 
@@ -411,14 +424,14 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	// ---------------------------------------
   	apb_transaction 	pkt_qu_monapb[$];
 	uart_transaction 	pkt_qu_monuart[$];
-	// uart_transaction 	pkt_qu_drvuart[$];  
+	uart_transaction 	pkt_qu_drvuart[$];  
 
 	// Handle to  a cfg class
   	uart_config cfg;   
 
 	int config_sample_count = 0;
     int tx_sample_count = 0;
-    // int rx_sample_count = 0;
+    int rx_sample_count = 0;
 
   	// ------------------------------------------------------------------------------
   	//  port to recive packets from monitor first argument is transation type and 
@@ -426,7 +439,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	// ------------------------------------------------------------------------------
     uvm_analysis_imp_monapb 	#(apb_transaction, apbuart_scoreboard)		item_collected_export_monapb;
 	uvm_analysis_imp_monuart 	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_monuart;
-	// uvm_analysis_imp_drvuart  	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_drvuart;  
+	uvm_analysis_imp_drvuart  	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_drvuart;  
 
   	//---------------------------------------
   	// new - constructor
@@ -435,16 +448,16 @@ class apbuart_scoreboard extends uvm_scoreboard;
   		super.new(name, parent);
 		uart_config_cg=new();
 		tx_cg=new();
-		// rx_cg=new();
+		rx_cg=new();
   	endfunction : new
 
 	extern virtual function void build_phase(uvm_phase phase);
 	extern virtual function void write_monapb(apb_transaction pkt);
 	extern virtual function void write_monuart(uart_transaction pkt);
-	// extern virtual function void write_drvuart(uart_transaction pkt);
+	extern virtual function void write_drvuart(uart_transaction pkt);
 	extern virtual function void compare_config (apb_transaction apb_pkt);
 	extern virtual function void compare_transmission (apb_transaction apb_pkt, uart_transaction uart_pkt); 
-	// extern virtual function void compare_receive (apb_transaction apb_pkt , uart_transaction uart_pkt);
+	extern virtual function void compare_receive (apb_transaction apb_pkt , uart_transaction uart_pkt);
 	extern virtual task run_phase(uvm_phase phase);  
 	extern virtual function void report_phase(uvm_phase phase);
   
@@ -459,7 +472,7 @@ function void apbuart_scoreboard::build_phase(uvm_phase phase);
 		`uvm_fatal("No cfg",{"Configuration must be set for: ",get_full_name(),".cfg"});  
   	item_collected_export_monapb 	= new("item_collected_export_monapb", this);
 	item_collected_export_monuart 	= new("item_collected_export_monuart", this);
-	// item_collected_export_drvuart 	= new("item_collected_export_drvuart", this);  
+	item_collected_export_drvuart 	= new("item_collected_export_drvuart", this);  
 endfunction: build_phase
 
 // --------------------------------------------------
@@ -482,9 +495,9 @@ endfunction : write_monuart
 //  write task - recives the pkt from driver (Uart)
 //  and pushes into queue
 // ------------------------------------------------
-// function void apbuart_scoreboard::write_drvuart(uart_transaction pkt);
-// 	pkt_qu_drvuart.push_back(pkt); // Pushing the transactions from the end of queue
-// endfunction : write_drvuart
+function void apbuart_scoreboard::write_drvuart(uart_transaction pkt);
+	pkt_qu_drvuart.push_back(pkt); // Pushing the transactions from the end of queue
+endfunction : write_drvuart
 
 
 // --------------------------------------------------------------------------------------
@@ -494,8 +507,8 @@ endfunction : write_monuart
 task apbuart_scoreboard::run_phase(uvm_phase phase);
 	apb_transaction 	apb_pkt_mon;
 	uart_transaction 	uart_pkt_mon;
-  	// apb_transaction 	apb_pkt_drv;
-	// uart_transaction 	uart_pkt_drv;
+  	apb_transaction 	apb_pkt_drv;
+	uart_transaction 	uart_pkt_drv;
     
     forever 
     begin
@@ -521,12 +534,12 @@ task apbuart_scoreboard::run_phase(uvm_phase phase);
 			uart_pkt_mon = pkt_qu_monuart.pop_front(); 		// getting the entry from the start of fifo
 			compare_transmission (apb_pkt_mon,uart_pkt_mon);
 		end
-		// else if (apb_pkt_mon.PADDR == cfg.receive_data_addr)
-		// begin
-		// 	wait(pkt_qu_drvuart.size() > 0);	    	// checking the fifo that it contains any valid entry from driver
-    	// 	uart_pkt_drv = pkt_qu_drvuart.pop_front(); 	// getting the entry from the start of fifo
-		// 	compare_receive (apb_pkt_mon,uart_pkt_drv);
-		// end
+		else if (apb_pkt_mon.PADDR == cfg.receive_data_addr)
+		begin
+			wait(pkt_qu_drvuart.size() > 0);	    	// checking the fifo that it contains any valid entry from driver
+    		uart_pkt_drv = pkt_qu_drvuart.pop_front(); 	// getting the entry from the start of fifo
+			compare_receive (apb_pkt_mon,uart_pkt_drv);
+		end
     end
 endtask : run_phase
 
@@ -593,39 +606,46 @@ function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt,
 	
 endfunction  
 
-// function void apbuart_scoreboard::compare_receive (apb_transaction apb_pkt , uart_transaction uart_pkt); 
-//     if(apb_pkt.PRDATA == uart_pkt.payload)
-//     	`uvm_info(get_type_name(),$sformatf("------ :: Reciever Data Packet Match :: ------"),UVM_LOW)
-// 	else
-//     	`uvm_error(get_type_name(),$sformatf("------ :: Reciever Data Packet MisMatch :: ------"))
-// 	`uvm_info(get_type_name(),$sformatf("Expected Reciever Data Value : %0h Actual Reciever Data Value: %0h",uart_pkt.payload,apb_pkt.PRDATA),UVM_LOW)
-// 	`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
+function void apbuart_scoreboard::compare_receive (apb_transaction apb_pkt , uart_transaction uart_pkt); 
+	bit err_expected;
+  	bit err_actual;
+    if(apb_pkt.PRDATA == uart_pkt.payload)
+    	`uvm_info(get_type_name(),$sformatf("------ :: Reciever Data Packet Match :: ------"),UVM_LOW)
+	else
+    	`uvm_error(get_type_name(),$sformatf("------ :: Reciever Data Packet MisMatch :: ------"))
+	`uvm_info(get_type_name(),$sformatf("Expected Reciever Data Value : %0h Actual Reciever Data Value: %0h",uart_pkt.payload,apb_pkt.PRDATA),UVM_LOW)
+	`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
 
-// 	//$display("uart_pkt.sb_corr::%0b\tuart_pkt.sb_corr_bit[0]::%0b\tcfg.n_sb::%d",uart_pkt.sb_corr,uart_pkt.sb_corr_bit,cfg.parity[1]);
-// 	if((uart_pkt.bad_parity && cfg.parity[1]) || (uart_pkt.sb_corr && (cfg.n_sb || uart_pkt.sb_corr_bit[0])))
-// 	begin
-// 		//$display("uart_pkt.sb_corr::%0b\tuart_pkt.sb_corr_bit[0]::%0b\tcfg.n_sb::%d",uart_pkt.sb_corr,uart_pkt.sb_corr_bit[0],cfg.n_sb[0]);
+	//$display("uart_pkt.sb_corr::%0b\tuart_pkt.sb_corr_bit[0]::%0b\tcfg.n_sb::%d",uart_pkt.sb_corr,uart_pkt.sb_corr_bit,cfg.parity[1]);
+	if((uart_pkt.bad_parity && cfg.parity[1]) || (uart_pkt.sb_corr && (cfg.n_sb || uart_pkt.sb_corr_bit[0])))
+		err_expected = 1'b1;
+  	else
+    	err_expected = 1'b0;
 
-// 		if(apb_pkt.PSLVERR == 1'b1)
-// 			`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
-// 		else
-// 			`uvm_error(get_type_name(),$sformatf("------ :: Error MisMatch :: ------"))
-// 		`uvm_info(get_type_name(),$sformatf("Expected Error Value : %0h Actual Error Value: %0h",1'b1,apb_pkt.PSLVERR),UVM_LOW)
-// 		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
-// 	end
-// 	else
-// 	begin
-// 		if(apb_pkt.PSLVERR == 1'b0)
-// 			`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
-// 		else
-// 			`uvm_error(get_type_name(),$sformatf("------ :: Error MisMatch :: ------"))
-// 		`uvm_info(get_type_name(),$sformatf("Expected Error Value : %0h Actual Error Value: %0h",1'b0,apb_pkt.PSLVERR),UVM_LOW)
-// 		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
+  	err_actual = apb_pkt.PSLVERR;
+	begin
+		//$display("uart_pkt.sb_corr::%0b\tuart_pkt.sb_corr_bit[0]::%0b\tcfg.n_sb::%d",uart_pkt.sb_corr,uart_pkt.sb_corr_bit[0],cfg.n_sb[0]);
+
+		if(err_actual == err_expected)
+			`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
+		else
+			`uvm_error(get_type_name(),$sformatf("------ :: Error MisMatch :: ------"))
+		`uvm_info(get_type_name(),$sformatf("Expected Error Value : %0h Actual Error Value: %0h",1'b1,apb_pkt.PSLVERR),UVM_LOW)
+		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
+	end
+	else
+	begin
+		if(err_actual == err_expected)
+			`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
+		else
+			`uvm_error(get_type_name(),$sformatf("------ :: Error MisMatch :: ------"))
+		`uvm_info(get_type_name(),$sformatf("Expected Error Value : %0h Actual Error Value: %0h",1'b0,apb_pkt.PSLVERR),UVM_LOW)
+		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
 		
-// 	end
-// 	rx_cg.sample();
-// 	rx_sample_count++;
-// endfunction
+	end
+	rx_cg.sample(apb_pkt.PRDATA, uart_pkt.payload, err_actual);
+	rx_sample_count++;
+endfunction
 
 function void apbuart_scoreboard::report_phase(uvm_phase phase);
     real config_coverage;
@@ -635,10 +655,10 @@ function void apbuart_scoreboard::report_phase(uvm_phase phase);
     // Calculate coverage percentages using built-in coverage methods
     config_coverage = uart_config_cg.get_coverage(); // returns 0-100
     tx_coverage     = tx_cg.get_coverage();
-    // rx_coverage     = rx_cov.get_coverage();
+    rx_coverage     = rx_cg.get_coverage();
 
     `uvm_info(get_type_name(), $sformatf("Coverage Report:"), UVM_LOW)
     `uvm_info(get_type_name(), $sformatf("Config Coverage: %0.2f%% with %0d samples", config_coverage, config_sample_count), UVM_LOW)
     `uvm_info(get_type_name(), $sformatf("Tx Coverage: %0.2f%% with %0d samples", tx_coverage, tx_sample_count), UVM_LOW)
-    // `uvm_info(get_type_name(), $sformatf("Rx Coverage: %0.2f%% with %0d samples", rx_coverage, rx_sample_count), UVM_LOW)
+    `uvm_info(get_type_name(), $sformatf("Rx Coverage: %0.2f%% with %0d samples", rx_coverage, rx_sample_count), UVM_LOW)
 endfunction
