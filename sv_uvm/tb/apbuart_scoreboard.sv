@@ -340,6 +340,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 			bins f6 = {6};
 			bins f7 = {7};
 			bins f8 = {8};
+			illegal_bins illegal_frame = default;
 		}
 
 		// Parity (assume 0=none, 1=even, 2=odd)
@@ -347,6 +348,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 			bins none = {0};
 			bins even = {1};
 			bins odd  = {2};
+			illegal_bins bad_stop = default;
 		}
 
 		// Stop bits (assume 1 or 2)
@@ -356,7 +358,8 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		}
 
 		// Cross config coverage
-		cfg_cross: cross baud_cp, frame_cp, parity_cp, stopbit_cp;
+		cfg_cross: cross baud_cp, frame_cp, parity_cp, stopbit_cp{ignore_bins illegal_combos = binsof(baud_cp) intersect {0, 63} && binsof(stopbit_cp) intersect {2};};
+		baud_parity_cross: cross baud_cp, parity_cp;
 	endgroup
 
 	// covergroup tx_cg;
