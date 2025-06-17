@@ -318,6 +318,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
     logic [31:0] uart_data;  // Added for tx_cg
 	logic [31:0] rx_apb_data;  // Added for rx_cg
     logic [31:0] rx_uart_data;  // Added for rx_cg
+	logic rx_error;
  
 	covergroup uart_config_cg;
 		option.per_instance = 1;
