@@ -641,7 +641,7 @@ endfunction
 function void apbuart_scoreboard::report_phase(uvm_phase phase);
     real config_coverage;
     real tx_coverage;
-    // real rx_coverage;
+    real rx_coverage;
 
     // Calculate coverage percentages using built-in coverage methods
     config_coverage = uart_config_cg.get_coverage(); // returns 0-100
