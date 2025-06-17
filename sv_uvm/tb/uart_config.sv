@@ -32,7 +32,7 @@ class uart_config extends uvm_object;
     constraint c_frame_len  {frame_len  inside {5,6,7,8};}
     constraint c_n_sb       {n_sb       inside {0,1};}
     constraint c_parity     {parity     inside {0,1,2,3};}
-    constraint c_bgen       {bRate      inside {4800,9600,14400,19200,38400,57600,115200,128000};} // 4800,9600,14400,19200,38400,57600,115200,128000
+    constraint c_bgen       {bRate      inside {4800,9600,14400,19200,38400,57600,115200,128000,63,0};} // 4800,9600,14400,19200,38400,57600,115200,128000
 
     function void baudRateFunc();
         case (bRate)
