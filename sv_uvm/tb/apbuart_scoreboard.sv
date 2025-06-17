@@ -358,7 +358,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 			// illegal_bins bad_stop = default;
 
 		}
-
+		
 		// Cross config coverage
 		cfg_cross: cross baud_cp, frame_cp, parity_cp, stopbit_cp;
 		baud_parity_cross: cross baud_cp, parity_cp;
