@@ -626,13 +626,14 @@ function void apbuart_scoreboard::compare_receive (apb_transaction apb_pkt , uar
 
 		//$display("uart_pkt.sb_corr::%0b\tuart_pkt.sb_corr_bit[0]::%0b\tcfg.n_sb::%d",uart_pkt.sb_corr,uart_pkt.sb_corr_bit[0],cfg.n_sb[0]);
 
-	if(err_actual == err_expected)
+	if(err_actual == err_expected) begin
 		`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
-	else
+	end
+	else begin
 		`uvm_error(get_type_name(),$sformatf("------ :: Error MisMatch :: ------"))
 	`uvm_info(get_type_name(),$sformatf("Expected Error Value : %0h Actual Error Value: %0h",1'b1,apb_pkt.PSLVERR),UVM_LOW)
 	`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
-	
+	end
 	else begin
 		if(err_actual == err_expected)
 			`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
