@@ -580,8 +580,8 @@ function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt,
 	if(apb_pkt.PWDATA == uart_pkt.transmitter_reg) begin
     	`uvm_info(get_type_name(),$sformatf("------ :: Transmission Data Packet Match :: ------"),UVM_LOW)
 		 // Assign data for coverage
-		tx_cg.apb_data  = apb_pkt.PWDATA;
-		tx_cg.uart_data = uart_pkt.transmitter_reg;
+		// tx_cg.apb_data  = apb_pkt.PWDATA;
+		// tx_cg.uart_data = uart_pkt.transmitter_reg;
 
 		tx_cg.sample(apb_pkt.PWDATA, uart_pkt.transmitter_reg);		
 		tx_sample_count++;
