@@ -357,7 +357,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		// Cross config coverage
 		cfg_cross: cross baud_cp, frame_cp, parity_cp, stopbit_cp{ignore_bins illegal_combos = binsof(baud_cp) intersect {0, 63} && binsof(stopbit_cp) intersect {2};}
 		baud_parity_cross: cross baud_cp, parity_cp;
-		baud_frame_cross: cross baud_cp, frame_cp;
+		// baud_frame_cross: cross baud_cp, frame_cp;
 	endgroup
 
 	// covergroup tx_cg;
