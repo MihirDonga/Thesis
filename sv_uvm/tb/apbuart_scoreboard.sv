@@ -391,7 +391,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 
 	endgroup
 
-	covergroup tx_cg with function sample(logic [31:0] rx_apb_data, logic [31:0] rx_uart_data, bit error_bit);
+	covergroup rx_cg with function sample(logic [31:0] rx_apb_data, logic [31:0] rx_uart_data, bit error_bit);
 		option.per_instance = 1;
 		// Coverpoint for APB write data
 		coverpoint rx_apb_data {
