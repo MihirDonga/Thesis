@@ -43,8 +43,8 @@ endfunction : build_phase
 function void apbuart_env::connect_phase(uvm_phase phase);
     super.connect_phase(phase);
     apb_agnt.monitor.item_collected_port_mon.connect(apbuart_scb.item_collected_export_monapb);
-   	// uart_agnt.driver.item_collected_port_drv.connect(apbuart_scb.item_collected_export_drvuart);
-    // uart_agnt.monitor.item_collected_port_mon.connect(apbuart_scb.item_collected_export_monuart);
+   	uart_agnt.driver.item_collected_port_drv.connect(apbuart_scb.item_collected_export_drvuart);
+    uart_agnt.monitor.item_collected_port_mon.connect(apbuart_scb.item_collected_export_monuart); 
      
     uvm_config_db#(apb_sequencer)::set(this,"*","apb_sqr",apb_agnt.sequencer);
     uvm_config_db#(uart_sequencer)::set(this,"*","uart_sqr",uart_agnt.sequencer);
