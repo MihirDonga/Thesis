@@ -303,8 +303,8 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	// -----------------------------------------------------------------------------------
 
 	`uvm_analysis_imp_decl(_monapb)
-	`uvm_analysis_imp_decl(_monuart) 
-	`uvm_analysis_imp_decl(_drvuart) 
+	// `uvm_analysis_imp_decl(_monuart) 
+	// `uvm_analysis_imp_decl(_drvuart) 
 
 	`uvm_component_utils(apbuart_scoreboard)
   
