@@ -32,5 +32,5 @@ task apbuart_data_compare_test::run_phase(uvm_phase phase);
   	apbuart_transmt_sq.start(env_sq.v_sqr);
     phase.drop_objection(this);
   end
-  	phase.phase_done.set_drain_time(this, 75000*7);
+  	phase.phase_done.set_drain_time(this, 20);
 endtask
