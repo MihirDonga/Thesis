@@ -291,10 +291,10 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		error_cross: cross rx_cp, error_cp;
 	endgroup
 
-
-	uart_config_cg config_cov;
-	tx_cg tx_cov;
-	rx_cg rx_cov;
+	//instantiate the covergroup
+	uart_config_cg config_cov();
+	tx_cg tx_cov();
+	rx_cg rx_cov();
 
 	int config_sample_count = 0;
     int tx_sample_count = 0;
@@ -335,9 +335,6 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	//---------------------------------------
   	function new (string name, uvm_component parent);
   		super.new(name, parent);
-		config_cov = new();
-		tx_cov = new();
-		rx_cov = new();
 
   	endfunction : new
 
