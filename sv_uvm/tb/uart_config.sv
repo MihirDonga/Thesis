@@ -29,10 +29,36 @@ class uart_config extends uvm_object;
         `uvm_field_enum(uvm_active_passive_enum, is_active, UVM_ALL_ON)
     `uvm_object_utils_end
 
-    constraint c_frame_len  {frame_len  inside {5,6,7,8};}
-    constraint c_n_sb       {n_sb       inside {0,1};}
-    constraint c_parity     {parity     inside {0,1,2,3};}
-    constraint c_bgen       {bRate      inside {4800,9600,14400,19200,38400,57600,115200,128000,63,0};} // 4800,9600,14400,19200,38400,57600,115200,128000
+    constraint c_frame_len {
+    // Distribute frame_len values with equal weights (adjust weights as needed)
+    dist { 5 := 1, 6 := 1, 7 := 1, 8 := 1 };
+    }
+
+    constraint c_n_sb {
+    // Distribute stop bits, assuming 0=one stop bit, 1=two stop bits
+    dist { 0 := 8, 1 := 2 }; // 80% one stop bit, 20% two stop bits (example)
+    }
+
+    constraint c_parity {
+    // Parity: 0=none, 1=even, 2=odd, 3=unknown (if used)
+    dist { 0 := 5, 1 := 2, 2 := 2, 3 := 1 };
+    }
+
+    constraint c_bgen {
+    // Baud rate distribution: more common baud rates get higher weight
+    dist {
+        4800   := 5,
+        9600   := 10,
+        14400  := 1,
+        19200  := 8,
+        38400  := 6,
+        57600  := 4,
+        115200 := 7,
+        128000 := 2,
+        63     := 1,
+        0      := 1
+    };
+    }
 
     function void baudRateFunc();
         case (bRate)
