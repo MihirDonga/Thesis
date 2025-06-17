@@ -303,7 +303,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	// -----------------------------------------------------------------------------------
 
 	`uvm_analysis_imp_decl(_monapb)
-	// `uvm_analysis_imp_decl(_monuart) 
+	`uvm_analysis_imp_decl(_monuart) 
 	// `uvm_analysis_imp_decl(_drvuart) 
 
 	`uvm_component_utils(apbuart_scoreboard)
@@ -314,9 +314,8 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	logic [31:0] frame_len_reg;
 	logic [31:0] parity_reg;
 	logic [31:0] stopbit_reg;
-	// logic [31:0] transmitter_reg;  // Added for tx_cg
-    // logic [31:0] prdata;  // Added for rx_cg
-    // logic pslverr;
+	logic [31:0] apb_data;  // Added for tx_cg
+    logic [31:0] uart_data;  // Added for rx_cg
  
 	covergroup uart_config_cg;
 		option.per_instance = 1;
@@ -368,13 +367,28 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		// stop_fram_cross: cross stopbit_cp, frame_cp;
 	endgroup
 
-	// covergroup tx_cg;
-	// 	coverpoint transmitter_reg {
-	// 		bins low = {[0:100]};       // example bin ranges, adjust as needed
-	// 		bins mid = {[101:1000]};
-	// 		bins high = {[1001:2**32-1]};
-	// 	}
-	// endgroup
+	covergroup tx_cg;
+		option.per_instance = 1;
+		// Coverpoint for APB write data
+		coverpoint apb_data {
+			// Binning ranges based on 32-bit width
+			bins low_values[]    = {[32'h0000_0000:32'h0000_00FF]};
+			bins mid_values[]    = {[32'h0000_0100:32'h7FFF_FFFF]};
+			bins high_values[]   = {[32'h8000_0000:32'hFFFF_FFFF]};
+			bins corner_values[] = {32'h0000_0000, 32'hFFFF_FFFF, 32'hAAAA_AAAA, 32'h5555_5555, 32'hDEAD_BEEF};
+		}
+
+		// Coverpoint for UART transmitted data
+		coverpoint uart_data {
+			bins low_values[]    = {[32'h0000_0000:32'h0000_00FF]};
+			bins mid_values[]    = {[32'h0000_0100:32'h7FFF_FFFF]};
+			bins high_values[]   = {[32'h8000_0000:32'hFFFF_FFFF]};
+			bins corner_values[] = {32'h0000_0000, 32'hFFFF_FFFF, 32'hAAAA_AAAA, 32'h5555_5555, 32'hDEAD_BEEF};
+		}
+		// Cross coverage
+  		cross apb_data, uart_data;
+
+	endgroup
 
 	// covergroup rx_cg;
 	// 	rx_cp: coverpoint uart_pkt.payload {
@@ -397,14 +411,14 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	//  recived from monitor and driver
   	// ---------------------------------------
   	apb_transaction 	pkt_qu_monapb[$];
-	// uart_transaction 	pkt_qu_monuart[$];
+	uart_transaction 	pkt_qu_monuart[$];
 	// uart_transaction 	pkt_qu_drvuart[$];  
 
 	// Handle to  a cfg class
   	uart_config cfg;   
 
 	int config_sample_count = 0;
-    // int tx_sample_count = 0;
+    int tx_sample_count = 0;
     // int rx_sample_count = 0;
 
   	// ------------------------------------------------------------------------------
@@ -412,7 +426,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	//  other is defining which subscriber is attached
   	// ------------------------------------------------------------------------------
     uvm_analysis_imp_monapb 	#(apb_transaction, apbuart_scoreboard)		item_collected_export_monapb;
-	// uvm_analysis_imp_monuart 	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_monuart;
+	uvm_analysis_imp_monuart 	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_monuart;
 	// uvm_analysis_imp_drvuart  	#(uart_transaction, apbuart_scoreboard) 	item_collected_export_drvuart;  
 
   	//---------------------------------------
@@ -421,16 +435,16 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	function new (string name, uvm_component parent);
   		super.new(name, parent);
 		uart_config_cg=new();
-		// tx_cg=new();
+		tx_cg=new();
 		// rx_cg=new();
   	endfunction : new
 
 	extern virtual function void build_phase(uvm_phase phase);
 	extern virtual function void write_monapb(apb_transaction pkt);
-	// extern virtual function void write_monuart(uart_transaction pkt);
+	extern virtual function void write_monuart(uart_transaction pkt);
 	// extern virtual function void write_drvuart(uart_transaction pkt);
 	extern virtual function void compare_config (apb_transaction apb_pkt);
-	// extern virtual function void compare_transmission (apb_transaction apb_pkt, uart_transaction uart_pkt); 
+	extern virtual function void compare_transmission (apb_transaction apb_pkt, uart_transaction uart_pkt); 
 	// extern virtual function void compare_receive (apb_transaction apb_pkt , uart_transaction uart_pkt);
 	extern virtual task run_phase(uvm_phase phase);  
 	extern virtual function void report_phase(uvm_phase phase);
@@ -445,7 +459,7 @@ function void apbuart_scoreboard::build_phase(uvm_phase phase);
 	if(!uvm_config_db#(uart_config)::get(this, "", "cfg", cfg))
 		`uvm_fatal("No cfg",{"Configuration must be set for: ",get_full_name(),".cfg"});  
   	item_collected_export_monapb 	= new("item_collected_export_monapb", this);
-	// item_collected_export_monuart 	= new("item_collected_export_monuart", this);
+	item_collected_export_monuart 	= new("item_collected_export_monuart", this);
 	// item_collected_export_drvuart 	= new("item_collected_export_drvuart", this);  
 endfunction: build_phase
 
@@ -461,9 +475,9 @@ endfunction : write_monapb
 //  write task - recives the pkt from monitor (UART) 
 //  and pushes into queue
 // --------------------------------------------------
-// function void apbuart_scoreboard::write_monuart(uart_transaction pkt);
-// 	pkt_qu_monuart.push_back(pkt); // Pushing the transactions from the end of queue
-// endfunction : write_monuart
+function void apbuart_scoreboard::write_monuart(uart_transaction pkt);
+	pkt_qu_monuart.push_back(pkt); // Pushing the transactions from the end of queue
+endfunction : write_monuart
   
 // ------------------------------------------------
 //  write task - recives the pkt from driver (Uart)
@@ -502,12 +516,12 @@ task apbuart_scoreboard::run_phase(uvm_phase phase);
 		begin
 			compare_config (apb_pkt_mon) ;
 		end
-		// else if (apb_pkt_mon.PADDR == cfg.trans_data_addr)
-		// begin
-		// 	wait(pkt_qu_monuart.size() > 0);	    		// checking the fifo that it contains any valid entry from monitor apb
-		// 	uart_pkt_mon = pkt_qu_monuart.pop_front(); 		// getting the entry from the start of fifo
-		// 	compare_transmission (apb_pkt_mon,uart_pkt_mon);
-		// end
+		else if (apb_pkt_mon.PADDR == cfg.trans_data_addr)
+		begin
+			wait(pkt_qu_monuart.size() > 0);	    		// checking the fifo that it contains any valid entry from monitor apb
+			uart_pkt_mon = pkt_qu_monuart.pop_front(); 		// getting the entry from the start of fifo
+			compare_transmission (apb_pkt_mon,uart_pkt_mon);
+		end
 		// else if (apb_pkt_mon.PADDR == cfg.receive_data_addr)
 		// begin
 		// 	wait(pkt_qu_drvuart.size() > 0);	    	// checking the fifo that it contains any valid entry from driver
@@ -561,16 +575,22 @@ function void apbuart_scoreboard::compare_config (apb_transaction apb_pkt);
 	config_sample_count++;
 endfunction  
   
-// function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt, uart_transaction uart_pkt);  
-// 	if(apb_pkt.PWDATA == uart_pkt.transmitter_reg) 
-//     	`uvm_info(get_type_name(),$sformatf("------ :: Transmission Data Packet Match :: ------"),UVM_LOW)
-//   	else
-//       	`uvm_error(get_type_name(),$sformatf("------ :: Transmission Data Packet MisMatch :: ------"))
-// 	`uvm_info(get_type_name(),$sformatf("Expected Transmission Data Value : %0h Actual Transmission Data Value: %0h",apb_pkt.PWDATA,uart_pkt.transmitter_reg),UVM_LOW)   
-// 	`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
-// 	tx_cg.sample();
-// 	tx_sample_count++;
-// endfunction  
+function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt, uart_transaction uart_pkt);  
+	 
+	if(apb_pkt.PWDATA == uart_pkt.transmitter_reg) 
+    	`uvm_info(get_type_name(),$sformatf("------ :: Transmission Data Packet Match :: ------"),UVM_LOW)
+		 // Assign data for coverage
+		tx_cg.apb_data  = apb_pkt.PWDATA;
+		tx_cg.uart_data = uart_pkt.transmitter_reg;
+
+		tx_cg.sample();
+		tx_sample_count++;
+  	else
+      	`uvm_error(get_type_name(),$sformatf("------ :: Transmission Data Packet MisMatch :: ------"))
+	`uvm_info(get_type_name(),$sformatf("Expected Transmission Data Value : %0h Actual Transmission Data Value: %0h",apb_pkt.PWDATA,uart_pkt.transmitter_reg),UVM_LOW)   
+	`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
+	
+endfunction  
 
 // function void apbuart_scoreboard::compare_receive (apb_transaction apb_pkt , uart_transaction uart_pkt); 
 //     if(apb_pkt.PRDATA == uart_pkt.payload)
@@ -608,16 +628,16 @@ endfunction
 
 function void apbuart_scoreboard::report_phase(uvm_phase phase);
     real config_coverage;
-    // real tx_coverage;
+    real tx_coverage;
     // real rx_coverage;
 
     // Calculate coverage percentages using built-in coverage methods
     config_coverage = uart_config_cg.get_coverage(); // returns 0-100
-    // tx_coverage     = tx_cov.get_coverage();
+    tx_coverage     = tx_cov.get_coverage();
     // rx_coverage     = rx_cov.get_coverage();
 
     `uvm_info(get_type_name(), $sformatf("Coverage Report:"), UVM_LOW)
     `uvm_info(get_type_name(), $sformatf("Config Coverage: %0.2f%% with %0d samples", config_coverage, config_sample_count), UVM_LOW)
-    // `uvm_info(get_type_name(), $sformatf("Tx Coverage: %0.2f%% with %0d samples", tx_coverage, tx_sample_count), UVM_LOW)
+    `uvm_info(get_type_name(), $sformatf("Tx Coverage: %0.2f%% with %0d samples", tx_coverage, tx_sample_count), UVM_LOW)
     // `uvm_info(get_type_name(), $sformatf("Rx Coverage: %0.2f%% with %0d samples", rx_coverage, rx_sample_count), UVM_LOW)
 endfunction
