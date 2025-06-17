@@ -367,7 +367,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		// stop_fram_cross: cross stopbit_cp, frame_cp;
 	endgroup
 
-	covergroup tx_cg;
+	covergroup tx_cg with function sample(bit [31:0] apb_data, bit [31:0] uart_data);
 		option.per_instance = 1;
 		// Coverpoint for APB write data
 		coverpoint apb_data {
@@ -583,7 +583,7 @@ function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt,
 		tx_cg.apb_data  = apb_pkt.PWDATA;
 		tx_cg.uart_data = uart_pkt.transmitter_reg;
 
-		tx_cg.sample();
+		tx_cg.sample(apb_pkt.PWDATA, uart_pkt.transmitter_reg);		
 		tx_sample_count++;
 	end
   	else begin
