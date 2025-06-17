@@ -549,6 +549,7 @@ function void apbuart_scoreboard::compare_config (apb_transaction apb_pkt);
 		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
 	end
 	uart_config_cg.sample();
+	config_sample_count++;
 endfunction  
   
 // function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt, uart_transaction uart_pkt);  
@@ -602,7 +603,7 @@ function void apbuart_scoreboard::report_phase(uvm_phase phase);
     // real rx_coverage;
 
     // Calculate coverage percentages using built-in coverage methods
-    config_coverage = config_cov.get_coverage(); // returns 0-100
+    config_coverage = uart_config_cg.get_coverage(); // returns 0-100
     // tx_coverage     = tx_cov.get_coverage();
     // rx_coverage     = rx_cov.get_coverage();
 
