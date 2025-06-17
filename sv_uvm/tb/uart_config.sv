@@ -28,37 +28,16 @@ class uart_config extends uvm_object;
         `uvm_field_int(baud_rate, UVM_DEFAULT + UVM_DEC)
         `uvm_field_enum(uvm_active_passive_enum, is_active, UVM_ALL_ON)
     `uvm_object_utils_end
-constraint c_frame_len {
-    frame_len dist { 5 := 1, 6 := 1, 7 := 1, 8 := 1 };
-}
 
-constraint c_n_sb {
-    n_sb dist { 0 := 8, 1 := 2 };
-}
-
-constraint c_parity {
-    parity dist { 0 := 5, 1 := 2, 2 := 2, 3 := 1 };
-}
-
-constraint c_bgen {
-    baud_rate dist {
-      4800   := 5,
-      9600   := 10,
-      14400  := 1,
-      19200  := 8,
-      38400  := 6,
-      57600  := 4,
-      115200 := 7,
-      128000 := 2,
-      63     := 1,
-      0      := 1
-    };
-}
+    constraint c_frame_len  {frame_len  inside {5,6,7,8};}
+    constraint c_n_sb       {n_sb       inside {0,1};}
+    constraint c_parity     {parity     inside {0,1,2,3};}
+    constraint c_bgen       {bRate      inside {4800,9600,14400,19200,38400,57600,115200,128000};} // 4800,9600,14400,19200,38400,57600,115200,128000
 
     function void baudRateFunc();
         case (bRate)
             32'd4800: 	baud_rate = 32'd10416;
-          32'd9600: 	baud_rate = 32'd5208;		//tick = 50_000_000 / (9600 * 1) ≈ 5208, 50MHz clock and desired baud rate = 9600 So, inside the DUT, the baud generator counts 5208 ticks per bit time.
+            32'd9600: 	baud_rate = 32'd5208;		//tick = 50_000_000 / (9600 * 1) ≈ 5208, 50MHz clock and desired baud rate = 9600 So, inside the DUT, the baud generator counts 5208 ticks per bit time.
 	        32'd14400:	baud_rate = 32'd3472;
             32'd19200: 	baud_rate = 32'd2604;
             32'd38400: 	baud_rate = 32'd1302;
