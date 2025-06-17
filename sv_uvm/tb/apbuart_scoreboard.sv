@@ -411,7 +411,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	//---------------------------------------
   	function new (string name, uvm_component parent);
   		super.new(name, parent);
-		uart_config_cg=new()'
+		uart_config_cg=new();
 		tx_cg=new();
 		rx_cg=new();
   	endfunction : new
