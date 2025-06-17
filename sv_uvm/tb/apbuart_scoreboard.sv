@@ -635,7 +635,7 @@ function void apbuart_scoreboard::report_phase(uvm_phase phase);
 
     // Calculate coverage percentages using built-in coverage methods
     config_coverage = uart_config_cg.get_coverage(); // returns 0-100
-    tx_coverage     = tx_cov.get_coverage();
+    tx_coverage     = tx_cg.get_coverage();
     // rx_coverage     = rx_cov.get_coverage();
 
     `uvm_info(get_type_name(), $sformatf("Coverage Report:"), UVM_LOW)
