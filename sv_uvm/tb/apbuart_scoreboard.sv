@@ -214,8 +214,17 @@
 // endfunction
 
 class apbuart_scoreboard extends uvm_scoreboard;
+	// -----------------------------------------------------------------------------------
+	//  Using the `uvm_analysis_imp_decl() macro allows the construction of two analysis 
+	//  implementation ports with corresponding, uniquely named, write methods
+	// -----------------------------------------------------------------------------------
 
-	
+	`uvm_analysis_imp_decl(_monapb)
+	`uvm_analysis_imp_decl(_monuart) 
+	`uvm_analysis_imp_decl(_drvuart) 
+
+	`uvm_component_utils(apbuart_scoreboard)
+  
 	// Registers to store configuration data
 
 	logic [31:0] baud_rate_reg;
@@ -291,26 +300,6 @@ class apbuart_scoreboard extends uvm_scoreboard;
 		error_cross: cross rx_cp, error_cp;
 	endgroup
 
-	//instantiate the covergroup
-	uart_config_cg config_cov();
-	tx_cg tx_cov();
-	rx_cg rx_cov();
-
-	int config_sample_count = 0;
-    int tx_sample_count = 0;
-    int rx_sample_count = 0;
-
-	// -----------------------------------------------------------------------------------
-	//  Using the `uvm_analysis_imp_decl() macro allows the construction of two analysis 
-	//  implementation ports with corresponding, uniquely named, write methods
-	// -----------------------------------------------------------------------------------
-
-	`uvm_analysis_imp_decl(_monapb)
-	`uvm_analysis_imp_decl(_monuart) 
-	`uvm_analysis_imp_decl(_drvuart) 
-
-	`uvm_component_utils(apbuart_scoreboard)
-  
   	// ---------------------------------------
   	//  declaring pkt_qu to store the pkt's 
   	//  recived from monitor and driver
@@ -321,6 +310,15 @@ class apbuart_scoreboard extends uvm_scoreboard;
 
 	// Handle to  a cfg class
   	uart_config cfg;   
+
+	//instantiate the covergroup
+	uart_config_cg config_cov();
+	tx_cg tx_cov();
+	rx_cg rx_cov();
+
+	int config_sample_count = 0;
+    int tx_sample_count = 0;
+    int rx_sample_count = 0;
 
   	// ------------------------------------------------------------------------------
   	//  port to recive packets from monitor first argument is transation type and 
