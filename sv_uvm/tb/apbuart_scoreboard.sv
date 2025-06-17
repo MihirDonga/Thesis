@@ -623,18 +623,17 @@ function void apbuart_scoreboard::compare_receive (apb_transaction apb_pkt , uar
     	err_expected = 1'b0;
 
   	err_actual = apb_pkt.PSLVERR;
-	begin
+
 		//$display("uart_pkt.sb_corr::%0b\tuart_pkt.sb_corr_bit[0]::%0b\tcfg.n_sb::%d",uart_pkt.sb_corr,uart_pkt.sb_corr_bit[0],cfg.n_sb[0]);
 
-		if(err_actual == err_expected)
-			`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
-		else
-			`uvm_error(get_type_name(),$sformatf("------ :: Error MisMatch :: ------"))
-		`uvm_info(get_type_name(),$sformatf("Expected Error Value : %0h Actual Error Value: %0h",1'b1,apb_pkt.PSLVERR),UVM_LOW)
-		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
-	end
+	if(err_actual == err_expected)
+		`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
 	else
-	begin
+		`uvm_error(get_type_name(),$sformatf("------ :: Error MisMatch :: ------"))
+	`uvm_info(get_type_name(),$sformatf("Expected Error Value : %0h Actual Error Value: %0h",1'b1,apb_pkt.PSLVERR),UVM_LOW)
+	`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
+	
+	else begin
 		if(err_actual == err_expected)
 			`uvm_info(get_type_name(),$sformatf("------ :: Error Match :: ------"),UVM_LOW)
 		else
