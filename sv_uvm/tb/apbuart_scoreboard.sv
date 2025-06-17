@@ -213,6 +213,89 @@
 // 	end
 // endfunction
 
+// // Define structs for coverage data
+//     typedef struct {
+//         logic [31:0] baud_rate;
+//         logic [31:0] frame_len;
+//         logic [31:0] parity;
+//         logic [31:0] stopbit;
+//     } uart_config_t;
+
+//     typedef struct {
+//         logic [31:0] pwdata;
+//         logic [31:0] prdata;
+//         logic        pslverr;
+//     } uart_transaction_t;
+
+// 	// Covergroups using structs
+//     covergroup uart_config_cg with function sample(uart_config_t cfg);
+//         option.per_instance = 1;
+
+//         // Baud rate coverage
+//         baud_cp: coverpoint cfg.baud_rate {
+//             bins b4800   = {4800};
+//             bins b9600   = {9600};
+//             bins b19200  = {19200};
+//             bins b38400  = {38400};
+//             bins b57600  = {57600};
+//             bins b115200 = {115200};
+//             bins b128000 = {128000};
+//             bins b63     = {63};
+//             bins b0      = {0};
+//         }
+
+//         // Frame length (5-8 bits)
+//         frame_cp: coverpoint cfg.frame_len {
+//             bins f5 = {5};
+//             bins f6 = {6};
+//             bins f7 = {7};
+//             bins f8 = {8};
+//         }
+
+//         // Parity (assume 0=none, 1=even, 2=odd)
+//         parity_cp: coverpoint cfg.parity {
+//             bins none = {0};
+//             bins even = {1};
+//             bins odd  = {2};
+//         }
+
+//         // Stop bits (assume 1 or 2)
+//         stopbit_cp: coverpoint cfg.stopbit {
+//             bins one = {1};
+//             bins two = {2};
+//         }
+
+//         // Cross config coverage
+//         cfg_cross: cross baud_cp, frame_cp, parity_cp, stopbit_cp;
+//     endgroup
+
+//     covergroup tx_cg with function sample(logic [31:0] tx_data);
+//         option.per_instance = 1;
+//         coverpoint tx_data {
+//             bins low  = {[0:100]};
+//             bins mid  = {[101:1000]};
+//             bins high = {[1001:2**32-1]};
+//         }
+//     endgroup
+
+//     covergroup rx_cg with function sample(uart_transaction_t trans);
+//         option.per_instance = 1;
+        
+//         rx_cp: coverpoint trans.prdata {
+//             bins zero       = {32'h00000000};
+//             bins low_range  = {[32'h00000001:32'h0FFFFFFF]};
+//             bins mid_range  = {[32'h10000000:32'h7FFFFFFF]};
+//             bins high_range = {[32'h80000000:32'hFFFFFFFF]};
+//         }
+
+//         error_cp: coverpoint trans.pslverr {
+//             bins error    = {1};
+//             bins no_error = {0};
+//         }
+
+//         error_cross: cross rx_cp, error_cp;
+//     endgroup
+
 class apbuart_scoreboard extends uvm_scoreboard;
 	// -----------------------------------------------------------------------------------
 	//  Using the `uvm_analysis_imp_decl() macro allows the construction of two analysis 
@@ -231,9 +314,9 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	logic [31:0] frame_len_reg;
 	logic [31:0] parity_reg;
 	logic [31:0] stopbit_reg;
-	logic [31:0] pwdata;  // Added for tx_cg
-    logic [31:0] prdata;  // Added for rx_cg
-    logic pslverr;
+	// logic [31:0] pwdata;  // Added for tx_cg
+    // logic [31:0] prdata;  // Added for rx_cg
+    // logic pslverr;
  
 	covergroup uart_config_cg;
 		option.per_instance = 1;
@@ -277,7 +360,7 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	endgroup
 
 	covergroup tx_cg;
-		coverpoint transmitter_reg {
+		coverpoint uart_pkt.transmitter_reg {
 			bins low = {[0:100]};       // example bin ranges, adjust as needed
 			bins mid = {[101:1000]};
 			bins high = {[1001:2**32-1]};
@@ -285,19 +368,19 @@ class apbuart_scoreboard extends uvm_scoreboard;
 	endgroup
 
 	covergroup rx_cg;
-		rx_cp: coverpoint payload {
+		rx_cp: coverpoint uart_pkt.payload {
 			bins zero        = {32'h00000000};        // exactly zero
 			bins low_range   = {[32'h00000001:32'h0FFFFFFF]};  // low values
 			bins mid_range   = {[32'h10000000:32'h7FFFFFFF]};  // middle values
 			bins high_range  = {[32'h80000000:32'hFFFFFFFF]};  // high values
 		}
 
-		error_cp: coverpoint pslverr {
-				bins error = {1};
-				bins no_error = {0};
-			}
+		// error_cp: coverpoint pslverr {
+		// 		bins error = {1};
+		// 		bins no_error = {0};
+		// 	}
 
-		error_cross: cross rx_cp, error_cp;
+		// error_cross: cross rx_cp, error_cp;
 	endgroup
 
   	// ---------------------------------------
@@ -310,11 +393,6 @@ class apbuart_scoreboard extends uvm_scoreboard;
 
 	// Handle to  a cfg class
   	uart_config cfg;   
-
-	//instantiate the covergroup
-	uart_config_cg config_cov();
-	tx_cg tx_cov();
-	rx_cg rx_cov();
 
 	int config_sample_count = 0;
     int tx_sample_count = 0;
@@ -333,7 +411,9 @@ class apbuart_scoreboard extends uvm_scoreboard;
   	//---------------------------------------
   	function new (string name, uvm_component parent);
   		super.new(name, parent);
-
+		uart_config_cg=new()'
+		tx_cg=new();
+		rx_cg=new();
   	endfunction : new
 
 	extern virtual function void build_phase(uvm_phase phase);
@@ -468,7 +548,7 @@ function void apbuart_scoreboard::compare_config (apb_transaction apb_pkt);
 		`uvm_info(get_type_name(),$sformatf("Expected Stop Bit Value : %0h Actual Stop Value: %0h",stopbit_reg,apb_pkt.PRDATA),UVM_LOW)
 		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
 	end
-	config_cov.sample();
+	uart_config_cg.sample();
 	config_sample_count++;
 endfunction  
   
@@ -479,7 +559,7 @@ function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt,
       	`uvm_error(get_type_name(),$sformatf("------ :: Transmission Data Packet MisMatch :: ------"))
 	`uvm_info(get_type_name(),$sformatf("Expected Transmission Data Value : %0h Actual Transmission Data Value: %0h",apb_pkt.PWDATA,uart_pkt.transmitter_reg),UVM_LOW)   
 	`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
-	tx_cov.sample();
+	tx_cg.sample();
 	tx_sample_count++;
 endfunction  
 
@@ -513,7 +593,7 @@ function void apbuart_scoreboard::compare_receive (apb_transaction apb_pkt , uar
 		`uvm_info(get_type_name(),"------------------------------------\n",UVM_LOW)
 		
 	end
-	rx_cov.sample();
+	rx_cg.sample();
 	rx_sample_count++;
 endfunction
 
