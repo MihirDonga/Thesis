@@ -1,33 +1,45 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge, Timer
-from uart_config import uart_config
-from uart_transaction import UARTTransaction
 import random
 
-# Python uses __init__ instead of new()
-# Type declarations are dynamic in Python
+class UartTransaction(uvm_sequence_item):
+    def __init__(self, name="UartTransaction"):
+        super().__init__(name)
+        self.payload = 0
+        self.bad_parity = False
+        self.sb_corr = False
+        self.sb_corr_bit = 0
+        self.start_bit = 0
+        self.stop_bits = [1, 1]  # Default two stop bits
+        self.payld_func = []
+        
+    def calc_parity(self, payload, frame_len, bad_parity, parity_type, bad_parity_frame):
+        # Implement your parity calculation logic here
+        return 0  # Return calculated parity bits
+
+class UartConfig(uvm_object):
+    def __init__(self, name="UartConfig"):
+        super().__init__(name)
+        self.frame_len = 8  # Default 8-bit frame
+        self.baud_rate = 1  # Default baud rate (in clock cycles)
+        self.parity = [0, 0]  # [type, enable]
+        self.n_sb = 1  # Number of stop bits (1 or 2)
 
 class UartDriver(uvm_driver):
-    def __init__(self, name, parent):
-        super().__init__(name, parent)
-        self.cfg = None
-        self.item_collected_port_drv = None
-        self.trans_collected = None
+    def build_phase(self):
+        self.cfg = UartConfig()
+        self.item_collected_port_drv = uvm_analysis_port("item_collected_port_drv", self)
+        self.trans_collected = UartTransaction()
         self.LT = 0  # Line Type
         
-    def build_phase(self):
-        super().build_phase()
         # Get configuration from config_db
-        self.cfg = ConfigDB().get(self, "", "cfg")  
-        if not self.cfg:
-            self.logger.error("UART config not found")
-            raise Exception("ConfigError")
-        # uvm_config_db becomes ConfigDB in PyUVM
-        # uvm_fatal becomes logger.error + exception
-        # Port creation syntax is similar but Python-style   
-        
-        self.item_collected_port_drv = uvm_analysis_port("item_collected_port_drv", self)
-        self.trans_collected = UARTTransaction()
+        if not uvm_config_db.get(self, "", "cfg", self.cfg):
+            self.logger.warning("No configuration found, using defaults")
+            
+        # Get virtual interface
+        if not uvm_config_db.get(self, "", "vif", self.vif):
+            self.logger.error("Virtual interface not found!")
+            raise Exception("Virtual interface not found")
 
     async def run_phase(self):
         await self.get_and_drive()
@@ -50,7 +62,7 @@ class UartDriver(uvm_driver):
     async def get_and_drive(self):
         while True:
             # Set RX to idle state
-            self.dut.RX.value = 1
+            self.vif.RX.value = 1
             
             # Wait for reset to be inactive
             await RisingEdge(self.vif.PCLK)
@@ -91,21 +103,21 @@ class UartDriver(uvm_driver):
             while no_bits_sent < (1 + self.cfg.frame_len + self.cfg.parity[1] + (self.cfg.n_sb + 1)):
                 # Wait for baud rate period
                 for _ in range(self.cfg.baud_rate):
-                    await RisingEdge(self.dut.PCLK)
+                    await RisingEdge(self.vif.PCLK)
                 
                 if no_bits_sent == 0:
                     # Send start bit
-                    self.dut.RX.value = req.start_bit
+                    self.vif.RX.value = req.start_bit
                     no_bits_sent += 1
                 elif (no_bits_sent > 0) and (no_bits_sent < (1 + self.cfg.frame_len)):
                     # Send data bits
                     bit_pos = pay_offset + (no_bits_sent - 1)
-                    self.dut.RX.value = req.payld_func[bit_pos]
+                    self.vif.RX.value = req.payld_func[bit_pos]
                     self.logger.debug(f"Driver Sending Data bits: {req.payld_func[bit_pos]}")
                     no_bits_sent += 1
                 elif (no_bits_sent == (1 + self.cfg.frame_len)) and self.cfg.parity[1]:
                     # Send parity bit
-                    self.dut.RX.value = temp[parity_of_frame]
+                    self.vif.RX.value = temp[parity_of_frame]
                     parity_of_frame += 1
                     no_bits_sent += 1
                 else:
@@ -113,16 +125,16 @@ class UartDriver(uvm_driver):
                     for j in range(self.cfg.n_sb + 1):
                         if j == 1:
                             for _ in range(self.cfg.baud_rate):
-                                await RisingEdge(self.dut.PCLK)
+                                await RisingEdge(self.vif.PCLK)
                         
                         if req.sb_corr and req.sb_corr_bit[j] and req.sb_corr_frame[i]:
                             # Corrupt stop bit
-                            self.dut.RX.value = 0
+                            self.vif.RX.value = 0
                             no_bits_sent += 1
                             self.logger.debug(f"Driver intentionally corrupting Stop bit since error_bits[{j}] is {req.sb_corr}")
                         else:
                             # Send correct stop bit
-                            self.vdutif.RX.value = req.stop_bits[j]
+                            self.vif.RX.value = req.stop_bits[j]
                             self.logger.debug(f"Driver Sending Frame Stop bit#{j}: {req.stop_bits[j]}")
                             no_bits_sent += 1
             
@@ -131,5 +143,5 @@ class UartDriver(uvm_driver):
         
         # Return to idle state
         for _ in range(self.cfg.baud_rate):
-            await RisingEdge(self.dut.PCLK)
-        self.dut.RX.value = 1
+            await RisingEdge(self.vif.PCLK)
+        self.vif.RX.value = 1

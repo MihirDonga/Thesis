@@ -1,7 +1,6 @@
 from pyuvm import *
-from apb_config import apb_config
 
-class APBAgent(uvm_agent):
+class APBAgent(uvm_component):
     def __init__(self, name, parent):
         super().__init__(name, parent)
         self.driver = None
@@ -14,11 +13,11 @@ class APBAgent(uvm_agent):
         if not success:
             uvm_fatal("NO_CFG", f"Configuration must be set for: {self.get_full_name()}.apb_cfg")
 
-        self.monitor = APBMonitor.create("monitor", self)
+        self.monitor = APBMonitor("monitor", self)
 
         if self.apb_cfg.is_active:
-            self.driver = APBDriver.create("driver", self)
-            self.sequencer = APBSequencer.create("sequencer", self)
+            self.driver = APBDriver("driver", self)
+            self.sequencer = APBSequencer("sequencer", self)
 
     def connect_phase(self):
         if self.apb_cfg.is_active:

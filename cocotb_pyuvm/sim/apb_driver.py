@@ -1,48 +1,39 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge
-
-class APBTransaction(uvm_sequence_item):
-    def __init__(self, name="APBTransaction"):
-        super().__init__(name)
-      
-class APBConfig(uvm_object):
-    def __init__(self, name="APBConfig"):
-        super().__init__(name)
-        
-
-class UARTConfig(uvm_object):
-    def __init__(self, name="UARTConfig"):
-        super().__init__(name)
+from uart_config import uart_config
+from apb_config import apb_config
 
 class APBDriver(uvm_driver):
-    def build_phase(self):
-        self.cfg = UARTConfig()
-        self.apb_cfg = APBConfig()
-        
-        # Get configurations from config_db
-        if not uvm_config_db.get(self, "", "cfg", self.cfg):
-            self.logger.warning("No UART config found, using defaults")
-        if not uvm_config_db.get(self, "", "apb_cfg", self.apb_cfg):
-            self.logger.warning("No APB config found, using defaults")
-            
-        # Get virtual interface
-        if not uvm_config_db.get(self, "", "vif", self.vif):
-            self.logger.error("Virtual interface not found!")
-            raise Exception("Virtual interface not found")
+    def __init__(self, name, parent):
+        self.cfg = None
+        self.apb_cfg = None
 
+    def build_phase(self):    
+        super().build_phase()   
+        # Get configurations from config_db
+        self.cfg = ConfigDB().get(self, "", "cfg")
+        self.apb_cfg = ConfigDB().get(self, "", "apb_cfg")
+        
+        if not self.cfg:
+            self.logger.error("UART config not found")
+            raise Exception("ConfigError")
+        if not self.apb_cfg:
+            self.logger.error("APB config not found")
+            raise Exception("APBConfigError")
+        
     async def run_phase(self):
         while True:
             # Wait for clock edge and reset to be inactive
-            await RisingEdge(self.vif.PCLK)
-            if not self.vif.PRESETn.value:
+            await RisingEdge(self.dut.PCLK)
+            if not self.dut.PRESETn.value:
                 continue
                 
             # Initialize signals
-            self.vif.PSELx.value = 0
-            self.vif.PENABLE.value = 0
-            self.vif.PWRITE.value = 0
-            self.vif.PWDATA.value = 0
-            self.vif.PADDR.value = 0
+            self.dut.PSELx.value = 0
+            self.dut.PENABLE.value = 0
+            self.dut.PWRITE.value = 0
+            self.dut.PWDATA.value = 0
+            self.dut.PADDR.value = 0
             
             # Get transaction from sequencer
             req = await self.seq_item_port.get_next_item()
@@ -55,34 +46,38 @@ class APBDriver(uvm_driver):
 
     async def drive(self, req):
         # Phase 1: Setup phase
-        self.vif.PSELx.value = self.apb_cfg.psel_Index
-        self.vif.PWRITE.value = req.PWRITE
-        self.vif.PADDR.value = req.PADDR
+        self.dut.PSELx.value = self.apb_cfg.psel_Index
+        self.dut.PWRITE.value = req.PWRITE
+        self.dut.PADDR.value = req.PADDR
         
         # Handle special register writes
         if req.PADDR == self.cfg.baud_config_addr:
-            self.vif.PWDATA.value = self.cfg.bRate
+            self.dut.PWDATA.value = self.cfg.bRate
         elif req.PADDR == self.cfg.frame_config_addr:
-            self.vif.PWDATA.value = self.cfg.frame_len
+            self.dut.PWDATA.value = self.cfg.frame_len
         elif req.PADDR == self.cfg.parity_config_addr:
-            self.vif.PWDATA.value = self.cfg.parity
+            self.dut.PWDATA.value = self.cfg.parity
         elif req.PADDR == self.cfg.stop_bits_config_addr:
-            self.vif.PWDATA.value = self.cfg.n_sb
+            self.dut.PWDATA.value = self.cfg.n_sb
         else:
-            self.vif.PWDATA.value = req.PWDATA
+            self.dut.PWDATA.value = req.PWDATA
         
         # Wait for next clock edge (Phase 2: Enable phase)
-        await RisingEdge(self.vif.PCLK)
-        self.vif.PENABLE.value = 1
+        await RisingEdge(self.dut.PCLK)
+        self.dut.PENABLE.value = 1
         
         # Wait for PREADY
-        while not self.vif.PREADY.value:
-            await RisingEdge(self.vif.PCLK)
+        while not self.dut.PREADY.value:
+            await RisingEdge(self.dut.PCLK)
         
         # Transaction complete
-        self.vif.PSELx.value = 0
-        self.vif.PENABLE.value = 0
+        self.dut.PSELx.value = 0
+        self.dut.PENABLE.value = 0
         
         # Wait for PREADY to go low
-        while self.vif.PREADY.value:
-            await RisingEdge(self.vif.PCLK)
+        while self.dut.PREADY.value:
+            await RisingEdge(self.dut.PCLK)
+    # PCLK    __|--|__|--|__|--|__|--|__
+    # PSELx   0    1    1    0    0
+    # PENABLE 0    0    1    0    0
+    # PREADY  X    X    0    1    0
