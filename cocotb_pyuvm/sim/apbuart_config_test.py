@@ -10,7 +10,7 @@ class apbuart_config_test(apbuart_base_test):
 
     def build_phase(self, phase):
         super().build_phase(phase)
-        self.apbuart_confg_sq = apbuart_config_seq.type_id.create("apbuart_confg_sq", self)
+        self.apbuart_confg_sq = apbuart_config_seq("apbuart_confg_sq")
 
     async def run_phase(self, phase):
         for _ in range(self.cfg.loop_time):

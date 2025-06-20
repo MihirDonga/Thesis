@@ -1,24 +1,36 @@
 from pyuvm import *
 import cocotb
+from apbuart_coverage import UartConfigCoverage, TxCoverage, RxCoverage
 
-@uvm_component_utils
 class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
         super().__init__(name, parent)
+
+        self.apb_mon_imp = uvm_analysis_imp("apb_mon_imp", self, self.write_monapb)
+        self.uart_mon_imp = uvm_analysis_imp("uart_mon_imp", self, self.write_monuart)
+        self.uart_drv_imp = uvm_analysis_imp("uart_drv_imp", self, self.write_drvuart)
+
         # Queues for storing transactions
         self.pkt_qu_monapb = []
         self.pkt_qu_monuart = []
         self.pkt_qu_drvuart = []
+
         # Hooks for config and registers
         self.cfg = None
         self.baud_rate_reg = 0
         self.frame_len_reg = 0
         self.parity_reg = 0
         self.stopbit_reg = 0
+
+
         self.config_sample_count = 0
         self.tx_sample_count=0
         self.rx_sample_count=0
         
+        # Create coverage components
+        self.uart_config_cg = UartConfigCoverage("uart_config_cg")
+        self.tx_cg = TxCoverage("tx_cg")
+        self.rx_cg = RxCoverage("rx_cg")
 
     def build_phase(self):
         super().build_phase()
@@ -128,34 +140,49 @@ class APBUARTScoreboard(uvm_scoreboard):
                          f"Expected Stop Bit Value: {hex(self.stopbit_reg)} Actual Stop Value: {hex(apb_pkt.PRDATA)}", 
                          UVM_LOW)
             
-            self.uart_config_cg.sample()        
+            self.uart_config_cg.sample(self.baud_rate_reg, self.frame_len_reg, self.parity_reg, self.stopbit_reg)        
             self.config_sample_count += 1
 
     def compare_transmission(self, apb_pkt, uart_pkt):
         if apb_pkt.PWDATA == uart_pkt.transmitter_reg:
             self.logger.info("Transmission Data Packet Match")
+            self.tx_cg.sample(apb_pkt.PWDATA, uart_pkt.transmitter_reg)
+            self.tx_sample_count += 1
         else:
             self.logger.error("Transmission Data Packet Mismatch")
         self.logger.info(f"Expected: {apb_pkt.PWDATA:#x} Actual: {uart_pkt.transmitter_reg:#x}")
-        self.tx_cg.sample(apb_pkt.PWDATA, uart_pkt.transmitter_reg)
-        self.tx_sample_count += 1
 
     def compare_receive(self, apb_pkt, uart_pkt):
         if apb_pkt.PRDATA == uart_pkt.payload:
-            self.logger.info("Receiver Data Packet Match")
+            self.logger.info("------ :: Receiver Data Packet Match :: ------")
         else:
-            self.logger.error("Receiver Data Packet Mismatch")
-        self.logger.info(f"Expected: {uart_pkt.payload:#x} Actual: {apb_pkt.PRDATA:#x}")
-
-        error = uart_pkt.bad_parity and self.cfg.parity \
-                or uart_pkt.sb_corr and self.cfg.n_sb
-        expected = 1 if error else 0
-        if apb_pkt.PSLVERR == expected:
-            self.logger.info("Error Status Match")
+            self.logger.error("------ :: Receiver Data Packet MisMatch :: ------")
+        
+        self.logger.info(f"Expected Receiver Data Value: {uart_pkt.payload} Actual Receiver Data Value: {apb_pkt.PRDATA}")
+        self.logger.info("------------------------------------")
+        
+        err_expected = 1
+        if (uart_pkt.bad_parity and self.cfg.parity[1]) or (uart_pkt.sb_corr and (self.cfg.n_sb or uart_pkt.sb_corr_bit[0])):
+            err_expected = 0
+        
+        err_actual = apb_pkt.PSLVERR
+        
+        if err_actual == err_expected:
+            self.logger.info("------ :: Error Match :: ------")
         else:
-            self.logger.error("Error Status Mismatch")
-        self.logger.info(f"Expected PSLVERR: {expected} Actual: {apb_pkt.PSLVERR}")
+            self.logger.error("------ :: Error MisMatch :: ------")
+            self.logger.info(f"Expected Error Value: {err_expected} Actual Error Value: {err_actual}")
+            self.logger.info("------------------------------------")
         
         self.rx_cg.sample(apb_pkt.PRDATA, uart_pkt.payload, err_actual)
         self.rx_sample_count += 1
 
+    def report_phase(self):
+        config_coverage = self.uart_config_cg.get_coverage()
+        tx_coverage = self.tx_cg.get_coverage()
+        rx_coverage = self.rx_cg.get_coverage()
+        
+        self.logger.info("Coverage Report:")
+        self.logger.info(f"Config Coverage: {config_coverage:.2f}%")
+        self.logger.info(f"Tx Coverage: {tx_coverage:.2f}%")
+        self.logger.info(f"Rx Coverage: {rx_coverage:.2f}%")

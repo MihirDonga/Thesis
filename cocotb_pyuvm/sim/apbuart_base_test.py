@@ -11,13 +11,15 @@ class apbuart_base_test(uvm_test):
 
     def build_phase(self, phase):
         uvm_info(self.get_name(), "Inside build_phase", UVM_MEDIUM)
+        
+        # uvm_component, uvm_env, uvm_agent, scoreboard, sequencer	Yes (standard way)
+        # uvm_sequence	hsas No, instantiate directly via constructor
+        self.env_sq = apbuart_env("env_sq", self) 
 
-        self.env_sq = apbuart_env("env_sq", self)
-
-        uvm_config_db.set(self, "*", "cfg", self.cfg)
+        ConfigDB().set(self, "*", "cfg", self.cfg)
         self.set_config_params(9600, 8, 3, 1, 0)
 
-        uvm_config_db.set(self, "*", "apb_cfg", self.apb_cfg)
+        ConfigDB().set(self, "*", "apb_cfg", self.apb_cfg)
         self.set_apbconfig_params(2, 0)
 
     def set_config_params(self, bd_rate, frm_len, parity, sb, flag):

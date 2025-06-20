@@ -16,12 +16,15 @@ async def tbench_top(dut):
     dut.PRESETn.value = 1
     await RisingEdge(dut.PCLK)
 
+    # Store signals in ConfigDB for access by UVM components
+    ConfigDB().set(None, "*", "dut", dut)  # You can pass entire DUT for convenience
+
     # Store interfaces in ConfigDB (direct DUT access)
     ConfigDB().set(None, "*", "PCLK", dut.PCLK)
     ConfigDB().set(None, "*", "PRESETn", dut.PRESETn)
     
-    # Store individual signals as needed
-    apb_signals = {
+    # APB signal dictionary
+    ConfigDB().set(None, "*", "apb_signals", {
         'PSELx': dut.PSELx,
         'PENABLE': dut.PENABLE,
         'PWRITE': dut.PWRITE,
@@ -30,14 +33,12 @@ async def tbench_top(dut):
         'PRDATA': dut.PRDATA,
         'PREADY': dut.PREADY,
         'PSLVERR': dut.PSLVERR
-    }
-    ConfigDB().set(None, "*", "vifapb", apb_signals)
+    })
     
     uart_signals = {
         'Tx': dut.Tx,
         'RX': dut.RX
     }
-    ConfigDB().set(None, "*", "vifuart", uart_signals)
 
     # Start UVM test (equivalent to run_test())
     await uvm_root().run_test()

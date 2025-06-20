@@ -593,8 +593,7 @@ function void apbuart_scoreboard::compare_transmission (apb_transaction apb_pkt,
 	// Let’s say you're transmitting data (0xA5) from the APB side into the DUT, 
 	// DUT captures PWDATA and stores it into its uart_tx_reg.
 	// expecting the DUT to send this over the UART line.
-
-and expecting the DUT to send this over the UART line.
+	// and expecting the DUT to send this over the UART line.
 	if(apb_pkt.PWDATA == uart_pkt.transmitter_reg) begin
     	`uvm_info(get_type_name(),$sformatf("------ :: Transmission Data Packet Match :: ------"),UVM_LOW)
 		 // Assign data for coverage
