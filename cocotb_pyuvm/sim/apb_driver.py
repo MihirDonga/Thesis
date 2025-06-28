@@ -13,6 +13,7 @@ class APBDriver(uvm_driver):
         # Get configurations from config_db
         self.cfg = ConfigDB().get(self, "", "cfg")
         self.apb_cfg = ConfigDB().get(self, "", "apb_cfg")
+        dut = ConfigDB().get(self, "", "dut")
         
         if not self.cfg:
             self.logger.error("UART config not found")
@@ -20,6 +21,9 @@ class APBDriver(uvm_driver):
         if not self.apb_cfg:
             self.logger.error("APB config not found")
             raise Exception("APBConfigError")
+        if self.dut is None:
+            self.logger.error("DUT handle not found in ConfigDB")
+            raise Exception("dut")
         
     async def run_phase(self):
         while True:

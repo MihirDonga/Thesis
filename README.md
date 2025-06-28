@@ -6,4 +6,4 @@ simvision                       :  simvision /scratch/mihir/workarea/Thesis/Thes
 
 rtl  compile                    :  xrun -sv -f filelist.f -access +rwc -compile
 
-
+Test run : xrun -64bit -uvm -sv -f filelist.f +UVM_TESTNAME=apbuart_parity_error_test -top tbench_top -access +rwc -coverage functional -covoverwrite -covwork cov_work
