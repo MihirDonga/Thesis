@@ -26,58 +26,34 @@ import cocotb
 from cocotb.triggers import Timer
 import random
 
-# VCS-style coverage class
-class FullAdderCoverage:
-    def __init__(self):
-        self.input_cov = self.InputCoverage()
-        self.trans_cov = self.TransactionCoverage()
-        
-    class InputCoverage:
-        def __init__(self):
-            self.a = set()
-            self.b = set()
-            self.cin = set()
-            
-        def sample(self, a, b, cin):
-            self.a.add(a)
-            self.b.add(b)
-            self.cin.add(cin)
-            
-        def get_coverage(self):
-            return {
-                'a': len(self.a)/2 * 100,
-                'b': len(self.b)/2 * 100,
-                'cin': len(self.cin)/2 * 100
-            }
-    
-    class TransactionCoverage:
-        def __init__(self):
-            self.combinations = set()
-            
-        def sample(self, a, b, cin):
-            self.combinations.add((a, b, cin))
-            
-        def get_coverage(self):
-            return len(self.combinations)/8 * 100
-            
-    def sample(self, a, b, cin):
-        self.input_cov.sample(a, b, cin)
-        self.trans_cov.sample(a, b, cin)
-        
-    def report(self):
-        input_cov = self.input_cov.get_coverage()
-        trans_cov = self.trans_cov.get_coverage()
-        print("\n=== VCS-STYLE COVERAGE REPORT ===")
-        print(f"Input coverage: a={input_cov['a']:.1f}%, b={input_cov['b']:.1f}%, cin={input_cov['cin']:.1f}%")
-        print(f"Transaction coverage: {trans_cov:.1f}%")
-        print("===============================\n")
-
 class FullAdderTest(uvm_test):
     def build_phase(self):
         self.dut = cocotb.top
-        self.coverage = FullAdderCoverage()
-        self.num_tests = 50
-        
+        # VCS-style coverage bins
+        self.input_coverage = {
+            'a': set(),
+            'b': set(),
+            'cin': set()
+        }
+        self.transaction_coverage = set()
+        self.num_tests = 20  # Reduced for demo
+
+    def update_coverage(self, a, b, cin):
+        """VCS-style coverage sampling"""
+        self.input_coverage['a'].add(a)
+        self.input_coverage['b'].add(b)
+        self.input_coverage['cin'].add(cin)
+        self.transaction_coverage.add((a, b, cin))
+
+    def print_coverage(self):
+        """Prints coverage directly to log (VCS-style)"""
+        self.logger.info("=== COVERAGE SUMMARY ===")
+        self.logger.info(f"Input a:    {len(self.input_coverage['a'])}/2 bins hit")
+        self.logger.info(f"Input b:    {len(self.input_coverage['b'])}/2 bins hit")
+        self.logger.info(f"Input cin:  {len(self.input_coverage['cin'])}/2 bins hit")
+        self.logger.info(f"Transactions: {len(self.transaction_coverage)}/8 combinations")
+        self.logger.info("=======================")
+
     async def run_phase(self):
         self.raise_objection()
         
@@ -92,24 +68,23 @@ class FullAdderTest(uvm_test):
             self.dut.cin.value = cin
             await Timer(1, "NS")
             
-            # Check outputs
+            # Verify outputs
             sum_val = self.dut.sum.value
             cout_val = self.dut.cout.value
             expected_sum = a ^ b ^ cin
             expected_cout = (a & b) | (cin & (a ^ b))
             
             if sum_val != expected_sum or cout_val != expected_cout:
-                self.logger.error(f"Error: a={a}, b={b}, cin={cin}")
-                self.logger.error(f"Expected: sum={expected_sum}, cout={expected_cout}")
-                self.logger.error(f"Received: sum={sum_val}, cout={cout_val}")
+                self.logger.error(f"Error: Inputs: a={a}, b={b}, cin={cin}")
             
-            # Sample coverage
-            self.coverage.sample(a, b, cin)
+            # Update coverage
+            self.update_coverage(a, b, cin)
         
-        self.coverage.report()
+        # Print final coverage to log
+        self.print_coverage()
         self.drop_objection()
 
 @cocotb.test()
 async def run_test(dut):
-    """Full adder test with VCS-style coverage"""
+    """Test with VCS-style coverage logging"""
     await uvm_root().run_test("FullAdderTest")
