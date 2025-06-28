@@ -26,7 +26,7 @@
 
 SIM ?= xcelium
 TOPLEVEL_LANG ?= verilog
-VERILOG_SOURCES = hello_dut.v
+VERILOG_SOURCES = hello_world.sv
 TOPLEVEL = helloworld
 MODULE = hello_test
 
