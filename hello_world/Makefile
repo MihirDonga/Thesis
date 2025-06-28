@@ -30,14 +30,21 @@ VERILOG_SOURCES = hello_world.sv
 TOPLEVEL = full_adder
 MODULE = hello_test
 
-# Critical Python paths
-export PYTHONPATH := $(shell pwd):$(PYTHONPATH)
-export LD_LIBRARY_PATH := $(shell python3 -c "import pyuvm; print(pyuvm.get_lib_path())"):$(LD_LIBRARY_PATH)
 
-# Xcelium flags
-XRUN_ARGS += -disable_sem2009 -nocopyright
+# Xcelium coverage options (VCS-like)
+XRUN_ARGS += -coverage all
+XRUN_ARGS += -covdut full_adder
+XRUN_ARGS += -covoverwrite
+XRUN_ARGS += -covfile cov.ccf  # Coverage configuration file
+
+# Python coverage collection
+export PYTHON_COVERAGE=1
 
 include $(shell cocotb-config --makefiles)/Makefile.sim
 
+cov_report:
+    imc -load test_cov/work -execcmd "report -detail -both -out cov_report.txt"
+    python -m coverage html -d coverage_html
+
 clean::
-	rm -rf sim_build __pycache__ results.xml *.vcd *.log
+    rm -rf sim_build __pycache__ results.xml *.vcd *.log *.ucd *.ucm cov_report.txt coverage_html
