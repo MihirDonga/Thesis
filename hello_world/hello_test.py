@@ -7,7 +7,7 @@ class FullAdderTest(uvm_test):
     def build_phase(self):
         self.dut = cocotb.top
         self.unique_combinations = set()
-        self.num_tests = 20  # Reduced for demo
+        self.num_tests = 200  # Reduced for demo
     
     async def run_phase(self):
         self.raise_objection()
