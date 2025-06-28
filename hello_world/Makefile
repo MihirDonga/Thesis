@@ -31,8 +31,8 @@ TOPLEVEL = helloworld
 MODULE = hello_test
 
 # Critical Python paths
-export PYTHONPATH := $(shell pwd):$(PYTHONPATH)
-export LD_LIBRARY_PATH := $(shell python3 -c "import pyuvm; print(pyuvm.get_lib_path())"):$(LD_LIBRARY_PATH)
+# export PYTHONPATH := $(shell pwd):$(PYTHONPATH)
+# export LD_LIBRARY_PATH := $(shell python3 -c "import pyuvm; print(pyuvm.get_lib_path())"):$(LD_LIBRARY_PATH)
 
 # Xcelium flags
 XRUN_ARGS += -disable_sem2009 -nocopyright
