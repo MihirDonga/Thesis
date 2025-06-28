@@ -22,81 +22,45 @@
 #     """Test pyuvm with Xcelium/Icarus"""
 #     await uvm_root().run_test("HelloTest")
 from pyuvm import *
-import random
+import cocotb
 from cocotb.triggers import Timer
-
-class FullAdderItem(uvm_sequence_item):
-    def __init__(self, name="full_adder_item"):
-        super().__init__(name)
-        self.a = 0
-        self.b = 0
-        self.cin = 0
-        self.sum = 0
-        self.cout = 0
-
-class FullAdderDriver(uvm_driver):
-    def start_of_simulation_phase(self):
-        self.dut = cocotb.top
-
-    async def run_phase(self):
-        while True:
-            item = await self.seq_item_port.get_next_item()
-            self.raise_objection()
-            await Timer(1, "NS")
-            self.dut.a.value = item.a
-            self.dut.b.value = item.b
-            self.dut.cin.value = item.cin
-            self.drop_objection()
-            self.seq_item_port.item_done()
-
-class FullAdderMonitor(uvm_monitor):
-    def __init__(self, name, parent):
-        super().__init__(name, parent)
-        self.dut = cocotb.top
-        self.analysis_port = uvm_analysis_port("analysis_port", self)
-
-    async def run_phase(self):
-        while True:
-            await Timer(1, "NS")
-            tr = FullAdderItem()
-            tr.a = int(self.dut.a.value)
-            tr.b = int(self.dut.b.value)
-            tr.cin = int(self.dut.cin.value)
-            tr.sum = int(self.dut.sum.value)
-            tr.cout = int(self.dut.cout.value)
-            self.analysis_port.write(tr)
-
-class FullAdderScoreboard(uvm_scoreboard):
-    def build_phase(self):
-        self.analysis_export = uvm_analysis_export("analysis_export", self)
-        self.fifo = uvm_tlm_analysis_fifo("fifo", self)
-        self.analysis_export.connect(self.fifo.analysis_export)
-
-    def check_phase(self):
-        while self.fifo.has_analysis():
-            tr = self.fifo.get()
-            expected_sum = tr.a ^ tr.b ^ tr.cin
-            expected_cout = (tr.a & tr.b) | (tr.cin & (tr.a ^ tr.b))
-            
-            if tr.sum != expected_sum or tr.cout != expected_cout:
-                self.logger.error(f"Mismatch! Inputs: a={tr.a}, b={tr.b}, cin={tr.cin}")
-                self.logger.error(f"Expected: sum={expected_sum}, cout={expected_cout}")
-                self.logger.error(f"Received: sum={tr.sum}, cout={tr.cout}")
-
-class FullAdderEnv(uvm_env):
-    def build_phase(self):
-        self.driver = FullAdderDriver("driver", self)
-        self.monitor = FullAdderMonitor("monitor", self)
-        self.scoreboard = FullAdderScoreboard("scoreboard", self)
-
-    def connect_phase(self):
-        self.monitor.analysis_port.connect(self.scoreboard.analysis_export)
 
 class FullAdderTest(uvm_test):
     def build_phase(self):
-        self.env = FullAdderEnv("env", self)
+        self.dut = cocotb.top  # Get access to the DUT
+
+    async def run_phase(self):
+        self.raise_objection()
+        
+        # Test all 8 possible input combinations
+        for a in [0, 1]:
+            for b in [0, 1]:
+                for cin in [0, 1]:
+                    # Drive inputs
+                    self.dut.a.value = a
+                    self.dut.b.value = b
+                    self.dut.cin.value = cin
+                    await Timer(1, "NS")
+                    
+                    # Check outputs
+                    sum = self.dut.sum.value
+                    cout = self.dut.cout.value
+                    
+                    # Calculate expected values
+                    expected_sum = a ^ b ^ cin
+                    expected_cout = (a & b) | (cin & (a ^ b))
+                    
+                    # Verify
+                    if sum != expected_sum or cout != expected_cout:
+                        self.logger.error(f"FAIL: a={a}, b={b}, cin={cin}")
+                        self.logger.error(f"Got sum={sum}, cout={cout}")
+                        self.logger.error(f"Expected sum={expected_sum}, cout={expected_cout}")
+                    else:
+                        self.logger.info(f"PASS: a={a}, b={b}, cin={cin}")
+        
+        self.drop_objection()
 
 @cocotb.test()
 async def run_test(dut):
-    """Test full adder"""
+    """Simple full adder test"""
     await uvm_root().run_test("FullAdderTest")
