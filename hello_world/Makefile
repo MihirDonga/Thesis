@@ -2,7 +2,7 @@
 SIM ?= xcelium
 TOPLEVEL_LANG ?= verilog
 VERILOG_SOURCES = hello_world.sv
-TOPLEVEL = hello_world
+TOPLEVEL = helloworld
 MODULE = hello_test
 
 # Python & pyuvm paths
