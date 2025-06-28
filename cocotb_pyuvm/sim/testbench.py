@@ -19,26 +19,5 @@ async def tbench_top(dut):
     # Store signals in ConfigDB for access by UVM components
     ConfigDB().set(None, "*", "dut", dut)  # You can pass entire DUT for convenience
 
-    # Store interfaces in ConfigDB (direct DUT access)
-    ConfigDB().set(None, "*", "PCLK", dut.PCLK)
-    ConfigDB().set(None, "*", "PRESETn", dut.PRESETn)
-    
-    # APB signal dictionary
-    ConfigDB().set(None, "*", "apb_signals", {
-        'PSELx': dut.PSELx,
-        'PENABLE': dut.PENABLE,
-        'PWRITE': dut.PWRITE,
-        'PADDR': dut.PADDR,
-        'PWDATA': dut.PWDATA,
-        'PRDATA': dut.PRDATA,
-        'PREADY': dut.PREADY,
-        'PSLVERR': dut.PSLVERR
-    })
-    
-    uart_signals = {
-        'Tx': dut.Tx,
-        'RX': dut.RX
-    }
-
     # Start UVM test (equivalent to run_test())
     await uvm_root().run_test()
