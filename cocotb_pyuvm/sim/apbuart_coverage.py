@@ -1,119 +1,111 @@
 from pyuvm import *
 import cocotb
 
-class UartConfigCoverage(uvm_component):
+@vsc.covergroup
+class ConfigCoverage(object):
     def __init__(self, name, parent):
-        super().__init__(name, parent)
+        self.with_sample(dict(
+                    bRate=0,
+                    frame_len=0,
+                    parity=0,
+                    n_sb=0
+                ))        
         
-    def build_phase(self):
-        # Baud rate coverage
-        self.baud_cp = CoveragePoint("baud_cp")
-        self.baud_cp.add_bins([
-            CoverageBin("b4800", 4800),
-            CoverageBin("b9600", 9600),
-            CoverageBin("b19200", 19200),
-            CoverageBin("b38400", 38400),
-            CoverageBin("b57600", 57600),
-            CoverageBin("b115200", 115200),
-            CoverageBin("b128000", 128000),
-            CoverageBin("b63", 63),
-            CoverageBin("b0", 0)
-        ])
+        # Baud rate coverpoint
+        self.bRate_cp = vsc.coverpoint(self.bRate, bins=dict(
+            b4800 = vsc.bin(4800),
+            b9600 = vsc.bin(9600),
+            b14400 = vsc.bin(14400),
+            b19200 = vsc.bin(19200),
+            b38400 = vsc.bin(38400),
+            b57600 = vsc.bin(57600),
+            b115200 = vsc.bin(115200),
+            b128000 = vsc.bin(128000),
+            b63 = vsc.bin(63),
+            b0 = vsc.bin(0)
+        ))
         
-        # Frame length coverage
-        self.frame_cp = CoveragePoint("frame_cp")
-        self.frame_cp.add_bins([
-            CoverageBin("f5", 5),
-            CoverageBin("f6", 6),
-            CoverageBin("f7", 7),
-            CoverageBin("f8", 8)
-        ])
+        # Frame length coverpoint
+        self.frame_len_cp = vsc.coverpoint(self.frame_len, bins=dict(
+            f5 = vsc.bin(5),
+            f6 = vsc.bin(6),
+            f7 = vsc.bin(7),
+            f8 = vsc.bin(8)
+        ))
         
-        # Parity coverage
-        self.parity_cp = CoveragePoint("parity_cp")
-        self.parity_cp.add_bins([
-            CoverageBin("none", 0),
-            CoverageBin("even", 1),
-            CoverageBin("odd", 2)
-        ])
+        # Parity coverpoint
+        self.parity_cp = vsc.coverpoint(self.parity, bins=dict(
+            none = vsc.bin(0),
+            even = vsc.bin(1),
+            odd = vsc.bin(2),
+            other = vsc.bin(3)
+        ))
         
-        # Stop bits coverage
-        self.stopbit_cp = CoveragePoint("stopbit_cp")
-        self.stopbit_cp.add_bins([
-            CoverageBin("one", 1),
-            CoverageBin("two", 2)
-        ])
+        # Stop bits coverpoint
+        self.n_sb_cp = vsc.coverpoint(self.n_sb, bins=dict(
+            one = vsc.bin(0),
+            two = vsc.bin(1)
+        ))
         
         # Cross coverage
-        self.cfg_cross = CoverageCross("cfg_cross", [
-            self.baud_cp, self.frame_cp, self.parity_cp, self.stopbit_cp
-        ])
+        self.cfg_cross = vsc.cross([self.bRate_cp, self.frame_len_cp, 
+                                  self.parity_cp, self.n_sb_cp])
+
+@vsc.covergroup
+class TxCoverage(object):
+    def __init__(self):
+        self.with_sample(dict(
+            apb_data=0,
+            uart_data=0
+        ))
         
-    def sample(self, baud, frame, parity, stop):
-        self.baud_cp.sample(baud)
-        self.frame_cp.sample(frame)
-        self.parity_cp.sample(parity)
-        self.stopbit_cp.sample(stop)
-        self.cfg_cross.sample()
-
-class TxCoverage(uvm_component):
-    def __init__(self, name, parent):
-        super().__init__(name, parent)
-
-    def build_phase(self):
         # APB data coverage
-        self.apb_cp = CoveragePoint("apb_cp")
-        self.apb_cp.add_bins([
-            CoverageBin("low_values", (0x00000000, 0x000000FF)),
-            CoverageBin("mid_values", (0x00000100, 0x7FFFFFFF)),
-            CoverageBin("high_values", (0x80000000, 0xFFFFFFFF)),
-            CoverageBin("corner_values", [0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
-        ])
+        self.apb_cp = vsc.coverpoint(self.apb_data, bins=dict(
+            low = vsc.bin_array([], [0x00000000, 0x000000FF]),
+            mid = vsc.bin_array([], [0x00000100, 0x7FFFFFFF]),
+            high = vsc.bin_array([], [0x80000000, 0xFFFFFFFF]),
+            corners = vsc.bin_array([0x00000000, 0xFFFFFFFF, 
+                                   0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
+        ))
         
         # UART data coverage
-        self.uart_cp = CoveragePoint("uart_cp")
-        self.uart_cp.add_bins([
-            CoverageBin("low_values", (0x00000000, 0x000000FF)),
-            CoverageBin("mid_values", (0x00000100, 0x7FFFFFFF)),
-            CoverageBin("high_values", (0x80000000, 0xFFFFFFFF)),
-            CoverageBin("corner_values", [0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
-        ])
-        
-    def sample(self, apb_data, uart_data):
-        self.apb_cp.sample(apb_data)
-        self.uart_cp.sample(uart_data)
+        self.uart_cp = vsc.coverpoint(self.uart_data, bins=dict(
+            low = vsc.bin_array([], [0x00000000, 0x000000FF]),
+            mid = vsc.bin_array([], [0x00000100, 0x7FFFFFFF]),
+            high = vsc.bin_array([], [0x80000000, 0xFFFFFFFF]),
+            corners = vsc.bin_array([0x00000000, 0xFFFFFFFF, 
+                                   0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
+        ))
 
-class RxCoverage(uvm_component):
-    def __init__(self, name, parent):
-        super().__init__(name, parent)
-
-    def build_phase(self):
-        # APB data coverage
-        self.apb_cp = CoveragePoint("apb_cp")
-        self.apb_cp.add_bins([
-            CoverageBin("low_values", (0x00000000, 0x000000FF)),
-            CoverageBin("mid_values", (0x00000100, 0x7FFFFFFF)),
-            CoverageBin("high_values", (0x80000000, 0xFFFFFFFF)),
-            CoverageBin("corner_values", [0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
-        ])
+@vsc.covergroup
+class RxCoverage(object):
+    def __init__(self):
+        self.with_sample(dict(
+            apb_data=0,
+            uart_data=0,
+            error=0
+        ))
         
-        # UART data coverage
-        self.uart_cp = CoveragePoint("uart_cp")
-        self.uart_cp.add_bins([
-            CoverageBin("low_values", (0x00000000, 0x000000FF)),
-            CoverageBin("mid_values", (0x00000100, 0x7FFFFFFF)),
-            CoverageBin("high_values", (0x80000000, 0xFFFFFFFF)),
-            CoverageBin("corner_values", [0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
-        ])
+        # APB data coverage (same as Tx)
+        self.apb_cp = vsc.coverpoint(self.apb_data, bins=dict(
+            low = vsc.bin_array([], [0x00000000, 0x000000FF]),
+            mid = vsc.bin_array([], [0x00000100, 0x7FFFFFFF]),
+            high = vsc.bin_array([], [0x80000000, 0xFFFFFFFF]),
+            corners = vsc.bin_array([0x00000000, 0xFFFFFFFF, 
+                                   0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
+        ))
+        
+        # UART data coverage (same as Tx)
+        self.uart_cp = vsc.coverpoint(self.uart_data, bins=dict(
+            low = vsc.bin_array([], [0x00000000, 0x000000FF]),
+            mid = vsc.bin_array([], [0x00000100, 0x7FFFFFFF]),
+            high = vsc.bin_array([], [0x80000000, 0xFFFFFFFF]),
+            corners = vsc.bin_array([0x00000000, 0xFFFFFFFF, 
+                                   0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
+        ))
         
         # Error coverage
-        self.error_cp = CoveragePoint("error_cp")
-        self.error_cp.add_bins([
-            CoverageBin("error_set", True),
-            CoverageBin("error_clear", False)
-        ])
-        
-    def sample(self, apb_data, uart_data, error):
-        self.apb_cp.sample(apb_data)
-        self.uart_cp.sample(uart_data)
-        self.error_cp.sample(error)
+        self.error_cp = vsc.coverpoint(self.error, bins=dict(
+            error_set = vsc.bin(1),
+            error_clear = vsc.bin(0)
+        ))

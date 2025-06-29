@@ -1,31 +1,33 @@
 # uart_config.py
 from pyuvm import *
-import random
+from vsc import *
+from enum import Enum, auto
+
 
 from enum import Enum
 class uvm_active_passive_enum(Enum):
-    UVM_ACTIVE = 0
-    UVM_PASSIVE = 1
+    UVM_ACTIVE = auto()
+    UVM_PASSIVE = auto()
 
 class uart_config(uvm_object):
     def __init__(self, name="uart_config"):
         super().__init__(name)
         # From APB AGENTs (randomizable)
-        self.frame_len = None
-        self.n_sb = None
-        self.parity = None
-        self.bRate = None
-
+        self.frame_len = vsc.rand_uint32_t()
+        self.n_sb = vsc.rand_uint32_t()
+        self.parity = vsc.rand_uint32_t()
+        self.bRate = vsc.rand_uint32_t()
         # To UART Monitor
-        self.baud_rate = None
+        self.baud_rate = 0
 
         # Constants (Addresses)
-        self.baud_config_addr      = 0
-        self.frame_config_addr     = 4
-        self.parity_config_addr    = 8
-        self.stop_bits_config_addr = 12
-        self.trans_data_addr       = 16
-        self.receive_data_addr     = 20
+        self.baud_config_addr      = 0x0
+        self.frame_config_addr     = 0x4
+        self.parity_config_addr    = 0x8
+        self.stop_bits_config_addr = 0xc
+        self.trans_data_addr       = 0x10
+        self.receive_data_addr     = 0x14
+
         self.loop_time             = 10
 
         # UVM active/passive enum equivalent
@@ -33,11 +35,23 @@ class uart_config(uvm_object):
 
     def randomize(self):
         # Apply constraints
-        self.frame_len = random.choice([5, 6, 7, 8])
-        self.n_sb = random.choice([0, 1])
-        self.parity = random.choice([0, 1, 2, 3])
-        self.bRate = random.choice([4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 63, 0])
-        self.baudRateFunc()
+        @vsc.constraint
+        def frame_len_c(self):
+            self.frame_len.inside(vsc.rangelist(5, 6, 7, 8))
+            
+        @vsc.constraint
+        def n_sb_c(self):
+            self.n_sb.inside(vsc.rangelist(0, 1))
+            
+        @vsc.constraint
+        def parity_c(self):
+            self.parity.inside(vsc.rangelist(0, 1, 2, 3))
+            
+        @vsc.constraint
+        def bRate_c(self):
+            self.bRate.inside(vsc.rangelist(4800, 9600, 14400, 19200, 
+                             38400, 57600, 115200, 128000, 63, 0))
+
 
     def baudRateFunc(self):
         bRate_to_baud = {

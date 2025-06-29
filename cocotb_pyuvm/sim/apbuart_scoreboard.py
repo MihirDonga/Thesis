@@ -1,6 +1,6 @@
 from pyuvm import *
 import cocotb
-from apbuart_coverage import UartConfigCoverage, TxCoverage, RxCoverage
+from apbuart_coverage import ConfigCoverage, TxCoverage, RxCoverage
 
 class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
@@ -28,9 +28,9 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.rx_sample_count=0
         
         # Create coverage components
-        self.uart_config_cg = UartConfigCoverage("uart_config_cg")
-        self.tx_cg = TxCoverage("tx_cg")
-        self.rx_cg = RxCoverage("rx_cg")
+        self.config_cg = ConfigCoverage()
+        self.tx_cg = TxCoverage()
+        self.rx_cg = RxCoverage()
 
     def build_phase(self):
         super().build_phase()
@@ -140,13 +140,13 @@ class APBUARTScoreboard(uvm_scoreboard):
                          f"Expected Stop Bit Value: {hex(self.stopbit_reg)} Actual Stop Value: {hex(apb_pkt.PRDATA)}", 
                          UVM_LOW)
             
-            self.uart_config_cg.sample(self.baud_rate_reg, self.frame_len_reg, self.parity_reg, self.stopbit_reg)        
+            self.config_cg.sample( bRate=self.cfg.bRate, frame_len=self.cfg.frame_len,parity=self.cfg.parity, n_sb=self.cfg.n_sb)        
             self.config_sample_count += 1
 
     def compare_transmission(self, apb_pkt, uart_pkt):
         if apb_pkt.PWDATA == uart_pkt.transmitter_reg:
             self.logger.info("Transmission Data Packet Match")
-            self.tx_cg.sample(apb_pkt.PWDATA, uart_pkt.transmitter_reg)
+            self.tx_cg.sample(apb_data=apb_pkt.PWDATA, uart_data=uart_pkt.transmitter_reg)
             self.tx_sample_count += 1
         else:
             self.logger.error("Transmission Data Packet Mismatch")
@@ -174,11 +174,11 @@ class APBUARTScoreboard(uvm_scoreboard):
             self.logger.info(f"Expected Error Value: {err_expected} Actual Error Value: {err_actual}")
             self.logger.info("------------------------------------")
         
-        self.rx_cg.sample(apb_pkt.PRDATA, uart_pkt.payload, err_actual)
+        self.rx_cg.sample(apb_data=apb_pkt.PRDATA, uart_data=uart_pkt.payload, error=err_actual)
         self.rx_sample_count += 1
 
     def report_phase(self):
-        config_coverage = self.uart_config_cg.get_coverage()
+        config_coverage = self.config_cg.get_coverage()
         tx_coverage = self.tx_cg.get_coverage()
         rx_coverage = self.rx_cg.get_coverage()
         
