@@ -22,6 +22,9 @@ class UartDriver(uvm_driver):
         if not self.cfg:
             self.logger.error("UART config not found")
             raise Exception("ConfigError")
+        
+        self.dut = ConfigDB().get(self, "", "dut")
+
         # uvm_config_db becomes ConfigDB in PyUVM
         # uvm_fatal becomes logger.error + exception
         # Port creation syntax is similar but Python-style   

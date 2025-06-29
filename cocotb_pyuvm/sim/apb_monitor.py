@@ -1,8 +1,6 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge
 from dataclasses import dataclass
-from typing import Dict, Set, List, Tuple
-from apb_transaction import APBTransaction
 
 class APBMonitor(uvm_monitor):
     def __init__(self, name, parent):
@@ -13,7 +11,8 @@ class APBMonitor(uvm_monitor):
     def build_phase(self):        
         super().build_phase()
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
-        
+        self.dut = ConfigDB().get(self, "", "dut")
+
     async def run_phase(self):
         while True:
             # Wait for transaction start

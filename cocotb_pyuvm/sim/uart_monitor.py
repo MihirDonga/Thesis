@@ -1,9 +1,7 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge, Timer
-import random
 from dataclasses import dataclass
 from uart_transaction import UARTTransaction
-from uart_config import uart_config
 
 class UartMonitor(uvm_monitor):
     def __init__(self, name, parent):
@@ -24,6 +22,8 @@ class UartMonitor(uvm_monitor):
             self.logger.error("UART config not found")
             raise Exception("ConfigError")
         
+        self.dut = ConfigDB().get(self, "", "dut")
+
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
         self.trans_collected = UARTTransaction()
 

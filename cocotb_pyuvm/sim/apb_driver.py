@@ -1,7 +1,6 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge
-from uart_config import uart_config
-from apb_config import apb_config
+from cocotb.handle import SimHandle  # For type hinting the DUT
 
 class APBDriver(uvm_driver):
     def __init__(self, name, parent):
@@ -13,7 +12,7 @@ class APBDriver(uvm_driver):
         # Get configurations from config_db
         self.cfg = ConfigDB().get(self, "", "cfg")
         self.apb_cfg = ConfigDB().get(self, "", "apb_cfg")
-        dut = ConfigDB().get(self, "", "dut")
+        self.dut = ConfigDB().get(self, "", "dut")
         
         if not self.cfg:
             self.logger.error("UART config not found")
