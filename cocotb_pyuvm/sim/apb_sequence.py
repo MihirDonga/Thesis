@@ -1,22 +1,6 @@
 from pyuvm import *
-
-# ---------------------------
-# Dummy uart_config Object
-# ---------------------------
-@uvm_object_utils
-class UARTConfig(uvm_object):
-    def __init__(self, name="UARTConfig"):
-        super().__init__(name)
-
-# ---------------------------
-# Dummy apb_transaction
-# ---------------------------
-@uvm_object_utils
-class APBTransaction(uvm_sequence_item):
-    def __init__(self, name="APBTransaction"):
-        super().__init__(name)
-        self.PWRITE = None
-        self.PADDR = None
+from apb_transaction import APBTransaction
+from uart_config import uart_config
 
 # ---------------------------
 # Sequence: ConfigAPBUART
@@ -24,7 +8,7 @@ class APBTransaction(uvm_sequence_item):
 @uvm_object_utils
 class ConfigAPBUART(uvm_sequence):
     async def body(self):
-        cfg = UARTConfig("cfg")
+        cfg = uart_config("cfg")
 
         for addr in [cfg.baud_config_addr,
                      cfg.frame_config_addr,
@@ -33,13 +17,13 @@ class ConfigAPBUART(uvm_sequence):
 
             apbuart_sq = APBTransaction("apbuart_sq")
             await self.start_item(apbuart_sq)
-            apbuart_sq.PWRITE = True
+            apbuart_sq.PWRITE = 1
             apbuart_sq.PADDR = addr
             await self.finish_item(apbuart_sq)
 
             apbuart_sq = APBTransaction("apbuart_sq")
             await self.start_item(apbuart_sq)
-            apbuart_sq.PWRITE = False
+            apbuart_sq.PWRITE = 0
             apbuart_sq.PADDR = addr
             await self.finish_item(apbuart_sq)
 
@@ -49,11 +33,11 @@ class ConfigAPBUART(uvm_sequence):
 @uvm_object_utils
 class TransmitSingleBeat(uvm_sequence):
     async def body(self):
-        cfg = UARTConfig("cfg")
+        cfg = uart_config("cfg")
         apbuart_sq = APBTransaction("apbuart_sq")
 
         await self.start_item(apbuart_sq)
-        apbuart_sq.PWRITE = True
+        apbuart_sq.PWRITE = 1
         apbuart_sq.PADDR = cfg.trans_data_addr
         await self.finish_item(apbuart_sq)
 
@@ -63,10 +47,10 @@ class TransmitSingleBeat(uvm_sequence):
 @uvm_object_utils
 class RecRegTest(uvm_sequence):
     async def body(self):
-        cfg = UARTConfig("cfg")
+        cfg = uart_config("cfg")
         apbuart_sq = APBTransaction("apbuart_sq")
 
         await self.start_item(apbuart_sq)
-        apbuart_sq.PWRITE = False
+        apbuart_sq.PWRITE = 0
         apbuart_sq.PADDR = cfg.receive_data_addr
         await self.finish_item(apbuart_sq)

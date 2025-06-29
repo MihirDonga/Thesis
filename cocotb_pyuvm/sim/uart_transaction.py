@@ -1,46 +1,73 @@
 from pyuvm import *
 import random
+from vsc import *
 from cocotb.triggers import Timer, RisingEdge
 
 class UARTTransaction(uvm_sequence_item):
     def __init__(self, name="UARTTransaction"):
         super().__init__(name)
         # Input Signals of DUT for APB UART's transaction
-        self.payload = 0                  # 32-bit data to be sent on DUT RX pin
-        self.transmitter_reg = 0          # 32-bit data monitored from DUT TX pin
-        self.bad_parity = False
-        self.bad_parity_frame = 0         # Now an integer (7 bits)
-        self.sb_corr = False
-        self.sb_corr_frame = 0            # Now an integer (7 bits)
-        self.sb_corr_bit = 0              # Now an integer (2 bits)
-        self.start_bit = 0
-        self.stop_bits = 0b11             # Default to binary 11 (2 bits)
-        self.payld_func = 0               # 36-bit extended payload
+        self.payload = vsc.rand_uint32_t()  # 32-bit data to be sent on DUT RX pin
+        self.transmitter_reg = vsc.rand_uint32_t()  # 32-bit data monitored from DUT TX pin
+        self.bad_parity = vsc.rand_bit_t()
+        self.bad_parity_frame = vsc.rand_uint7_t()
+        self.sb_corr = vsc.rand_bit_t()
+        self.sb_corr_frame = vsc.rand_uint7_t()
+        self.sb_corr_bit = vsc.rand_uint2_t()
+        self.start_bit = vsc.rand_bit_t()
+        self.stop_bits = vsc.rand_uint2_t()
+        
+        self.payld_func = 0  # 36-bit value for calculations
+        
+
+        self._define_constraints()      #constraints
+
 
     def __str__(self):
         return (f"UARTTransaction: payload=0x{self.payload:08x}, "
                 f"bad_parity={self.bad_parity}, sb_corr={self.sb_corr}")
 
-    def randomize(self):
+    def _define_constraints(self):
         """Randomize all fields with constraints"""
-        self.start_bit = 0                 # Constraint: always 0
-        self.stop_bits = 0b11              # Constraint: always 11
-        
-        # Randomize with constraints
-        self.payload = random.randint(0, 2**32-1)
-        self.bad_parity = random.choice([True, False])
-        self.sb_corr = random.choice([True, False])
-        
-        # Constraint: bad_parity_frame[3:0] > 0
-        self.bad_parity_frame = random.randint(1, 2**4-1) | (random.randint(0, 7) << 4)
-        
-        # Constraint: sb_corr_frame[3:0] > 0
-        self.sb_corr_frame = random.randint(1, 2**4-1) | (random.randint(0, 7) << 4)
-        
-        # Constraint: sb_corr_bit != 0
-        self.sb_corr_bit = random.choice([1, 2, 3])
-        
-        return True
+        @vsc.constraint
+        def default_start_bit_c(self):
+            self.start_bit == 0
+            
+        @vsc.constraint
+        def default_stop_bits_c(self):
+            self.stop_bits == 3  # Binary 11
+            
+        @vsc.constraint
+        def corrupt_parity_frame_c(self):
+            vsc.if_then(self.bad_parity,
+                (self.bad_parity_frame[3:0] > 0))
+            
+        @vsc.constraint
+        def corrupt_sb_frame_c(self):
+            vsc.if_then(self.sb_corr,
+                (self.sb_corr_frame[3:0] > 0))
+            
+        @vsc.constraint
+        def corrupt_sb_bit_c(self):
+            vsc.if_then(self.sb_corr,
+                (self.sb_corr_bit != 0))
+    
+    def randomize(self):
+        """
+        Randomize all fields with constraints
+        Returns:
+            bool: True if randomization succeeded, False otherwise
+        """
+        try:
+            if not vsc.randomize(self):
+                self.uvm_report_error("RAND_FAIL", "Randomization failed")
+                return 0
+            self.payld_func = self.payload
+            return 1
+        except Exception as e:
+            self.uvm_report_error("RAND_EXCEPT", f"Randomization exception: {str(e)}")
+            return 0
+
 
     def calc_parity(self, frame_len, ev_odd):
         """
@@ -51,7 +78,7 @@ class UARTTransaction(uvm_sequence_item):
         Returns:
             Integer with parity bits (7 bits)
         """
-        self.payld_func = self.payload  # Zero-padding happens automatically in slicing
+        self.payld_func = self.payload & 0xFFFFFFFF  # Zero-padding happens automatically in slicing
         
         parity_result = 0
         
@@ -103,7 +130,7 @@ class UARTTransaction(uvm_sequence_item):
             self.logger.error(f"Incorrect frame length selected: {frame_len}")
             raise ValueError("Invalid frame length")
             
-        return parity_result
+        return parity_result & 0x7F  # Ensure 7-bit return
 
     def _calculate_single_parity(self, chunk, ev_odd):
         """Calculate parity for a single chunk"""

@@ -33,7 +33,9 @@ class uart_config(uvm_object):
         # UVM active/passive enum equivalent
         self.is_active = uvm_active_passive_enum.UVM_ACTIVE
 
-    def randomize(self):
+        self._setup_constraints()
+
+    def _setup_constraints(self):
         # Apply constraints
         @vsc.constraint
         def frame_len_c(self):
@@ -52,6 +54,15 @@ class uart_config(uvm_object):
             self.bRate.inside(vsc.rangelist(4800, 9600, 14400, 19200, 
                              38400, 57600, 115200, 128000, 63, 0))
 
+    def randomize(self):
+        """Randomize the configuration using VSC"""
+        try:
+            vsc.randomize(self)
+            self.baudRateFunc()  # Update baud rate after randomization
+            return True
+        except Exception as e:
+            print(f"Randomization failed: {e}")
+            return False
 
     def baudRateFunc(self):
         bRate_to_baud = {
