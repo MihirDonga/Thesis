@@ -26,4 +26,3 @@ class apbuart_config_test(apbuart_base_test):
 
         # Wait 20 time units after dropping objection before test finishes
         await Timer(20, "ns")
-uvm_component_utils(apbuart_config_test)
