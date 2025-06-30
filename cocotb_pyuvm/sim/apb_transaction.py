@@ -3,6 +3,17 @@ from vsc import *
 
 
 class APBTransaction(uvm_sequence_item):
+
+    uvm_object_utils(apb_transaction)
+    
+    # Field automation (replaces uvm_field_int macros)
+    uvm_field_int('PWRITE')
+    uvm_field_int('PWDATA')
+    uvm_field_int('PADDR')
+    uvm_field_int('PREADY')
+    uvm_field_int('PSLVERR') 
+    uvm_field_int('PRDATA')
+    
     def __init__(self, name="APBTransaction"):
         super().__init__(name)
         # Input Signals of DUT for APB UART's transaction

@@ -4,6 +4,14 @@ from vsc import *
 from cocotb.triggers import Timer, RisingEdge
 
 class UARTTransaction(uvm_sequence_item):
+    uvm_object_utils(uart_transaction)
+    uvm_field_int('start_bit')
+    uvm_field_int('stop_bits')
+    uvm_field_int('payload')
+    uvm_field_int('bad_parity')
+    uvm_field_int('sb_corr')
+    uvm_field_int('transmitter_reg')
+
     def __init__(self, name="UARTTransaction"):
         super().__init__(name)
         # Input Signals of DUT for APB UART's transaction
