@@ -1,6 +1,5 @@
 from pyuvm import *
 from uart_transaction import *
-from pyuvm import uvm_object_utils
 # ------------------------
 # Sequence: Stop Bit Corruption
 # ------------------------

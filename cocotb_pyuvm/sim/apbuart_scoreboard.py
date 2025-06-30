@@ -3,7 +3,6 @@ from apbuart_coverage import ConfigCoverage, TxCoverage, RxCoverage
 from pyuvm import UVM_LOW
 from cocotb.triggers import Timer
 from pyuvm import uvm_analysis_imp
-from pyuvm import uvm_component_utils
 
 @uvm_component_utils
 class APBUARTScoreboard(uvm_scoreboard):

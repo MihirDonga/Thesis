@@ -1,7 +1,6 @@
 from pyuvm import *
 from apb_transaction import APBTransaction
 from uart_config import uart_config
-from pyuvm import uvm_object_utils
 # ---------------------------
 # Sequence: ConfigAPBUART
 # ---------------------------
@@ -31,7 +30,7 @@ class config_apbuart(uvm_sequence):
 # Sequence: TransmitSingleBeat
 # ---------------------------
 @uvm_object_utils
-class TransmitSingleBeat(uvm_sequence):
+class transmit_single_beat(uvm_sequence):
     async def body(self):
         cfg = uart_config("cfg")
         apbuart_sq = APBTransaction("apbuart_sq")
@@ -45,7 +44,7 @@ class TransmitSingleBeat(uvm_sequence):
 # Sequence: RecRegTest
 # ---------------------------
 @uvm_object_utils
-class RecRegTest(uvm_sequence):
+class rec_reg_test(uvm_sequence):
     async def body(self):
         cfg = uart_config("cfg")
         apbuart_sq = APBTransaction("apbuart_sq")
