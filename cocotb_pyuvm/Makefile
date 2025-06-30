@@ -9,6 +9,7 @@ MODULE = testbench
 export PYTHONPATH := $(shell pwd):$(PYTHONPATH)
 
 # Xcelium flags
+XRUN_ARGS += -incdir rtl
 XRUN_ARGS += -disable_sem2009 -nocopyright
 XRUN_ARGS += -access +rwc -timescale 1ns/1ps
 
