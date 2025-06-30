@@ -2,7 +2,6 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 from pyuvm import *
-from apbuart_environment import APBUARTEnv  # Import your PyUVM components
 
 # Simple version without interface classes - direct signal access
 @cocotb.test()
