@@ -3,7 +3,6 @@ from uart_transaction import *
 # ------------------------
 # Sequence: Stop Bit Corruption
 # ------------------------
-@uvm_object_utils
 class recdrv_test_uart(uvm_sequence):
     async def body(self):
         uart_sq = UARTTransaction.type_id.create("uart_sq")
@@ -15,7 +14,6 @@ class recdrv_test_uart(uvm_sequence):
 # ------------------------
 # Sequence: Frame Error (Stop bit error only)
 # ------------------------
-@uvm_object_utils
 class fe_test_uart(uvm_sequence):
     async def body(self):
         uart_sq = UARTTransaction.type_id.create("uart_sq")
@@ -27,7 +25,6 @@ class fe_test_uart(uvm_sequence):
 # ------------------------
 # Sequence: Parity Error
 # ------------------------
-@uvm_object_utils
 class pe_test_uart(uvm_sequence):
     async def body(self):
         uart_sq = UARTTransaction.type_id.create("uart_sq")
@@ -39,7 +36,6 @@ class pe_test_uart(uvm_sequence):
 # ------------------------
 # Sequence: Error-Free
 # ------------------------
-@uvm_object_utils
 class err_free_test_uart(uvm_sequence):
     async def body(self):
         uart_sq = UARTTransaction.type_id.create("uart_sq")
