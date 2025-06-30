@@ -6,7 +6,7 @@ TOPLEVEL = apb_uart_top
 MODULE = testbench
 
 # Critical Python paths
-export PYTHONPATH := $(shell pwd):$(PYTHONPATH)
+export PYTHONPATH := $(PWD)/sim:$(PYTHONPATH)
 
 # Xcelium flags
 XRUN_ARGS += -incdir $(PWD)/rtl
