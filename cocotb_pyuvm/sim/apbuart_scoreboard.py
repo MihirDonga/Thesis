@@ -4,7 +4,6 @@ from pyuvm import UVM_LOW
 from cocotb.triggers import Timer
 from pyuvm import uvm_analysis_imp
 
-@uvm_component_utils
 class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
         super().__init__(name, parent)
@@ -107,60 +106,66 @@ class APBUARTScoreboard(uvm_scoreboard):
             # Continue loop
 
     def compare_config(self, apb_pkt):
+
+        test = uvm_root().find("apbuart_base_test")  # Reference to your base test
+
         if apb_pkt.PADDR == self.cfg.baud_config_addr:
             if apb_pkt.PRDATA == self.baud_rate_reg:
-                self.uvm_info(self.get_type_name(), "------ :: Baud Rate Match :: ------", UVM_LOW)
+                self.logger.info("------ :: Baud Rate Match :: ------")
             else:
-                self.uvm_error(self.get_type_name(), "------ :: Baud Rate MisMatch :: ------")
-            self.uvm_info(self.get_type_name(), 
-                         f"Expected Baud Rate: {self.baud_rate_reg} Actual Baud Rate: {apb_pkt.PRDATA}", 
-                         UVM_LOW)
+                self.logger.error(self.get_type_name(), "------ :: Baud Rate MisMatch :: ------")
+                test.report_error("Baud Rate Mismatch detected in scoreboard!")
+            self.logger.info(f"Expected Baud Rate: {self.baud_rate_reg} Actual Baud Rate: {apb_pkt.PRDATA}")
             
         if apb_pkt.PADDR == self.cfg.frame_config_addr:
             if apb_pkt.PRDATA == self.frame_len_reg:
-                self.uvm_info(self.get_type_name(), "------ :: Frame Rate Match :: ------", UVM_LOW)
+                self.logger.info("------ :: Frame Rate Match :: ------")
             else:
-                self.uvm_error(self.get_type_name(), "------ :: Frame Rate MisMatch :: ------")
-            self.uvm_info(self.get_type_name(), 
-                         f"Expected Frame Rate: {hex(self.frame_len_reg)} Actual Frame Rate: {hex(apb_pkt.PRDATA)}", 
-                         UVM_LOW)
+                self.logger.error("------ :: Frame Rate MisMatch :: ------")
+                test.report_error("Frame Length Mismatch detected in scoreboard!")
+            self.logger.info(f"Expected Frame Rate: {hex(self.frame_len_reg)} Actual Frame Rate: {hex(apb_pkt.PRDATA)}")
             
         if apb_pkt.PADDR == self.cfg.parity_config_addr:
             if apb_pkt.PRDATA == self.parity_reg:
-                self.uvm_info(self.get_type_name(), "------ :: Parity Match :: ------", UVM_LOW)
+                self.logger.info("------ :: Parity Match :: ------")
             else:
-                self.uvm_error(self.get_type_name(), "------ :: Parity MisMatch :: ------")
-            self.uvm_info(self.get_type_name(), 
-                         f"Expected Parity Value: {hex(self.parity_reg)} Actual Parity Value: {hex(apb_pkt.PRDATA)}", 
-                         UVM_LOW)
+                self.logger.error("------ :: Parity MisMatch :: ------")
+                test.report_error("Parity Mismatch detected in scoreboard!")
+            self.logger.info(f"Expected Parity Value: {hex(self.parity_reg)} Actual Parity Value: {hex(apb_pkt.PRDATA)}")
             
         if apb_pkt.PADDR == self.cfg.stop_bits_config_addr:
             if apb_pkt.PRDATA == self.stopbit_reg:
-                self.uvm_info(self.get_type_name(), "------ :: Stop Bit Match :: ------", UVM_LOW)
+                self.logger.info("------ :: Stop Bit Match :: ------")
             else:
-                self.uvm_error(self.get_type_name(), "------ :: Stop Bit MisMatch :: ------")
-            self.uvm_info(self.get_type_name(), 
-                         f"Expected Stop Bit Value: {hex(self.stopbit_reg)} Actual Stop Value: {hex(apb_pkt.PRDATA)}", 
-                         UVM_LOW)
+                self.logger.error("------ :: Stop Bit MisMatch :: ------")
+                test.report_error("Stop Bit Mismatch detected in scoreboard!")
+            self.logger.info(f"Expected Stop Bit Value: {hex(self.stopbit_reg)} Actual Stop Value: {hex(apb_pkt.PRDATA)}")
             
             self.config_cg.sample( bRate=self.cfg.bRate, frame_len=self.cfg.frame_len,parity=self.cfg.parity, n_sb=self.cfg.n_sb)        
             self.config_sample_count += 1
 
     def compare_transmission(self, apb_pkt, uart_pkt):
+
+        test = uvm_root().find("apbuart_base_test")
+
         if apb_pkt.PWDATA == uart_pkt.transmitter_reg:
             self.logger.info("Transmission Data Packet Match")
             self.tx_cg.sample(apb_data=apb_pkt.PWDATA, uart_data=uart_pkt.transmitter_reg)
             self.tx_sample_count += 1
         else:
             self.logger.error("Transmission Data Packet Mismatch")
+            test.report_error("Transmission Data Packet Mismatch detected in scoreboard!")
         self.logger.info(f"Expected: {apb_pkt.PWDATA:#x} Actual: {uart_pkt.transmitter_reg:#x}")
 
     def compare_receive(self, apb_pkt, uart_pkt):
+        
+        test = uvm_root().find("apbuart_base_test")
+
         if apb_pkt.PRDATA == uart_pkt.payload:
             self.logger.info("------ :: Receiver Data Packet Match :: ------")
         else:
             self.logger.error("------ :: Receiver Data Packet MisMatch :: ------")
-        
+            test.report_error("Receiver Data Packet Mismatch detected in scoreboard!")
         self.logger.info(f"Expected Receiver Data Value: {uart_pkt.payload} Actual Receiver Data Value: {apb_pkt.PRDATA}")
         self.logger.info("------------------------------------")
         
@@ -174,6 +179,8 @@ class APBUARTScoreboard(uvm_scoreboard):
             self.logger.info("------ :: Error Match :: ------")
         else:
             self.logger.error("------ :: Error MisMatch :: ------")
+            test.report_error("Error Mismatch detected in scoreboard!")
+            
             self.logger.info(f"Expected Error Value: {err_expected} Actual Error Value: {err_actual}")
             self.logger.info("------------------------------------")
         
