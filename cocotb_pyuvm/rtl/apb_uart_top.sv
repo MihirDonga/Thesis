@@ -1,4 +1,5 @@
-`include "Defines.sv"
+`ifndef DEFINES_SV
+`define DEFINES_SV
 module apb_uart_top (
 	 input logic PCLK,
 	 input logic PRESETn,
