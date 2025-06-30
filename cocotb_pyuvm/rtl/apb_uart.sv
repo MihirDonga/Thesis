@@ -1,5 +1,4 @@
-`ifndef DEFINES_SV
-`define DEFINES_SV
+`include "rtl/Defines.sv"
 module apb_uart
 (
   input 	logic PCLK,
