@@ -1,6 +1,5 @@
 from pyuvm import *
 from apbuart_coverage import ConfigCoverage, TxCoverage, RxCoverage
-from pyuvm import UVM_LOW
 from cocotb.triggers import Timer
 from pyuvm import uvm_analysis_imp
 
@@ -180,7 +179,7 @@ class APBUARTScoreboard(uvm_scoreboard):
         else:
             self.logger.error("------ :: Error MisMatch :: ------")
             test.report_error("Error Mismatch detected in scoreboard!")
-            
+
             self.logger.info(f"Expected Error Value: {err_expected} Actual Error Value: {err_actual}")
             self.logger.info("------------------------------------")
         
