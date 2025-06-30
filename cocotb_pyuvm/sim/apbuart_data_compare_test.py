@@ -6,12 +6,12 @@ class apbuart_data_compare_test(apbuart_base_test):
 
     def __init__(self, name, parent=None):
         super().__init__(name, parent)
-        self.apbuart_confg_sq = None
+        self.apbuart_config_sq = None
         self.apbuart_transmt_sq = None
 
     def build_phase(self, phase):
         super().build_phase(phase)
-        self.apbuart_confg_sq = apbuart_config_seq.type_id.create("apbuart_confg_sq", self)
+        self.apbuart_config_sq = apbuart_config_seq.type_id.create("apbuart_config_sq", self)
         self.apbuart_transmt_sq = apbuart_singlebeat_seq.type_id.create("apbuart_transmt_sq", self)
 
     async def run_phase(self, phase):

@@ -1,6 +1,5 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge
-from cocotb.handle import SimHandle  # For type hinting the DUT
 
 class APBDriver(uvm_driver):
     def __init__(self, name, parent):

@@ -1,5 +1,5 @@
 from pyuvm import uvm_object
-from vsc import *
+import vsc
 from enum import Enum, auto
 
 # Constants (SystemVerilog `define`s)

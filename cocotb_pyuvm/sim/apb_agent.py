@@ -1,5 +1,7 @@
 from pyuvm import *
-from apb_config import apb_config
+from apb_driver import APBDriver
+from apb_monitor import APBMonitor
+from apb_sequencer import APBSequencer
 
 class APBAgent(uvm_agent):
     def __init__(self, name, parent):

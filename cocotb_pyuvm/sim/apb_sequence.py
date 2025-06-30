@@ -1,12 +1,12 @@
 from pyuvm import *
 from apb_transaction import APBTransaction
 from uart_config import uart_config
-
+from pyuvm import uvm_object_utils
 # ---------------------------
 # Sequence: ConfigAPBUART
 # ---------------------------
 @uvm_object_utils
-class ConfigAPBUART(uvm_sequence):
+class config_apbuart(uvm_sequence):
     async def body(self):
         cfg = uart_config("cfg")
 

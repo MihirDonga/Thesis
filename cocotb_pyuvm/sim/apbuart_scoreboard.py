@@ -1,14 +1,18 @@
 from pyuvm import *
-import cocotb
 from apbuart_coverage import ConfigCoverage, TxCoverage, RxCoverage
+from pyuvm import UVM_LOW
+from cocotb.triggers import Timer
+from pyuvm import uvm_analysis_imp
+from pyuvm import uvm_component_utils
 
+@uvm_component_utils
 class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
         super().__init__(name, parent)
 
-        self.apb_mon_imp = uvm_analysis_imp("apb_mon_imp", self, self.write_monapb)
-        self.uart_mon_imp = uvm_analysis_imp("uart_mon_imp", self, self.write_monuart)
-        self.uart_drv_imp = uvm_analysis_imp("uart_drv_imp", self, self.write_drvuart)
+        self.apb_mon_imp = uvm_analysis_imp("apb_mon_imp", self.write_monapb, self)
+        self.uart_mon_imp = uvm_analysis_imp("uart_mon_imp", self.write_monuart, self)
+        self.uart_drv_imp = uvm_analysis_imp("uart_drv_imp", self.write_drvuart, self)
 
         # Queues for storing transactions
         self.pkt_qu_monapb = []
@@ -41,17 +45,17 @@ class APBUARTScoreboard(uvm_scoreboard):
             raise Exception("UART Config not found")
 
         # Analysis ports (subscribers)
-        self.item_collected_export_monapb = uvm_analysis_imp(self.write_monapb, "item_collected_export_monapb", self)
-        self.item_collected_export_monuart = uvm_analysis_imp(self.write_monuart, "item_collected_export_monuart", self)
-        self.item_collected_export_drvuart = uvm_analysis_imp(self.write_drvuart, "item_collected_export_drvuart", self)
+        self.item_collected_export_monapb = uvm_analysis_imp("item_collected_export_monapb",self.write_monapb, self)
+        self.item_collected_export_monuart = uvm_analysis_imp("item_collected_export_monuart", self.write_monuart, self)
+        self.item_collected_export_drvuart = uvm_analysis_imp("item_collected_export_drvuart", self.write_drvuart, self)
 
-    def write_monapb(self, pkt: 'APBTransaction'):
+    def write_monapb(self, pkt: "APBTransaction"):
         self.pkt_qu_monapb.append(pkt)
 
-    def write_monuart(self, pkt: 'UARTTransaction'):
+    def write_monuart(self, pkt: "UARTTransaction"):
         self.pkt_qu_monuart.append(pkt)
 
-    def write_drvuart(self, pkt: 'UARTTransaction'):
+    def write_drvuart(self, pkt: "UARTTransaction"):
         self.pkt_qu_drvuart.append(pkt)
 
     async def run_phase(self, phase):

@@ -1,6 +1,6 @@
 from pyuvm import *
-
-
+from apb_sequence import *
+from uart_sequence import *
 class vseq_base(uvm_sequence):
 
     def __init__(self, name="vseq_base"):

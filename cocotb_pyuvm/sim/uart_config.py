@@ -1,6 +1,5 @@
-# uart_config.py
 from pyuvm import *
-from vsc import *
+import vsc
 from enum import Enum, auto
 
 

@@ -1,5 +1,5 @@
 from pyuvm import *
-import cocotb
+import vsc
 
 @vsc.covergroup
 class ConfigCoverage(object):

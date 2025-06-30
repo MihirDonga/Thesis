@@ -1,13 +1,11 @@
 from pyuvm import *
-from cocotb.triggers import RisingEdge, Timer
-from uart_config import uart_config
 from uart_transaction import UARTTransaction
-import random
+from cocotb.triggers import RisingEdge
 
 # Python uses __init__ instead of new()
 # Type declarations are dynamic in Python
 
-class UartDriver(uvm_driver):
+class UARTDriver(uvm_driver):
     def __init__(self, name, parent):
         super().__init__(name, parent)
         self.cfg = None

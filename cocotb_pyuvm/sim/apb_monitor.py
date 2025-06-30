@@ -1,6 +1,5 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge
-from dataclasses import dataclass
 
 class APBMonitor(uvm_monitor):
     def __init__(self, name, parent):

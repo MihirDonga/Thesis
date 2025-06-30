@@ -1,9 +1,8 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge, Timer
-from dataclasses import dataclass
 from uart_transaction import UARTTransaction
 
-class UartMonitor(uvm_monitor):
+class UARTMonitor(uvm_monitor):
     def __init__(self, name, parent):
         self.cfg = None
         self.trans_collected = None

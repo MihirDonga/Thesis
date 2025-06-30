@@ -1,5 +1,8 @@
 from pyuvm import *
-from uvm.base.uvm_config_db import ConfigDB
+from apb_agent import APBAgent
+from uart_agent import UARTAgent
+from apbuart_scoreboard import APBUARTScoreboard
+from apbuart_vsequencer import VSequencer
 
 class APBUARTEnv(uvm_env):
     
@@ -13,10 +16,10 @@ class APBUARTEnv(uvm_env):
     def build_phase(self):
         super().build_phase()
         # Create components
-        self.apb_agnt = APBAgent.create("apb_agnt", self)
-        self.uart_agnt = UARTAgent.create("uart_agnt", self)
-        self.apbuart_scb = APBUARTScoreboard.create("apbuart_scb", self)
-        self.v_sqr = VSequencer.create("v_sqr", self)
+        self.apb_agnt = APBAgent.type_id.create("apb_agnt")
+        self.uart_agnt = UARTAgent.type_id.create("uart_agnt")
+        self.apbuart_scb = APBUARTScoreboard.type_id.create("apbuart_scb")
+        self.v_sqr = VSequencer.type_id.create("v_sqr")
 
     def connect_phase(self):
         super().connect_phase()

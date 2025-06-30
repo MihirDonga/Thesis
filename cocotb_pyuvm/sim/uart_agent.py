@@ -1,5 +1,7 @@
 from pyuvm import *
-from uart_config import uart_config
+from uart_driver import UARTDriver
+from uart_monitor import UARTMonitor
+from uart_sequencer import UARTSequencer
 
 # UART Agent
 class UARTAgent(uvm_agent):
