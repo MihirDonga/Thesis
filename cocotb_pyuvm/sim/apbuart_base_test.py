@@ -17,7 +17,7 @@ class apbuart_base_test(uvm_test):
         
         # uvm_component, uvm_env, uvm_agent, scoreboard, sequencer	Yes (standard way)
         # uvm_sequence	hsas No, instantiate directly via constructor
-        self.env_sq =  APBUARTEnv("env_sq", self) 
+        self.env_sq =  APBUARTEnv.type_id.create("env_sq") 
 
         ConfigDB().set(self, "*", "cfg", self.cfg)
         self.set_config_params(9600, 8, 3, 1, 0)
