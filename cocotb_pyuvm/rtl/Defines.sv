@@ -1,6 +1,3 @@
-`ifndef DEFINES_SV
-`define DEFINES_SV
-
 //Defined Baud Rates	
 	`define		BR_4800					4800
 	`define		BR_9600					9600
