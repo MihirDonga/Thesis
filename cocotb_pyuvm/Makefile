@@ -7,10 +7,15 @@ MODULE = testbench
 
 # Critical Python paths
 export PYTHONPATH := $(shell pwd):$(PYTHONPATH)
-export LD_LIBRARY_PATH := $(shell python3 -c "import pyuvm; print(pyuvm.get_lib_path())"):$(LD_LIBRARY_PATH)
 
 # Xcelium flags
 XRUN_ARGS += -disable_sem2009 -nocopyright
+XRUN_ARGS += -access +rwc -timescale 1ns/1ps
+
+# PyUVM/Cocotb integration
+ifeq ($(SIM),xcelium)
+    EXTRA_ARGS += -loadvpi $(shell cocotb-config --lib-name-path vpi xcelium)
+endif
 
 include $(shell cocotb-config --makefiles)/Makefile.sim
 
