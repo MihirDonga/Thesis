@@ -2,7 +2,7 @@
 SIM ?= xcelium
 TOPLEVEL_LANG ?= verilog
 VERILOG_SOURCES =$(wildcard rtl/*.sv)
-TOPLEVEL = tbench_top
+TOPLEVEL = apb_uart_top
 MODULE = testbench
 
 # Critical Python paths
