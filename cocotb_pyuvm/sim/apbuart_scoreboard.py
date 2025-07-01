@@ -32,8 +32,8 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.tx_cg = TxCoverage()
         self.rx_cg = RxCoverage()
 
-    def build_phase(self):
-        super().build_phase()
+    def build_phase(self, phase):
+        super().build_phase(phase)
         success, self.cfg = ConfigDB().get(self, "", "cfg")
         if not success or self.cfg is None:
             self.logger.fatal("No cfg",

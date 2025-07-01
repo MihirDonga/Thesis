@@ -6,8 +6,8 @@ class APBDriver(uvm_driver):
         self.cfg = None
         self.apb_cfg = None
 
-    def build_phase(self):    
-        super().build_phase()   
+    def build_phase(self, phase):
+        super().build_phase(phase)
         # Get configurations from config_db
         self.cfg = ConfigDB().get(self, "", "cfg")
         self.apb_cfg = ConfigDB().get(self, "", "apb_cfg")

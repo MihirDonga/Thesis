@@ -12,7 +12,8 @@ class UARTAgent(uvm_agent):
         self.monitor = None
         self.cfg = None
 
-    def build_phase(self):
+    def build_phase(self, phase):
+        super().build_phase(phase)
         success, self.cfg = ConfigDB().get(self, "", "cfg")
         if not success:
             uvm_fatal("NO_CFG", f"Configuration must be set for: {self.get_full_name()}.cfg")

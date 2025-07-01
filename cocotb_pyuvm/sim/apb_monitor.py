@@ -7,8 +7,8 @@ class APBMonitor(uvm_monitor):
         self.item_collected_port_mon = None
         self.trans_collected = None
 
-    def build_phase(self):        
-        super().build_phase()
+    def build_phase(self, phase):
+        super().build_phase(phase)
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
         self.dut = ConfigDB().get(self, "", "dut")
 

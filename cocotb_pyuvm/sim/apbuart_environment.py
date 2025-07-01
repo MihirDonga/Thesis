@@ -13,8 +13,8 @@ class APBUARTEnv(uvm_env):
         self.apbuart_scb = None  # type: APBUARTScoreboard
         self.v_sqr = None  # type: VSequencer
 
-    def build_phase(self):
-        super().build_phase()
+    def build_phase(self, phase):
+        super().build_phase(phase)
         # Create components
         self.apb_agnt = APBAgent.type_id.create("apb_agnt")
         self.uart_agnt = UARTAgent.type_id.create("uart_agnt")

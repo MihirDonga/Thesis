@@ -12,8 +12,8 @@ class UARTMonitor(uvm_monitor):
         self.LT = 0
         self.parity_en = False
     
-    def build_phase(self):
-        super().build_phase()
+    def build_phase(self, phase):
+        super().build_phase(phase)
         
         # Get configuration from config_db
         self.cfg = ConfigDB().get(self, "", "cfg")  

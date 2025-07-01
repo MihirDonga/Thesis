@@ -13,8 +13,8 @@ class UARTDriver(uvm_driver):
         self.trans_collected = None
         self.LT = 0  # Line Type
         
-    def build_phase(self):
-        super().build_phase()
+    def build_phase(self, phase):
+        super().build_phase(phase)
         # Get configuration from config_db
         self.cfg = ConfigDB().get(self, "", "cfg")  
         if not self.cfg:
