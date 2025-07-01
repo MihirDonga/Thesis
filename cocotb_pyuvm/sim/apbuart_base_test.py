@@ -51,6 +51,7 @@ class apbuart_base_test(uvm_test):
         self.error_count += 1
 
     def end_of_elaboration_phase(self, phase):
+        super().end_of_elaboration_phase(phase)
         self.print_obj()
 
     def report_phase(self, phase):

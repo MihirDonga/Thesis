@@ -27,7 +27,8 @@ class UARTMonitor(uvm_monitor):
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
         self.trans_collected = UARTTransaction()
 
-    async def run_phase(self):
+    async def run_phase(self, phase):
+        super().run_phase(phase)
         while True:
             await RisingEdge(self.dut.PCLK)
             self.cfg_settings()  # Update configuration settings

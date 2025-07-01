@@ -6,7 +6,8 @@ class VSequencer(uvm_component):
         self.apb_sqr = None
         self.uart_sqr = None
 
-    def end_of_elaboration_phase(self):
+    def end_of_elaboration_phase(self, phase):
+        super().__init__(phase)
         success, self.apb_sqr = ConfigDB().get(self, "", "apb_sqr")
         if not success:
             uvm_fatal("VSQR/CFG/NOAPB", "No apb_sqr specified for this instance")

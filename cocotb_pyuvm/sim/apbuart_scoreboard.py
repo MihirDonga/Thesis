@@ -55,6 +55,7 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.pkt_qu_drvuart.append(pkt)
 
     async def run_phase(self, phase):
+        super().build_phase(phase)
         while True:
             # Wait until APB monitor queue has data
             if self.pkt_qu_monapb:

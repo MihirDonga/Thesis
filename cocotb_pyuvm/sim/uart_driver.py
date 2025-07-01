@@ -30,7 +30,8 @@ class UARTDriver(uvm_driver):
         self.item_collected_port_drv = uvm_analysis_port("item_collected_port_drv", self)
         self.trans_collected = UARTTransaction()
 
-    async def run_phase(self):
+    async def run_phase(self, phase):
+        super().run_phase(phase)
         await self.get_and_drive()
 
     def cfg_settings(self):

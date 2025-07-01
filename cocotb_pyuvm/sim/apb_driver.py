@@ -3,6 +3,7 @@ from cocotb.triggers import RisingEdge
 
 class APBDriver(uvm_driver):
     def __init__(self, name, parent):
+        super().__init__(name, parent)
         self.cfg = None
         self.apb_cfg = None
 
@@ -23,7 +24,8 @@ class APBDriver(uvm_driver):
             self.logger.error("DUT handle not found in ConfigDB")
             raise Exception("dut")
         
-    async def run_phase(self):
+    async def run_phase(self,phase):
+        super().run_phase(phase)
         while True:
             # Wait for clock edge and reset to be inactive
             await RisingEdge(self.dut.PCLK)

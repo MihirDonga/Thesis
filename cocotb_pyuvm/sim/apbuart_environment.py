@@ -35,12 +35,13 @@ class APBUARTEnv(uvm_env):
         ConfigDB().set(self, "*", "apb_sqr", self.apb_agnt.sequencer)
         ConfigDB().set(self, "*", "uart_sqr", self.uart_agnt.sequencer)
 
-    async def final_phase(self):
-        super().final_phase()
+    async def final_phase(self, phase):
+        super().final_phase(phase)
         # Start coverage printing as background task
         cocotb.start_soon(self.print_all_coverages())
 
-    async def print_all_coverages(self):
+    async def print_all_coverages(self, phase):
+        super().print_all_coverages(phase)
         if self.apb_agnt and hasattr(self.apb_agnt.monitor, 'print_coverage_APB_summary'):
             self.apb_agnt.monitor.print_coverage_APB_summary()
         else:

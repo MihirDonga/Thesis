@@ -12,7 +12,8 @@ class APBMonitor(uvm_monitor):
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
         self.dut = ConfigDB().get(self, "", "dut")
 
-    async def run_phase(self):
+    async def run_phase(self, phase):
+        super().build_phase(phase)
         while True:
             # Wait for transaction start
             await RisingEdge(self.dut.PCLK)

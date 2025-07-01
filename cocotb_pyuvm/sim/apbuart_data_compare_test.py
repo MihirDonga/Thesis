@@ -15,6 +15,7 @@ class apbuart_data_compare_test(apbuart_base_test):
         self.apbuart_transmt_sq = apbuart_singlebeat_seq.type_id.create("apbuart_transmt_sq", self)
 
     async def run_phase(self, phase):
+        super().run_phase(phase)
         for _ in range(self.cfg.loop_time):
             self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
             print("UART Config:")
