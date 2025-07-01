@@ -1,7 +1,6 @@
 from pyuvm import *
 from apbuart_coverage import ConfigCoverage, TxCoverage, RxCoverage
 from cocotb.triggers import Timer
-from pyuvm import uvm_analysis_imp
 
 class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
