@@ -1,6 +1,6 @@
 from pyuvm import *
 from cocotb.triggers import Timer
-import apbuart_base_test
+from apbuart_base_test import apbuart_base_test
 from apbuart_vseq_base import apbuart_config_seq
 class apbuart_config_test(apbuart_base_test):
 
