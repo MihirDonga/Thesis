@@ -2,8 +2,9 @@ from pyuvm import *
 from uart_config import uart_config
 from apb_config import apb_config
 from apbuart_environment import APBUARTEnv
+from pyuvm import UVMTest
 
-class apbuart_base_test(uvm_test):
+class apbuart_base_test(UVMTest):
     def __init__(self, name="apbuart_base_test", parent=None):
         super().__init__(name, parent)
         self.env_sq = None
@@ -12,6 +13,7 @@ class apbuart_base_test(uvm_test):
         self.error_count = 0  # Manual error counter
 
     def build_phase(self, phase):
+        super().build_phase(phase)
         self.logger.info(f"{self.get_name()} - Inside build_phase")
         
         # uvm_component, uvm_env, uvm_agent, scoreboard, sequencer	Yes (standard way)

@@ -11,8 +11,11 @@ class apbuart_config_test(apbuart_base_test):
     def build_phase(self, phase):
         super().build_phase(phase)
         self.apbuart_config_sq = apbuart_config_seq.type_id.create("apbuart_config_sq")
+        if self.apbuart_config_sq is None:
+            raise Exception("Failed to create apbuart_config_seq from factory")
 
     async def run_phase(self, phase):
+        super().run_phase(phase)
         for _ in range(self.cfg.loop_time):
             self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
             self.logger.info(f"UART Config:\n{self.cfg}")       #prints __str__ from uart_config
