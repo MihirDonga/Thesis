@@ -12,7 +12,7 @@ class APBAgent(uvm_agent):
         self.apb_cfg = None
 
     def build_phase(self, phase):
-        super().build_phase()   
+        super().build_phase(phase)
         success, self.apb_cfg = ConfigDB().get(self, "", "apb_cfg")
         if not success:
             uvm_fatal("NO_CFG", f"Configuration must be set for: {self.get_full_name()}.apb_cfg")
