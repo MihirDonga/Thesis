@@ -4,6 +4,7 @@ from uart_transaction import UARTTransaction
 
 class UARTMonitor(uvm_monitor):
     def __init__(self, name, parent):
+        super().__init__(name, parent)
         self.cfg = None
         self.trans_collected = None
         self.count = 0

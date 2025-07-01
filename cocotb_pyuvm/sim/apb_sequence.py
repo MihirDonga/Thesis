@@ -5,6 +5,9 @@ from uart_config import uart_config
 # Sequence: ConfigAPBUART
 # ---------------------------
 class config_apbuart(uvm_sequence):
+    def __init__(self, name="config_apbuart"):
+        super().__init__(name)
+
     async def body(self):
         cfg = uart_config("cfg")
 
@@ -29,6 +32,9 @@ class config_apbuart(uvm_sequence):
 # Sequence: TransmitSingleBeat
 # ---------------------------
 class transmit_single_beat(uvm_sequence):
+    def __init__(self, name="transmit_single_beat"):
+        super().__init__(name)
+
     async def body(self):
         cfg = uart_config("cfg")
         apbuart_sq = APBTransaction("apbuart_sq")
@@ -42,6 +48,9 @@ class transmit_single_beat(uvm_sequence):
 # Sequence: RecRegTest
 # ---------------------------
 class rec_reg_test(uvm_sequence):
+    def __init__(self, name="rec_reg_test"):
+        super().__init__(name)
+
     async def body(self):
         cfg = uart_config("cfg")
         apbuart_sq = APBTransaction("apbuart_sq")
