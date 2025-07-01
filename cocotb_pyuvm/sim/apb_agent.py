@@ -24,5 +24,6 @@ class APBAgent(uvm_agent):
             self.sequencer = APBSequencer.create("sequencer", self)
 
     def connect_phase(self):
+        super().connect_phase(phase)
         if self.apb_cfg.is_active:
             self.driver.seq_item_port.connect(self.sequencer.seq_item_export)

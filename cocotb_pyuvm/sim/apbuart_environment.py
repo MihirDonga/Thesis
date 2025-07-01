@@ -21,8 +21,8 @@ class APBUARTEnv(uvm_env):
         self.apbuart_scb = APBUARTScoreboard.type_id.create("apbuart_scb")
         self.v_sqr = VSequencer.type_id.create("v_sqr")
 
-    def connect_phase(self):
-        super().connect_phase()
+    def connect_phase(self,phase):
+        super().connect_phase(phase)
         # Connect analysis ports
         self.apb_agnt.monitor.item_collected_port_mon.connect(
             self.apbuart_scb.item_collected_export_monapb)

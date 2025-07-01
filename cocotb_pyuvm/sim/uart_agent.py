@@ -24,6 +24,7 @@ class UARTAgent(uvm_agent):
             self.driver = UARTDriver.create("driver", self)
             self.sequencer = UARTSequencer.create("sequencer", self)
 
-    def connect_phase(self):
+    def connect_phase(self,phase):
+        super().connect_phase(phase)
         if self.cfg.is_active:
             self.driver.seq_item_port.connect(self.sequencer.seq_item_export)
