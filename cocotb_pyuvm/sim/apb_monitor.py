@@ -13,7 +13,7 @@ class APBMonitor(uvm_monitor):
         self.dut = ConfigDB().get(self, "", "dut")
 
     async def run_phase(self, phase):
-        super().build_phase(phase)
+        super().run_phase(phase)
         while True:
             # Wait for transaction start
             await RisingEdge(self.dut.PCLK)
