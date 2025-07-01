@@ -18,7 +18,7 @@ async def tbench_top(dut):
     await RisingEdge(dut.PCLK)
 
     # Store signals in ConfigDB for access by UVM components
-    ConfigDB().set(None, "*", "dut", cocotb.top)  # You can pass entire DUT for convenience
+    ConfigDB().set(None, "*", "dut", dut)  # You can pass entire DUT for convenience
 
     # Start UVM test (equivalent to run_test())
-    await uvm_root().run_test(apbuart_config_test)
+    await uvm_root().run_test(lambda: apbuart_config_test("apbuart_config_test"))
