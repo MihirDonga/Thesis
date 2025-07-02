@@ -14,13 +14,13 @@ class apbuart_rec_readreg_test(apbuart_base_test):
 
     def build_phase(self, phase):
         super().build_phase(phase)
-        self.apbuart_confg_sq = apbuart_config_seq.type_id.create("apbuart_confg_sq", self)
-        self.apbuart_no_err_sq = apbuart_NoError_seq.type_id.create("apbuart_no_err_sq", self)
-        self.apbuart_part_err_sq = apbuart_parityError_seq.type_id.create("apbuart_part_err_sq", self)
-        self.apbuart_frm_err_sq = apbuart_frameError_seq.type_id.create("apbuart_frm_err_sq", self)
-        self.apbuart_transmission_sq = apbuart_singlebeat_seq.type_id.create("apbuart_transmission_sq", self)
-        self.apbuart_drv_random_sq = apbuart_recdrv_seq.type_id.create("apbuart_drv_random_sq", self)
-        self.apbuart_read_rcv_reg_sq = apbuart_recreadreg_seq.type_id.create("apbuart_read_rcv_reg_sq", self)
+        self.apbuart_confg_sq = apbuart_config_seq.create("apbuart_confg_sq", self)
+        self.apbuart_no_err_sq = apbuart_NoError_seq.create("apbuart_no_err_sq", self)
+        self.apbuart_part_err_sq = apbuart_parityError_seq.create("apbuart_part_err_sq", self)
+        self.apbuart_frm_err_sq = apbuart_frameError_seq.create("apbuart_frm_err_sq", self)
+        self.apbuart_transmission_sq = apbuart_singlebeat_seq.create("apbuart_transmission_sq", self)
+        self.apbuart_drv_random_sq = apbuart_recdrv_seq.create("apbuart_drv_random_sq", self)
+        self.apbuart_read_rcv_reg_sq = apbuart_recreadreg_seq.create("apbuart_read_rcv_reg_sq", self)
 
     async def run_phase(self, phase):
         for _ in range(self.cfg.loop_time):

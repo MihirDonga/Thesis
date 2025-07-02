@@ -8,8 +8,8 @@ class apbuart_rec_drv_test(apbuart_base_test):
 
     def build_phase(self, phase):
         super().build_phase(phase)
-        self.apbuart_confg_sq = apbuart_config_seq.type_id.create("apbuart_confg_sq", self)
-        self.apbuart_drv_sq = apbuart_recdrv_seq.type_id.create("apbuart_drv_sq", self)
+        self.apbuart_confg_sq = apbuart_config_seq.create("apbuart_confg_sq", self)
+        self.apbuart_drv_sq = apbuart_recdrv_seq.create("apbuart_drv_sq", self)
 
     async def run_phase(self, phase):
         for _ in range(1):

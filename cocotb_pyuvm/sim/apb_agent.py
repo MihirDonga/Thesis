@@ -17,13 +17,13 @@ class APBAgent(uvm_agent):
         if not success:
             uvm_fatal("NO_CFG", f"Configuration must be set for: {self.get_full_name()}.apb_cfg")
 
-        self.monitor = APBMonitor.create("monitor", self)
+        self.monitor = APBMonitor.type_id.create("monitor", self)
 
         if self.apb_cfg.is_active:
-            self.driver = APBDriver.create("driver", self)
-            self.sequencer = APBSequencer.create("sequencer", self)
+            self.driver = APBDriver.type_id.create("driver", self)
+            self.sequencer = APBSequencer.type_id.create("sequencer", self)
 
-    def connect_phase(self):
+    def connect_phase(self,phase):
         super().connect_phase(phase)
         if self.apb_cfg.is_active:
             self.driver.seq_item_port.connect(self.sequencer.seq_item_export)

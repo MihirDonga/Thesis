@@ -10,7 +10,7 @@ class recdrv_test_uart(uvm_sequence):
         self.uart_sq = None
 
     async def body(self):
-        uart_sq = UARTTransaction.type_id.create("uart_sq")
+        uart_sq = UARTTransaction.create("uart_sq")
         uart_sq.sb_corr = 0      # Stop bit corrupted
         uart_sq.bad_parity = 1  # Good parity
         await self.start_item(uart_sq)
@@ -26,7 +26,7 @@ class fe_test_uart(uvm_sequence):
         self.uart_sq = None
 
     async def body(self):
-        uart_sq = UARTTransaction.type_id.create("uart_sq")
+        uart_sq = UARTTransaction.create("uart_sq")
         uart_sq.sb_corr = 1      # Stop bit corrupted
         uart_sq.bad_parity = 1  # Good parity
         await self.start_item(uart_sq)
@@ -42,7 +42,7 @@ class pe_test_uart(uvm_sequence):
         self.uart_sq = None
 
     async def body(self):
-        uart_sq = UARTTransaction.type_id.create("uart_sq")
+        uart_sq = UARTTransaction.create("uart_sq")
         uart_sq.bad_parity = 1   # Parity error
         uart_sq.sb_corr = 0     # Good stop bit
         await self.start_item(uart_sq)
@@ -57,7 +57,7 @@ class err_free_test_uart(uvm_sequence):
         self.uart_sq = None
 
     async def body(self):
-        uart_sq = UARTTransaction.type_id.create("uart_sq")
+        uart_sq = UARTTransaction.create("uart_sq")
         uart_sq.bad_parity = 0  # Good parity
         uart_sq.sb_corr = 0     # Good stop bit
         # uart_sq.payload = 0x11223344  # Optional
