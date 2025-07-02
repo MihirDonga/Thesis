@@ -18,11 +18,11 @@ class UARTAgent(uvm_agent):
         if not success:
             uvm_fatal("NO_CFG", f"Configuration must be set for: {self.get_full_name()}.cfg")
         
-        self.monitor = UARTMonitor.create("monitor", self)
+        self.monitor = UARTMonitor("monitor", self)
         
         if self.cfg.is_active:
-            self.driver = UARTDriver.create("driver", self)
-            self.sequencer = UARTSequencer.create("sequencer", self)
+            self.driver = UARTDriver("driver", self)
+            self.sequencer = UARTSequencer("sequencer", self)
 
     def connect_phase(self,phase):
         super().connect_phase(phase)

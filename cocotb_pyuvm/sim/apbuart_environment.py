@@ -16,10 +16,10 @@ class APBUARTEnv(uvm_env):
     def build_phase(self, phase):
         super().build_phase(phase)
         # Create components
-        self.apb_agnt = APBAgent.create("apb_agnt")
-        self.uart_agnt = UARTAgent.create("uart_agnt")
-        self.apbuart_scb = APBUARTScoreboard.create("apbuart_scb")
-        self.v_sqr = VSequencer.create("v_sqr")
+        self.apb_agnt = APBAgent("apb_agnt",self)
+        self.uart_agnt = UARTAgent("uart_agnt",self)
+        self.apbuart_scb = APBUARTScoreboard("apbuart_scb",self)
+        self.v_sqr = VSequencer("v_sqr")
 
     def connect_phase(self,phase):
         super().connect_phase(phase)
