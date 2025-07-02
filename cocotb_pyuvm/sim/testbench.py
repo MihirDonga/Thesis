@@ -1,4 +1,3 @@
-import pyuvm
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
@@ -6,7 +5,7 @@ from pyuvm import *
 from apbuart_config_test import apbuart_config_test  
 
 # Simple version without interface classes - direct signal access
-@pyuvm.test()
+@cocotb.test()
 async def tbench_top(dut):
     
     # Clock Generation: 50 MHz (20 ns period)
@@ -22,4 +21,4 @@ async def tbench_top(dut):
     ConfigDB().set(None, "*", "dut", dut)  # You can pass entire DUT for convenience
 
     # Start UVM test (equivalent to run_test())
-    await uvm_root().run_test("apbuart_config_test")
+    await uvm_root().run_test()
