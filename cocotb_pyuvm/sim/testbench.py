@@ -20,8 +20,8 @@ class apbuart_base_test(uvm_test):
         self.apb_cfg = None
         self.error_count = 0  # Manual error counter
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         self.logger.info(f"{self.get_name()} - Inside build_phase")
         
         # uvm_component, uvm_env, uvm_agent, scoreboard, sequencer	Yes (standard way)
@@ -65,8 +65,8 @@ class apbuart_base_test(uvm_test):
     #     super().end_of_elaboration_phase(phase)
     #     self.print_obj()
 
-    def report_phase(self, phase):
-        super().report_phase(phase)
+    def report_phase(self):
+        super().report_phase()
 
         if self.error_count> 0:
             self.logger.critical(f"{self.get_name()} - -" * 39)
