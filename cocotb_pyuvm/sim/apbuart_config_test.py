@@ -1,10 +1,8 @@
-import pyuvm
 from pyuvm import *
 from cocotb.triggers import Timer
 from apbuart_base_test import apbuart_base_test
 from apbuart_vseq_base import apbuart_config_seq
 
-@pyuvm.test()
 class apbuart_config_test(apbuart_base_test):
 
     def __init__(self, name, parent=None):
@@ -12,7 +10,7 @@ class apbuart_config_test(apbuart_base_test):
         self.apbuart_config_sq = None
 
     def build_phase(self, phase):
-        uvm_factory().set_inst_override_by_type(apbuart_base_test,apbuart_config_test)
+        # uvm_factory().set_inst_override_by_type(apbuart_base_test,apbuart_config_test)
         print(f"Entering build_phase for {self.get_name()}")
         super().build_phase(phase)
         self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_sq")
