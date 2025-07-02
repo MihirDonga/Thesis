@@ -7,7 +7,7 @@ class VSequencer(uvm_component):
         self.uart_sqr = None
 
     def end_of_elaboration_phase(self, phase):
-        super().__init__(phase)
+        super().end_of_elaboration_phase(phase)
         self.apb_sqr = ConfigDB().get(None, "", "apb_sqr", None)
         self.uart_sqr = ConfigDB().get(None, "", "uart_sqr", None)        
         if not self.apb_sqr:
