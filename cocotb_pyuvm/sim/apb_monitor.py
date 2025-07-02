@@ -4,6 +4,7 @@ from cocotb.triggers import RisingEdge
 class APBMonitor(uvm_monitor):
     def __init__(self, name, parent):
         super().__init__(name, parent)
+        self.dut = cocotb.top
         self.item_collected_port_mon = None
         self.trans_collected = None
 

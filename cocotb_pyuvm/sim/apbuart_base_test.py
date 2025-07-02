@@ -1,10 +1,8 @@
-import pyuvm
 from pyuvm import *
 from uart_config import uart_config
 from apb_config import apb_config
 from apbuart_environment import APBUARTEnv
 
-@pyuvm.test()
 class apbuart_base_test(uvm_test):
     def __init__(self, name="apbuart_base_test", parent=None):
         super().__init__(name, parent)
