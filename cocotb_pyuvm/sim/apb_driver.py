@@ -1,32 +1,33 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge
+from uart_config import uart_config
+from apb_config import apb_config
 
 class APBDriver(uvm_driver):
     def __init__(self, name, parent):
         super().__init__(name, parent)
-        self.dut = cocotb.top
+        self.dut = None
         self.cfg = None
         self.apb_cfg = None
 
     def build_phase(self, phase):
         super().build_phase(phase)
         # Get configurations from config_db
-        self.cfg = ConfigDB().get(self, "", "cfg")
-        self.apb_cfg = ConfigDB().get(self, "", "apb_cfg")
-        self.dut = ConfigDB().get(self, "", "dut")
+        self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
+        self.apb_cfg = ConfigDB().get(None, "", "apb_cfg", apb_config())
+        self.dut = ConfigDB().get(None, "", "dut", cocotb.top)
         
         if not self.cfg:
-            self.logger.error("UART config not found")
-            raise Exception("ConfigError")
+            self.logger.error("UART config not found APB_Driver")
+            raise Exception("ConfigError APB_Driver")
         if not self.apb_cfg:
-            self.logger.error("APB config not found")
-            raise Exception("APBConfigError")
-        if self.dut is None:
-            self.logger.error("DUT handle not found in ConfigDB")
-            raise Exception("dut")
+            self.logger.error("APB config not found APB_Driver")
+            raise Exception("APBConfigError APB_Driver")
+        if not self.dut:
+            self.logger.error("DUT handle not found in ConfigDB APB_Driver")
+            raise Exception("dut APB_Driver")
         
-    async def run_phase(self,phase):
-        super().run_phase(phase)
+    async def run_phase(self, phase):
         while True:
             # Wait for clock edge and reset to be inactive
             await RisingEdge(self.dut.PCLK)

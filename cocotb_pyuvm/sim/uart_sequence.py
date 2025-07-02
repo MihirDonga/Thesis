@@ -4,7 +4,7 @@ from uart_transaction import *
 # ------------------------
 # Sequence: Stop Bit Corruption
 # ------------------------
-class recdrv_test_uart(uvm_sequence):
+class recdrv_test_uart(uvm_sequence):  
     def __init__(self, name="recdrv_test_uart"):
         super().__init__(name)
         self.uart_sq = None

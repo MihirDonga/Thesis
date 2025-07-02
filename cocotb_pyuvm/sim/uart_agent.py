@@ -2,11 +2,11 @@ from pyuvm import *
 from uart_driver import UARTDriver
 from uart_monitor import UARTMonitor
 from uart_sequencer import UARTSequencer
-
+from uart_config import uart_config
 # UART Agent
 class UARTAgent(uvm_agent):
     def __init__(self, name, parent):
-        super().__init__(name)
+        super().__init__(name, parent)
         self.driver = None
         self.sequencer = None
         self.monitor = None
@@ -14,17 +14,17 @@ class UARTAgent(uvm_agent):
 
     def build_phase(self, phase):
         super().build_phase(phase)
-        success, self.cfg = ConfigDB().get(self, "", "cfg")
-        if not success:
-            uvm_fatal("NO_CFG", f"Configuration must be set for: {self.get_full_name()}.cfg")
-        
+        self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
+        if not self.cfg:
+            self.logger.error("UART config not found_UART_AGENT")
+            raise Exception("ConfigError")
         self.monitor = UARTMonitor("monitor", self)
         
         if self.cfg.is_active:
             self.driver = UARTDriver("driver", self)
             self.sequencer = UARTSequencer("sequencer", self)
 
-    def connect_phase(self,phase):
+    def connect_phase(self, phase):
         super().connect_phase(phase)
         if self.cfg.is_active:
             self.driver.seq_item_port.connect(self.sequencer.seq_item_export)

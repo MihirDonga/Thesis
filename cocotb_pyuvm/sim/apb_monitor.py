@@ -4,17 +4,18 @@ from cocotb.triggers import RisingEdge
 class APBMonitor(uvm_monitor):
     def __init__(self, name, parent):
         super().__init__(name, parent)
-        self.dut = cocotb.top
+        self.dut = None
         self.item_collected_port_mon = None
         self.trans_collected = None
 
     def build_phase(self, phase):
         super().build_phase(phase)
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
-        self.dut = ConfigDB().get(self, "", "dut")
-
+        self.dut = ConfigDB().get(None, "", "dut", cocotb.top)
+        if not self.dut:
+            self.logger.error("DUT handle not found APB_Monitor")
+            raise Exception("DUTError APB_Monitor")
     async def run_phase(self, phase):
-        super().run_phase(phase)
         while True:
             # Wait for transaction start
             await RisingEdge(self.dut.PCLK)

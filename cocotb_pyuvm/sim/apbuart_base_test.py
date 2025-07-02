@@ -23,10 +23,10 @@ class apbuart_base_test(uvm_test):
         # uvm_sequence	hsas No, instantiate directly via constructor
         self.env_sq =  APBUARTEnv("env_sq",self) 
 
-        ConfigDB().set(self, "*", "cfg", self.cfg)
+        ConfigDB().set(None, "*", "cfg", self.cfg)
         self.set_config_params(9600, 8, 3, 1, 0)
 
-        ConfigDB().set(self, "*", "apb_cfg", self.apb_cfg)
+        ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
         self.set_apbconfig_params(2, 0)
 
     def set_config_params(self, bd_rate, frm_len, parity, sb, flag):
@@ -54,9 +54,9 @@ class apbuart_base_test(uvm_test):
         self.logger.error(msg)
         self.error_count += 1
 
-    def end_of_elaboration_phase(self, phase):
-        super().end_of_elaboration_phase(phase)
-        self.print_obj()
+    # def end_of_elaboration_phase(self, phase):
+    #     super().end_of_elaboration_phase(phase)
+    #     self.print_obj()
 
     def report_phase(self, phase):
         super().report_phase(phase)
@@ -71,32 +71,53 @@ class apbuart_base_test(uvm_test):
             self.logger.critical(f"{self.get_name()} - -" * 39)
 
 @pyuvm.test()
+# class apbuart_config_test(apbuart_base_test):
+
+#     def __init__(self, name, parent=None):
+#         super().__init__(name, parent)
+#         self.apbuart_config_sq = None
+
+#     def build_phase(self, phase):
+#         # uvm_factory().set_inst_override_by_type(apbuart_base_test,apbuart_config_test)
+#         print(f"Entering build_phase for {self.get_name()}")
+#         super().build_phase(phase)
+#         self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_sq")
+#         if self.apbuart_config_sq is None:
+#             raise Exception("Failed to create apbuart_config_seq from factory")
+
+#     async def run_phase(self, phase):
+#         for _ in range(self.cfg.loop_time):
+#             self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
+#             self.logger.info(f"UART Config:\n{self.cfg}")       #prints __str__ from uart_config
+
+#             self.set_apbconfig_params(2, 1)  # Slave Bus Address, Randomize Flag
+#             self.logger.info(f"APB Config:\n{self.apb_cfg}")    #prints __str__ from apb_config
+
+#             phase.raise_objection(self)
+#             await self.apbuart_config_sq.start(self.env_sq.v_sqr)
+#             phase.drop_objection(self)
+
+#         # Wait 20 time units after dropping objection before test finishes
+#         await Timer(20, "ns")
+@pyuvm.test()
 class apbuart_config_test(apbuart_base_test):
-
-    def __init__(self, name, parent=None):
-        super().__init__(name, parent)
-        self.apbuart_config_sq = None
-
-    def build_phase(self, phase):
-        # uvm_factory().set_inst_override_by_type(apbuart_base_test,apbuart_config_test)
-        print(f"Entering build_phase for {self.get_name()}")
-        super().build_phase(phase)
-        self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_sq")
-        if self.apbuart_config_sq is None:
-            raise Exception("Failed to create apbuart_config_seq from factory")
+    """APBUART configuration test"""
 
     async def run_phase(self, phase):
-        super().run_phase(phase)
-        for _ in range(self.cfg.loop_time):
-            self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
-            self.logger.info(f"UART Config:\n{self.cfg}")       #prints __str__ from uart_config
-
-            self.set_apbconfig_params(2, 1)  # Slave Bus Address, Randomize Flag
-            self.logger.info(f"APB Config:\n{self.apb_cfg}")    #prints __str__ from apb_config
-
-            phase.raise_objection(self)
-            await self.apbuart_config_sq.start(self.env_sq.v_sqr)
+        phase.raise_objection(self)
+        
+        try:
+            # Run configuration sequence multiple times
+            for _ in range(self.cfg.loop_time):
+                # Randomize configurations
+                self._set_uart_config(9600, 8, 3, 1, randomize=True)
+                self._set_apb_config(2, randomize=True)
+                
+                # Execute configuration sequence
+                seq = apbuart_config_seq("apbuart_config_seq")
+                await seq.start(self.env_sq.v_sqr)
+                
+        finally:
+            # Ensure objection is dropped even if error occurs
+            await Timer(20, "ns")  # Cleanup period
             phase.drop_objection(self)
-
-        # Wait 20 time units after dropping objection before test finishes
-        await Timer(20, "ns")

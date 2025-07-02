@@ -1,6 +1,7 @@
 from pyuvm import *
 from uart_transaction import UARTTransaction
 from cocotb.triggers import RisingEdge
+from uart_config import uart_config
 
 # Python uses __init__ instead of new()
 # Type declarations are dynamic in Python
@@ -17,13 +18,15 @@ class UARTDriver(uvm_driver):
     def build_phase(self, phase):
         super().build_phase(phase)
         # Get configuration from config_db
-        self.cfg = ConfigDB().get(self, "", "cfg")  
+        self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
+        self.dut = ConfigDB().get(None, "", "dut", cocotb.top)        
         if not self.cfg:
             self.logger.error("UART config not found")
             raise Exception("ConfigError")
+        if not self.dut:
+            self.logger.error("UART dut not found")
+            raise Exception("dut_error")
         
-        self.dut = ConfigDB().get(self, "", "dut")
-
         # uvm_config_db becomes ConfigDB in PyUVM
         # uvm_fatal becomes logger.error + exception
         # Port creation syntax is similar but Python-style   
@@ -56,8 +59,8 @@ class UARTDriver(uvm_driver):
             self.dut.RX.value = 1
             
             # Wait for reset to be inactive
-            await RisingEdge(self.vif.PCLK)
-            if not self.vif.PRESETn.value:
+            await RisingEdge(self.dut.PCLK)
+            if not self.dut.PRESETn.value:
                 continue
                 
             # Get transaction from sequencer

@@ -7,9 +7,9 @@ from uart_config import uart_config
 class config_apbuart(uvm_sequence):
     def __init__(self, name="config_apbuart"):
         super().__init__(name)
-
+        self.cfg = None
     async def body(self):
-        cfg = uart_config.create("cfg")
+        cfg = uart_config("cfg")
 
         for addr in [cfg.baud_config_addr,
                      cfg.frame_config_addr,
@@ -36,8 +36,8 @@ class transmit_single_beat(uvm_sequence):
         super().__init__(name)
 
     async def body(self):
-        cfg = uart_config.create("cfg")
-        apbuart_sq = APBTransaction.create("apbuart_sq")
+        cfg = uart_config("cfg")
+        apbuart_sq = APBTransaction("apbuart_sq")
 
         await self.start_item(apbuart_sq)
         apbuart_sq.PWRITE = 1
@@ -52,8 +52,8 @@ class rec_reg_test(uvm_sequence):
         super().__init__(name)
 
     async def body(self):
-        cfg = uart_config.create("cfg")
-        apbuart_sq = APBTransaction.create("apbuart_sq")
+        cfg = uart_config("cfg")
+        apbuart_sq = APBTransaction("apbuart_sq")
 
         await self.start_item(apbuart_sq)
         apbuart_sq.PWRITE = 0

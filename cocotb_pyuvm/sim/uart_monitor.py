@@ -1,35 +1,37 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge, Timer
 from uart_transaction import UARTTransaction
+from uart_config import uart_config
 
 class UARTMonitor(uvm_monitor):
     def __init__(self, name, parent):
         super().__init__(name, parent)
-        self.dut = cocotb.top
+        self.dut = None
         self.cfg = None
         self.trans_collected = None
         self.count = 0
         self.count1 = 1
         self.receive_reg = 0
         self.LT = 0
-        self.parity_en = False
+        self.parity_en = 0
     
     def build_phase(self, phase):
         super().build_phase(phase)
         
         # Get configuration from config_db
-        self.cfg = ConfigDB().get(self, "", "cfg")  
+        self.cfg = ConfigDB().get(None, "", "cfg", uart_config())        
         if not self.cfg:
-            self.logger.error("UART config not found")
-            raise Exception("ConfigError")
+            self.logger.error("UART config not found UART_Monitor")
+            raise Exception("ConfigError UART_Monitor")
         
         self.dut = ConfigDB().get(self, "", "dut")
-
+        if not self.dut:
+            self.logger.error("UART dut not found UART_Monitor")
+            raise Exception("dut error UART_Monitor")
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
         self.trans_collected = UARTTransaction()
 
     async def run_phase(self, phase):
-        super().run_phase(phase)
         while True:
             await RisingEdge(self.dut.PCLK)
             self.cfg_settings()  # Update configuration settings
