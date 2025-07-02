@@ -26,7 +26,7 @@ async def tbench_top(dut):
 # async def tbench_top(dut):
     from pyuvm import uvm_root
     root = uvm_root()
-    print("Registered test classes:", root._uvm_factory._registry.keys())
+    print("Registered test classes:", factory._registry.keys())
     await uvm_root().run_test("apbuart_config_test")
 
 
