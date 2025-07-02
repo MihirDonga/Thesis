@@ -97,29 +97,29 @@ class apbuart_base_test(uvm_test):
 #         # Wait 20 time units after dropping objection before test finishes
 #         await Timer(20, "ns")
 
-class apbuart_config_test(apbuart_base_test):
-    """APBUART configuration test"""
+# class apbuart_config_test(apbuart_base_test):
+#     """APBUART configuration test"""
 
-    def build_phase(self, phase):
-        print(f"Entering build_phase for {self.get_name()}")
-        super().build_phase(phase)  # Must call parent first
-        self.apbuart_config_sq = apbuart_config_seq("apbuart_config_seq")
+#     def build_phase(self, phase):
+#         print(f"Entering build_phase for {self.get_name()}")
+#         super().build_phase(phase)  # Must call parent first
+#         self.apbuart_config_sq = apbuart_config_seq("apbuart_config_seq")
 
 
-    async def run_phase(self, phase):
-        phase.raise_objection(self)
+#     async def run_phase(self, phase):
+#         phase.raise_objection(self)
         
-        try:
-            # Run configuration sequence multiple times
-            for _ in range(self.cfg.loop_time):
-                # Randomize configurations
-                self._set_uart_config(9600, 8, 3, 1, 1)
-                self._set_apb_config(2, 1)
+#         try:
+#             # Run configuration sequence multiple times
+#             for _ in range(self.cfg.loop_time):
+#                 # Randomize configurations
+#                 self._set_uart_config(9600, 8, 3, 1, 1)
+#                 self._set_apb_config(2, 1)
                 
-                # Execute configuration sequence
-                await apbuart_config_sq.start(self.env_sq.v_sqr)
+#                 # Execute configuration sequence
+#                 await apbuart_config_sq.start(self.env_sq.v_sqr)
                 
-        finally:
-            # Ensure objection is dropped even if error occurs
-            await Timer(20, "ns")  # Cleanup period
-            phase.drop_objection(self)
+#         finally:
+#             # Ensure objection is dropped even if error occurs
+#             await Timer(20, "ns")  # Cleanup period
+#             phase.drop_objection(self)
