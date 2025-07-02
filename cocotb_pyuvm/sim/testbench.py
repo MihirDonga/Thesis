@@ -2,9 +2,81 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 from pyuvm import *
-from apbuart_base_test import apbuart_base_test  
+# from apbuart_base_test import apbuart_base_test  
 # from apbuart_config_test import apbuart_config_test
 # Simple version without interface classes - direct signal access
+from pyuvm import *
+from uart_config import uart_config
+from apb_config import apb_config
+from apbuart_environment import APBUARTEnv
+from cocotb.triggers import Timer
+# from apbuart_vseq_base import apbuart_config_seq
+
+class apbuart_base_test(uvm_test):
+    def __init__(self, name="apbuart_base_test", parent=None):
+        super().__init__(name, parent)
+        self.env_sq = None
+        self.cfg = None
+        self.apb_cfg = None
+        self.error_count = 0  # Manual error counter
+
+    def build_phase(self, phase):
+        super().build_phase(phase)
+        self.logger.info(f"{self.get_name()} - Inside build_phase")
+        
+        # uvm_component, uvm_env, uvm_agent, scoreboard, sequencer	Yes (standard way)
+        # uvm_sequence	hsas No, instantiate directly via constructor
+        self.env_sq =  APBUARTEnv.create("env_sq",self) 
+        self.cfg = uart_config()
+        self.apb_cfg = apb_config()
+
+        self.set_config_params(9600, 8, 3, 1, 0)
+        self.set_apbconfig_params(2, 0)
+        
+        ConfigDB().set(None, "*", "cfg", self.cfg)
+        ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
+
+    def set_config_params(self, bd_rate, frm_len, parity, sb, flag):
+        if flag:
+            self.cfg.randomize()
+        else:
+            self.cfg.frame_len = frm_len
+            self.cfg.n_sb = sb
+            self.cfg.parity = parity
+            self.cfg.bRate = bd_rate
+            self.cfg.baudRateFunc()
+
+        self.logger.info(f"{self.get_name()} - UART Config after set_config_params:\n{self.cfg}")
+
+    def set_apbconfig_params(self, addr, flag):
+        if flag:
+            self.apb_cfg.randomize()
+        else:
+            self.apb_cfg.slave_Addr = addr
+            self.apb_cfg.AddrCalcFunc()
+
+        self.logger.info(f"{self.get_name()} - APB Config after set_apbconfig_params:\n{self.apb_cfg}")
+
+    def report_error(self, msg):
+        self.logger.error(msg)
+        self.error_count += 1
+
+    # def end_of_elaboration_phase(self, phase):
+    #     super().end_of_elaboration_phase(phase)
+    #     self.print_obj()
+
+    def report_phase(self, phase):
+        super().report_phase(phase)
+
+        if self.error_count> 0:
+            self.logger.critical(f"{self.get_name()} - -" * 39)
+            self.logger.critical(f"{self.get_name()} - ----            TEST FAIL          ----")
+            self.logger.critical(f"{self.get_name()} - -" * 39)
+        else:
+            self.logger.critical(f"{self.get_name()} - -" * 39)
+            self.logger.critical(f"{self.get_name()} - ----           TEST PASS           ----")
+            self.logger.critical(f"{self.get_name()} - -" * 39)
+
 @cocotb.test()
 async def tbench_top(dut):
     
