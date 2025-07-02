@@ -4,6 +4,7 @@ from cocotb.triggers import RisingEdge
 class APBDriver(uvm_driver):
     def __init__(self, name, parent):
         super().__init__(name, parent)
+        self.dut = cocotb.top
         self.cfg = None
         self.apb_cfg = None
 
