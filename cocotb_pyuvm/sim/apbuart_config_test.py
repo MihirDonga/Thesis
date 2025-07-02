@@ -15,7 +15,7 @@ class apbuart_config_test(apbuart_base_test):
         uvm_factory().set_inst_override_by_type(apbuart_base_test,apbuart_config_test)
         print(f"Entering build_phase for {self.get_name()}")
         super().build_phase(phase)
-        self.apbuart_config_sq = apbuart_config_seq.type_id.create("apbuart_config_sq")
+        self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_sq")
         if self.apbuart_config_sq is None:
             raise Exception("Failed to create apbuart_config_seq from factory")
 
