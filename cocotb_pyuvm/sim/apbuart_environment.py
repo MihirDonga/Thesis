@@ -19,7 +19,7 @@ class APBUARTEnv(uvm_env):
         self.apb_agnt = APBAgent("apb_agnt",self)
         self.uart_agnt = UARTAgent("uart_agnt",self)
         self.apbuart_scb = APBUARTScoreboard("apbuart_scb",self)
-        self.v_sqr = VSequencer("v_sqr")
+        self.v_sqr = VSequencer("v_sqr",self)
 
     def connect_phase(self,phase):
         super().connect_phase(phase)
@@ -35,21 +35,21 @@ class APBUARTEnv(uvm_env):
         ConfigDB().set(self, "*", "apb_sqr", self.apb_agnt.sequencer)
         ConfigDB().set(self, "*", "uart_sqr", self.uart_agnt.sequencer)
 
-    async def final_phase(self, phase):
-        super().final_phase(phase)
-        # Start coverage printing as background task
-        cocotb.start_soon(self.print_all_coverages())
+    # async def final_phase(self, phase):
+    #     super().final_phase(phase)
+    #     # Start coverage printing as background task
+    #     cocotb.start_soon(self.print_all_coverages())
 
-    async def print_all_coverages(self, phase):
-        super().print_all_coverages(phase)
-        if self.apb_agnt and hasattr(self.apb_agnt.monitor, 'print_coverage_APB_summary'):
-            self.apb_agnt.monitor.print_coverage_APB_summary()
-        else:
-            self.logger.warning("APB_MONITOR_NULL", 
-                              "APB monitor instance is null or missing coverage method")
+    # async def print_all_coverages(self, phase):
+    #     super().print_all_coverages(phase)
+    #     if self.apb_agnt and hasattr(self.apb_agnt.monitor, 'print_coverage_APB_summary'):
+    #         self.apb_agnt.monitor.print_coverage_APB_summary()
+    #     else:
+    #         self.logger.warning("APB_MONITOR_NULL", 
+    #                           "APB monitor instance is null or missing coverage method")
         
-        if self.uart_agnt and hasattr(self.uart_agnt.monitor, 'print_coverage_UART_summary'):
-            self.uart_agnt.monitor.print_coverage_UART_summary()
-        else:
-            self.logger.warning("UART_MONITOR_NULL", 
-                              "UART monitor instance is null or missing coverage method")
+    #     if self.uart_agnt and hasattr(self.uart_agnt.monitor, 'print_coverage_UART_summary'):
+    #         self.uart_agnt.monitor.print_coverage_UART_summary()
+    #     else:
+    #         self.logger.warning("UART_MONITOR_NULL", 
+    #                           "UART monitor instance is null or missing coverage method")
