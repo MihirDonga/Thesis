@@ -70,7 +70,6 @@ class apbuart_base_test(uvm_test):
             self.logger.critical(f"{self.get_name()} - ----           TEST PASS           ----")
             self.logger.critical(f"{self.get_name()} - -" * 39)
 
-@pyuvm.test()
 class apbuart_config_test(apbuart_base_test):
 
     def __init__(self, name, parent=None):
