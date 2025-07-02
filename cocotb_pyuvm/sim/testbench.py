@@ -5,7 +5,6 @@ from pyuvm import *
 from apbuart_config_test import apbuart_config_test  
 
 # Simple version without interface classes - direct signal access
-@cocotb.test()
 async def tbench_top(dut):
     
     # Clock Generation: 50 MHz (20 ns period)
