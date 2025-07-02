@@ -6,7 +6,7 @@ from apbuart_environment import APBUARTEnv
 from cocotb.triggers import Timer
 from apbuart_vseq_base import apbuart_config_seq
 
-@pyuvm.test()
+# @pyuvm.test()
 class apbuart_base_test(uvm_test):
     def __init__(self, name="apbuart_base_test", parent=None):
         super().__init__(name, parent)
