@@ -35,8 +35,8 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.tx_cg = TxCoverage()
         self.rx_cg = RxCoverage()
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         if not self.cfg:
             self.logger.fatal("No cfg",
@@ -57,8 +57,8 @@ class APBUARTScoreboard(uvm_scoreboard):
     def write_drvuart(self, pkt: "UARTTransaction"):
         self.pkt_qu_drvuart.append(pkt)
 
-    async def run_phase(self, phase):
-        super().build_phase(phase)
+    async def run_phase(self):
+        super().build_phase()
         while True:
             # Wait until APB monitor queue has data
             if self.pkt_qu_monapb:

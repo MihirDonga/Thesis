@@ -8,14 +8,14 @@ class APBMonitor(uvm_monitor):
         self.item_collected_port_mon = None
         self.trans_collected = None
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
         self.dut = ConfigDB().get(None, "", "dut", cocotb.top)
         if not self.dut:
             self.logger.error("DUT handle not found APB_Monitor")
             raise Exception("DUTError APB_Monitor")
-    async def run_phase(self, phase):
+    async def run_phase(self):
         while True:
             # Wait for transaction start
             await RisingEdge(self.dut.PCLK)

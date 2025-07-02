@@ -13,16 +13,16 @@ class APBUARTEnv(uvm_env):
         self.apbuart_scb = None  # type: APBUARTScoreboard
         self.v_sqr = None  # type: VSequencer
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         # Create components
         self.apb_agnt = APBAgent("apb_agnt",self)
         self.uart_agnt = UARTAgent("uart_agnt",self)
         self.apbuart_scb = APBUARTScoreboard("apbuart_scb",self)
         self.v_sqr = VSequencer("v_sqr",self)
 
-    def connect_phase(self,phase):
-        super().connect_phase(phase)
+    def connect_phase(self):
+        super().connect_phase()
         # Connect analysis ports
         self.apb_agnt.monitor.item_collected_port_mon.connect(
             self.apbuart_scb.item_collected_export_monapb)
@@ -35,12 +35,12 @@ class APBUARTEnv(uvm_env):
         ConfigDB().set(self, "*", "apb_sqr", self.apb_agnt.sequencer)
         ConfigDB().set(self, "*", "uart_sqr", self.uart_agnt.sequencer)
 
-    # async def final_phase(self, phase):
+    # async def final_phase(self):
     #     super().final_phase(phase)
     #     # Start coverage printing as background task
     #     cocotb.start_soon(self.print_all_coverages())
 
-    # async def print_all_coverages(self, phase):
+    # async def print_all_coverages(self):
     #     super().print_all_coverages(phase)
     #     if self.apb_agnt and hasattr(self.apb_agnt.monitor, 'print_coverage_APB_summary'):
     #         self.apb_agnt.monitor.print_coverage_APB_summary()

@@ -6,8 +6,8 @@ class VSequencer(uvm_sequencer):
         self.apb_sqr = None
         self.uart_sqr = None
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         self.apb_sqr = ConfigDB().get(None, "", "apb_sqr")
         self.uart_sqr = ConfigDB().get(None, "", "uart_sqr")        
         if not self.apb_sqr:

@@ -12,8 +12,8 @@ class APBAgent(uvm_agent):
         self.monitor = None
         self.apb_cfg = None
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         self.apb_cfg = ConfigDB().get(None, "", "apb_cfg", apb_config())    
         if not self.apb_cfg:
             self.logger.error("UART config not found_APB_AGENT")
@@ -25,7 +25,7 @@ class APBAgent(uvm_agent):
             self.driver = APBDriver.create("driver", self)
             self.sequencer = APBSequencer.create("sequencer", self)
 
-    def connect_phase(self, phase):
-        super().connect_phase(phase)
+    def connect_phase(self):
+        super().connect_phase()
         if self.apb_cfg.is_active:
             self.driver.seq_item_port.connect(self.sequencer.seq_item_export)

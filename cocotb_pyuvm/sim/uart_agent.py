@@ -12,8 +12,8 @@ class UARTAgent(uvm_agent):
         self.monitor = None
         self.cfg = None
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         if not self.cfg:
             self.logger.error("UART config not found_UART_AGENT")
@@ -24,7 +24,7 @@ class UARTAgent(uvm_agent):
             self.driver = UARTDriver.create("driver", self)
             self.sequencer = UARTSequencer.create("sequencer", self)
 
-    def connect_phase(self, phase):
-        super().connect_phase(phase)
+    def connect_phase(self):
+        super().connect_phase()
         if self.cfg.is_active:
             self.driver.seq_item_port.connect(self.sequencer.seq_item_export)

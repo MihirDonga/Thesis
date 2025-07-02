@@ -15,8 +15,8 @@ class UARTDriver(uvm_driver):
         self.trans_collected = None
         self.LT = 0  # Line Type
         
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         # Get configuration from config_db
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         self.dut = ConfigDB().get(None, "", "dut", cocotb.top)        
@@ -34,8 +34,8 @@ class UARTDriver(uvm_driver):
         self.item_collected_port_drv = uvm_analysis_port("item_collected_port_drv", self)
         self.trans_collected = UARTTransaction()
 
-    async def run_phase(self, phase):
-        super().run_phase(phase)
+    async def run_phase(self):
+        super().run_phase()
         await self.get_and_drive()
 
     def cfg_settings(self):

@@ -10,8 +10,8 @@ class APBDriver(uvm_driver):
         self.cfg = None
         self.apb_cfg = None
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         # Get configurations from config_db
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         self.apb_cfg = ConfigDB().get(None, "", "apb_cfg", apb_config())
@@ -27,7 +27,7 @@ class APBDriver(uvm_driver):
             self.logger.error("DUT handle not found in ConfigDB APB_Driver")
             raise Exception("dut APB_Driver")
         
-    async def run_phase(self, phase):
+    async def run_phase(self):
         while True:
             # Wait for clock edge and reset to be inactive
             await RisingEdge(self.dut.PCLK)
