@@ -22,12 +22,11 @@ class apbuart_base_test(uvm_test):
         # uvm_component, uvm_env, uvm_agent, scoreboard, sequencer	Yes (standard way)
         # uvm_sequence	hsas No, instantiate directly via constructor
         self.env_sq =  APBUARTEnv("env_sq",self) 
-
-        ConfigDB().set(None, "*", "cfg", self.cfg)
         self.set_config_params(9600, 8, 3, 1, 0)
-
-        ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
         self.set_apbconfig_params(2, 0)
+        
+        ConfigDB().set(None, "*", "cfg", self.cfg)
+        ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
 
     def set_config_params(self, bd_rate, frm_len, parity, sb, flag):
         if flag:
@@ -70,7 +69,7 @@ class apbuart_base_test(uvm_test):
             self.logger.critical(f"{self.get_name()} - ----           TEST PASS           ----")
             self.logger.critical(f"{self.get_name()} - -" * 39)
 
-@pyuvm.test()
+# @pyuvm.test()
 # class apbuart_config_test(apbuart_base_test):
 
 #     def __init__(self, name, parent=None):
@@ -110,8 +109,8 @@ class apbuart_config_test(apbuart_base_test):
             # Run configuration sequence multiple times
             for _ in range(self.cfg.loop_time):
                 # Randomize configurations
-                self._set_uart_config(9600, 8, 3, 1, randomize=True)
-                self._set_apb_config(2, randomize=True)
+                self._set_uart_config(9600, 8, 3, 1, 1)
+                self._set_apb_config(2, 1)
                 
                 # Execute configuration sequence
                 seq = apbuart_config_seq("apbuart_config_seq")
