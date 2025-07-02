@@ -6,7 +6,6 @@ from apbuart_environment import APBUARTEnv
 from cocotb.triggers import Timer
 from apbuart_vseq_base import apbuart_config_seq
 
-# @pyuvm.test()
 class apbuart_base_test(uvm_test):
     def __init__(self, name="apbuart_base_test", parent=None):
         super().__init__(name, parent)
@@ -69,7 +68,6 @@ class apbuart_base_test(uvm_test):
             self.logger.critical(f"{self.get_name()} - ----           TEST PASS           ----")
             self.logger.critical(f"{self.get_name()} - -" * 39)
 
-# @pyuvm.test()
 # class apbuart_config_test(apbuart_base_test):
 
 #     def __init__(self, name, parent=None):
