@@ -22,4 +22,4 @@ async def tbench_top(dut):
 
 
     # Start UVM test (equivalent to run_test())
-    await uvm_root().run_test(apbuart_base_test)
+    await uvm_root().run_test("apbuart_base_test")
