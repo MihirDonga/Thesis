@@ -3,7 +3,7 @@ import vsc
 
 @vsc.covergroup
 class ConfigCoverage(object):
-    def __init__(self, name, parent):
+    def __init__(self):
         self.with_sample(dict(
                     bRate=0,
                     frame_len=0,

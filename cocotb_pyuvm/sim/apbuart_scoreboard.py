@@ -3,6 +3,7 @@ from apbuart_coverage import ConfigCoverage, TxCoverage, RxCoverage
 from cocotb.triggers import Timer
 from uart_transaction import UARTTransaction
 from apb_transaction import APBTransaction
+from uart_config import uart_config
 
 class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
@@ -36,8 +37,8 @@ class APBUARTScoreboard(uvm_scoreboard):
 
     def build_phase(self, phase):
         super().build_phase(phase)
-        success, self.cfg = ConfigDB().get(self, "", "cfg")
-        if not success or self.cfg is None:
+        self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
+        if not self.cfg:
             self.logger.fatal("No cfg",
                 f"Configuration must be set for: {self.get_full_name()}.cfg")
             raise Exception("UART Config not found")
