@@ -101,6 +101,12 @@ class apbuart_base_test(uvm_test):
 @pyuvm.test()
 class apbuart_config_test(apbuart_base_test):
     """APBUART configuration test"""
+    
+    def build_phase(self, phase):
+        print(f"Entering build_phase for {self.get_name()}")
+        super().build_phase(phase)  # Must call parent first
+        self.apbuart_config_sq = apbuart_config_seq("apbuart_config_seq")
+
 
     async def run_phase(self, phase):
         phase.raise_objection(self)
