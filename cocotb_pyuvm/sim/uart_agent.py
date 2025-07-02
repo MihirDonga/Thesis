@@ -18,11 +18,11 @@ class UARTAgent(uvm_agent):
         if not self.cfg:
             self.logger.error("UART config not found_UART_AGENT")
             raise Exception("ConfigError")
-        self.monitor = UARTMonitor("monitor", self)
+        self.monitor = UARTMonitor.create("monitor", self)
         
         if self.cfg.is_active:
-            self.driver = UARTDriver("driver", self)
-            self.sequencer = UARTSequencer("sequencer", self)
+            self.driver = UARTDriver.create("driver", self)
+            self.sequencer = UARTSequencer.create("sequencer", self)
 
     def connect_phase(self, phase):
         super().connect_phase(phase)
