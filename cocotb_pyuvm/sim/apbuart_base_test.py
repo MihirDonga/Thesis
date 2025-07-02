@@ -96,7 +96,7 @@ class apbuart_base_test(uvm_test):
 
 #         # Wait 20 time units after dropping objection before test finishes
 #         await Timer(20, "ns")
-@pyuvm.test()
+
 class apbuart_config_test(apbuart_base_test):
     """APBUART configuration test"""
 
