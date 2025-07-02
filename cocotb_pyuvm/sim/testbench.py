@@ -20,5 +20,7 @@ async def tbench_top(dut):
     # Store signals in ConfigDB for access by UVM components
     ConfigDB().set(None, "*", "dut", dut)  # You can pass entire DUT for convenience
 
+    test_name = cocotb.plusargs.get("TESTNAME", "apbuart_config_test")
+
     # Start UVM test (equivalent to run_test())
-    await uvm_root().run_test(apbuart_config_test)
+    await uvm_root().run_test(test_name)
