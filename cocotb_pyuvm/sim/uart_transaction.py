@@ -10,12 +10,12 @@ class UARTTransaction(uvm_sequence_item):
         self.payload = vsc.rand_uint32_t()  # 32-bit data to be sent on DUT RX pin
         self.transmitter_reg = vsc.rand_uint32_t()  # 32-bit data monitored from DUT TX pin
         self.bad_parity = vsc.rand_bit_t()
-        self.bad_parity_frame = vsc.rand_uint7_t()
+        self.bad_parity_frame = vsc.rand_uint_t(8)
         self.sb_corr = vsc.rand_bit_t()
-        self.sb_corr_frame = vsc.rand_uint7_t()
-        self.sb_corr_bit = vsc.rand_uint2_t()
+        self.sb_corr_frame = vsc.rand_uint_t(8)
+        self.sb_corr_bit = vsc.rand_uint_t(2)
         self.start_bit = vsc.rand_bit_t()
-        self.stop_bits = vsc.rand_uint2_t()
+        self.stop_bits = vsc.rand_uint_t(2)
         
         self.payld_func = 0  # 36-bit value for calculations
         
