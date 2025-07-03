@@ -8,16 +8,7 @@ import vsc
 class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
         super().__init__(name, parent)
-
-        # # Create vsc variables for coverage
-        self.cg_bRate = vsc.uint32_t(0)
-        self.cg_frame_len = vsc.uint32_t(0)
-        self.cg_parity = vsc.uint32_t(0)
-        self.cg_n_sb = vsc.uint32_t(0)
-        self.cg_apb_data = vsc.uint32_t(0)
-        self.cg_uart_data = vsc.uint32_t(0)
-        self.cg_error = vsc.bit_t(0)
-        
+       
         # Create coverage components
         self.config_cg = ConfigCoverage()
         self.tx_cg = TxCoverage()
@@ -118,11 +109,6 @@ class APBUARTScoreboard(uvm_scoreboard):
     def compare_config(self, apb_pkt):
 
         # test = uvm_root().find("apbuart_base_test")  # Reference to your base test
-        # Update vsc variables with current values
-        self.cg_bRate.set_val(self.baud_rate_reg)
-        self.cg_frame_len.set_val(self.frame_len_reg)
-        self.cg_parity.set_val(self.parity_reg)
-        self.cg_n_sb.set_val(self.stopbit_reg)
 
         if apb_pkt.PADDR == self.cfg.baud_config_addr:
             if apb_pkt.PRDATA == self.baud_rate_reg:
@@ -163,20 +149,26 @@ class APBUARTScoreboard(uvm_scoreboard):
             parity=self.cg_parity.get_val(),
             n_sb=self.cg_n_sb.get_val()
         )
+        self.config_cg.sample(
+            bRate=self.baud_rate_reg,
+            frame_len=self.frame_len_reg,
+            parity=self.parity_reg,
+            n_sb=self.stopbit_reg
+        )
         self.config_sample_count += 1
 
 
     def compare_transmission(self, apb_pkt, uart_pkt):
 
-        # test = uvm_root().find("apbuart_base_test")
-        self.cg_apb_data.set_val(apb_pkt.PWDATA)
-        self.cg_uart_data.set_val(uart_pkt.transmitter_reg)
-
+        test = uvm_root().find("apbuart_base_test")
         # Sample coverage
         
         if apb_pkt.PWDATA == uart_pkt.transmitter_reg:
             self.logger.info("Transmission Data Packet Match")
-            self.tx_cg.sample(apb_data=self.cg_apb_data.get_val(), uart_data=self.cg_uart_data.get_val())
+            self.tx_cg.sample(
+                apb_data=apb_pkt.PWDATA,
+                uart_data=uart_pkt.transmitter_reg
+            )            
             self.tx_sample_count += 1
         else:
             self.logger.error("Transmission Data Packet Mismatch")
@@ -185,12 +177,7 @@ class APBUARTScoreboard(uvm_scoreboard):
 
     def compare_receive(self, apb_pkt, uart_pkt):
         
-        # test = uvm_root().find("apbuart_base_test")
-        # Update vsc variables
-        self.cg_apb_data.set_val(apb_pkt.PRDATA)
-        self.cg_uart_data.set_val(uart_pkt.payload)
-        self.cg_error.set_val(apb_pkt.PSLVERR)
-
+        test = uvm_root().find("apbuart_base_test")
               
         if apb_pkt.PRDATA == uart_pkt.payload:
             self.logger.info("------ :: Receiver Data Packet Match :: ------")
@@ -216,7 +203,11 @@ class APBUARTScoreboard(uvm_scoreboard):
             self.logger.info("------------------------------------")
         
          # Sample coverage
-        self.rx_cg.sample(apb_data=self.cg_apb_data.get_val(),uart_data=self.cg_uart_data.get_val(),error=self.cg_error.get_val())
+        self.rx_cg.sample(
+            apb_data=apb_pkt.PRDATA,
+            uart_data=uart_pkt.payload,
+            error=apb_pkt.PSLVERR
+        )        
         self.rx_sample_count += 1 
 
     def report_phase(self):
