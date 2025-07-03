@@ -9,10 +9,10 @@ class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
         super().__init__(name, parent)
 
-        self.apb_mon_imp = uvm_analysis_imp("apb_mon_imp", self.write_monapb, self)
-        self.uart_mon_imp = uvm_analysis_imp("uart_mon_imp", self.write_monuart, self)
-        self.uart_drv_imp = uvm_analysis_imp("uart_drv_imp", self.write_drvuart, self)
-
+        self.item_collected_export_monapb = uvm_analysis_export("item_collected_export_monapb", self)
+        self.item_collected_export_monuart = uvm_analysis_export("item_collected_export_monuart", self)
+        self.item_collected_export_drvuart = uvm_analysis_export("item_collected_export_drvuart", self)
+       
         # Queues for storing transactions
         self.pkt_qu_monapb = []
         self.pkt_qu_monuart = []
