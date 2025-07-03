@@ -8,8 +8,8 @@ class VSequencer(uvm_sequencer):
 
     def build_phase(self):
         super().build_phase()
-        self.apb_sqr = ConfigDB().get(self, "", "apb_sqr")
-        self.uart_sqr = ConfigDB().get(self, "", "uart_sqr")        
+        self.apb_sqr = ConfigDB().get(self, "", "apb_sqr", self.apb_sqr)
+        self.uart_sqr = ConfigDB().get(self, "", "uart_sqr", self.uart_sqr)        
         if self.apb_sqr is None:
             uvm_fatal("VSQR/CFG/NOAPB", "No apb_sqr specified for this instance")
 

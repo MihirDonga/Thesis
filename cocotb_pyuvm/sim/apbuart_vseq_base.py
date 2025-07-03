@@ -8,12 +8,10 @@ class vseq_base(uvm_sequence):
         super().__init__(name)
         self.apb_sqr = None
         self.uart_sqr = None
-        self.vsequencer = None
 
     async def body(self):
         self.apb_sqr = self.seqr.apb_sqr
         self.uart_sqr = self.seqr.uart_sqr
-        self.vsequencer = self.sequencer
 
 class apbuart_config_seq(vseq_base):
 
