@@ -95,7 +95,6 @@ class RxCoverage(object):
         self.uart_cp = vsc.coverpoint(self.uart_data, bins=dict(
             low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)]),
             mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)]),
-            mid = vsc.bin_array([], [(0x00000100, 0x7FFFFFFF)]),
             high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)]),
             corners = vsc.bin([0x00000000, 0xFFFFFFFF,0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
         ))
