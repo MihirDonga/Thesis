@@ -13,9 +13,9 @@ class UARTTransaction(uvm_sequence_item):
         self.bad_parity_frame = vsc.rand_uint8_t()
         self.sb_corr = vsc.rand_bit_t()
         self.sb_corr_frame = vsc.rand_uint8_t()
-        self.sb_corr_bit = vsc.rand_uint2_t()
+        self.sb_corr_bit = vsc.rand_bit_t(2)
         self.start_bit = vsc.rand_bit_t()
-        self.stop_bits = vsc.rand_uint2_t()
+        self.stop_bits = vsc.rand_bit_t(2)
         
         self.payld_func = 0  # 36-bit value for calculations
         
