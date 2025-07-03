@@ -24,7 +24,7 @@ class UARTMonitor(uvm_monitor):
             self.logger.error("UART config not found UART_Monitor")
             raise Exception("ConfigError UART_Monitor")
         
-        self.dut = ConfigDB().get(self, "", "dut")
+        self.dut = ConfigDB().get(self, "", "dut",cocotb.top)
         if self.dut is None:
             self.logger.error("UART dut not found UART_Monitor")
             raise Exception("dut error UART_Monitor")
