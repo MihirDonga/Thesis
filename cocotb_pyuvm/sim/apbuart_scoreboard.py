@@ -35,10 +35,10 @@ class APBUARTScoreboard(uvm_scoreboard):
     def build_phase(self):
         super().build_phase()
         
-         # Analysis exports
-        self.item_collected_export_monapb = uvm_analysis_export("item_collected_export_monapb", self)
-        self.item_collected_export_monuart = uvm_analysis_export("item_collected_export_monuart", self)
-        self.item_collected_export_drvuart = uvm_analysis_export("item_collected_export_drvuart", self)
+        #  # Analysis exports
+        # self.item_collected_export_monapb = uvm_analysis_export("item_collected_export_monapb", self)
+        # self.item_collected_export_monuart = uvm_analysis_export("item_collected_export_monuart", self)
+        # self.item_collected_export_drvuart = uvm_analysis_export("item_collected_export_drvuart", self)
        
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         if self.cfg is None:
