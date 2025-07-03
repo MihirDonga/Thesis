@@ -10,8 +10,8 @@ class VSequencer(uvm_sequencer):
         super().build_phase()
         self.apb_sqr = ConfigDB().get(None, "", "apb_sqr")
         self.uart_sqr = ConfigDB().get(None, "", "uart_sqr")        
-        if not self.apb_sqr:
+        if self.apb_sqr is None:
             uvm_fatal("VSQR/CFG/NOAPB", "No apb_sqr specified for this instance")
 
-        if not self.uart_sqr:
+        if self.uart_sqr is None:
             uvm_fatal("VSQR/CFG/NOUART", "No uart_sqr specified for this instance")

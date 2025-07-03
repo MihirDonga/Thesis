@@ -20,12 +20,12 @@ class UARTMonitor(uvm_monitor):
         
         # Get configuration from config_db
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())        
-        if not self.cfg:
+        if self.cfg is None:
             self.logger.error("UART config not found UART_Monitor")
             raise Exception("ConfigError UART_Monitor")
         
         self.dut = ConfigDB().get(self, "", "dut")
-        if not self.dut:
+        if self.dut is None:
             self.logger.error("UART dut not found UART_Monitor")
             raise Exception("dut error UART_Monitor")
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)

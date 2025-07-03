@@ -20,10 +20,10 @@ class UARTDriver(uvm_driver):
         # Get configuration from config_db
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         self.dut = ConfigDB().get(None, "", "dut", cocotb.top)        
-        if not self.cfg:
+        if self.cfg is None:
             self.logger.error("UART config not found")
             raise Exception("ConfigError")
-        if not self.dut:
+        if self.dut is None:
             self.logger.error("UART dut not found")
             raise Exception("dut_error")
         

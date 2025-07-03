@@ -15,7 +15,7 @@ class APBAgent(uvm_agent):
     def build_phase(self):
         super().build_phase()
         self.apb_cfg = ConfigDB().get(None, "", "apb_cfg", apb_config())    
-        if not self.apb_cfg:
+        if self.apb_cfg is None:
             self.logger.error("UART config not found_APB_AGENT")
             raise Exception("ConfigError")  
         

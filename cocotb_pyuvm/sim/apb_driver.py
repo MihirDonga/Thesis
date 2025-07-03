@@ -17,13 +17,13 @@ class APBDriver(uvm_driver):
         self.apb_cfg = ConfigDB().get(None, "", "apb_cfg", apb_config())
         self.dut = ConfigDB().get(None, "", "dut", cocotb.top)
         
-        if not self.cfg:
+        if self.cfg is None:
             self.logger.error("UART config not found APB_Driver")
             raise Exception("ConfigError APB_Driver")
-        if not self.apb_cfg:
+        if self.apb_cfg is None:
             self.logger.error("APB config not found APB_Driver")
             raise Exception("APBConfigError APB_Driver")
-        if not self.dut:
+        if self.dut is None:
             self.logger.error("DUT handle not found in ConfigDB APB_Driver")
             raise Exception("dut APB_Driver")
         

@@ -39,7 +39,7 @@ class APBUARTScoreboard(uvm_scoreboard):
     def build_phase(self):
         super().build_phase()
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
-        if not self.cfg:
+        if self.cfg is None:
             self.logger.fatal("No cfg",
                 f"Configuration must be set for: {self.get_full_name()}.cfg")
             raise Exception("UART Config not found")

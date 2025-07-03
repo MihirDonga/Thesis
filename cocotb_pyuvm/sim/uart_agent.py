@@ -15,7 +15,7 @@ class UARTAgent(uvm_agent):
     def build_phase(self):
         super().build_phase()
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
-        if not self.cfg:
+        if self.cfg is None:
             self.logger.error("UART config not found_UART_AGENT")
             raise Exception("ConfigError")
         self.monitor = UARTMonitor.create("monitor", self)
