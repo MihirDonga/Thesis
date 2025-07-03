@@ -40,6 +40,10 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.item_collected_export_monuart = uvm_analysis_export("item_collected_export_monuart", self)
         self.item_collected_export_drvuart = uvm_analysis_export("item_collected_export_drvuart", self)
        
+        self.item_collected_export_monapb.set_imp(self.write_item_collected_export_monapb)
+        self.item_collected_export_monuart.set_imp(self.write_item_collected_export_monuart)
+        self.item_collected_export_drvuart.set_imp(self.write_item_collected_export_drvuart)
+        
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         if self.cfg is None:
             self.logger.fatal("No cfg",
