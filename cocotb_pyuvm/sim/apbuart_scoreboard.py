@@ -36,13 +36,9 @@ class APBUARTScoreboard(uvm_scoreboard):
         super().build_phase()
         
          # Analysis exports
-        self.item_collected_export_monapb = uvm_analysis_export("item_collected_export_monapb", self)
-        self.item_collected_export_monuart = uvm_analysis_export("item_collected_export_monuart", self)
-        self.item_collected_export_drvuart = uvm_analysis_export("item_collected_export_drvuart", self)
-       
-        self.item_collected_export_monapb.set_imp(self.write_item_collected_export_monapb)
-        self.item_collected_export_monuart.set_imp(self.write_item_collected_export_monuart)
-        self.item_collected_export_drvuart.set_imp(self.write_item_collected_export_drvuart)
+        self.item_collected_export_monapb = MyAPBExport("item_collected_export_monapb", self)
+        self.item_collected_export_monuart = MyUARTExport("item_collected_export_monuart", self)
+        self.item_collected_export_drvuart = MyDrvUARTExport("item_collected_export_drvuart", self)
         
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         if self.cfg is None:
@@ -199,4 +195,27 @@ class APBUARTScoreboard(uvm_scoreboard):
         # self.logger.info("\nCoverage Report:")
         # self.logger.info(f"Config Coverage: {config_cov:.2f}% ({self.config_sample_count} samples)")
         # self.logger.info(f"Tx Coverage: {tx_cov:.2f}% ({self.tx_sample_count} samples)")
+     
         # self.logger.info(f"Rx Coverage: {rx_cov:.2f}% ({self.rx_sample_count} samples)")
+
+class MyAPBExport(uvm_analysis_export):
+    def __init__(self, name, parent):
+        super().__init__(name, parent)
+
+    def write(self, pkt):
+        # Forward the packet to the scoreboard handler
+        self.get_parent().write_item_collected_export_monapb(pkt)
+
+class MyUARTExport(uvm_analysis_export):
+    def __init__(self, name, parent):
+        super().__init__(name, parent)
+
+    def write(self, pkt):
+        self.get_parent().write_item_collected_export_monuart(pkt)
+
+class MyDrvUARTExport(uvm_analysis_export):
+    def __init__(self, name, parent):
+        super().__init__(name, parent)
+
+    def write(self, pkt):
+        self.get_parent().write_item_collected_export_drvuart(pkt)
