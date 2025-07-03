@@ -24,8 +24,8 @@ class apbuart_base_test(uvm_test):
         self.cfg = uart_config()
         self.apb_cfg = apb_config()
 
-        self.set_config_params(9600, 8, 3, 1, 0)
-        self.set_apbconfig_params(2, 0)
+        self.set_config_params(9600, 8, 3, 1, 1)
+        self.set_apbconfig_params(2, 1)
         
         ConfigDB().set(None, "*", "cfg", self.cfg)
         ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
