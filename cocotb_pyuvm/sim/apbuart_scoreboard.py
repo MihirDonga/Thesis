@@ -101,10 +101,10 @@ class APBUARTScoreboard(uvm_scoreboard):
 
         # Sample coverage with direct values
         self.config_cg.sample(
-            bRate=self.baud_rate_reg,
-            frame_len=self.frame_len_reg,
-            parity=self.parity_reg,
-            n_sb=self.stopbit_reg
+            bRate=int(self.baud_rate_reg),
+            frame_len=int(self.frame_len_reg),
+            parity=int(self.parity_reg),
+            n_sb=int(self.stopbit_reg)
         )
         self.config_sample_count += 1
 
@@ -146,8 +146,8 @@ class APBUARTScoreboard(uvm_scoreboard):
 
         # Sample coverage with direct values
         self.tx_cg.sample(
-            apb_data=apb_pkt.PWDATA,
-            uart_data=uart_pkt.transmitter_reg
+            apb_data=int(apb_pkt.PWDATA),
+            uart_data=int(uart_pkt.transmitter_reg)
         )
         self.tx_sample_count += 1
 
@@ -164,9 +164,9 @@ class APBUARTScoreboard(uvm_scoreboard):
 
         # Sample coverage with direct values
         self.rx_cg.sample(
-            apb_data=apb_pkt.PRDATA,
-            uart_data=uart_pkt.payload,
-            error=apb_pkt.PSLVERR
+            apb_data=int(apb_pkt.PRDATA),
+            uart_data=int(uart_pkt.payload),
+            error=int(apb_pkt.PSLVERR)
         )
         self.rx_sample_count += 1
 
