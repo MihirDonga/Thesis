@@ -12,6 +12,7 @@ class APBMonitor(uvm_monitor):
         super().build_phase()
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
         self.dut = ConfigDB().get(None, "", "dut", cocotb.top)
+        self.logger.info(f"DUT found: {self.dut}")
         if not self.dut:
             self.logger.error("DUT handle not found APB_Monitor")
             raise Exception("DUTError APB_Monitor")
