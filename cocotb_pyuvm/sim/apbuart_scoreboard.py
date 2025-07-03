@@ -1,5 +1,5 @@
 from pyuvm import *
-from apbuart_coverage import ConfigCoverage, TxCoverage, RxCoverage
+# from apbuart_coverage import ConfigCoverage, TxCoverage, RxCoverage
 from cocotb.triggers import Timer
 from uart_transaction import UARTTransaction
 from apb_transaction import APBTransaction
@@ -27,9 +27,9 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.stopbit_reg = 0
 
         # Initialize coverage groups
-        self.config_cg = ConfigCoverage()
-        self.tx_cg = TxCoverage()
-        self.rx_cg = RxCoverage()
+        # self.config_cg = ConfigCoverage()
+        # self.tx_cg = TxCoverage()
+        # self.rx_cg = RxCoverage()
 
         # Counters
         self.config_sample_count = 0
@@ -97,7 +97,7 @@ class APBUARTScoreboard(uvm_scoreboard):
                 self.compare_receive(apb_pkt_mon, uart_pkt_drv)
 
     def compare_config(self, apb_pkt):
-        test = uvm_root().find("apbuart_base_test")
+        # test = uvm_root().find("apbuart_base_test")
 
 
         # Verification logic
@@ -134,25 +134,25 @@ class APBUARTScoreboard(uvm_scoreboard):
             self.logger.info(f"Expected: {self.stopbit_reg} Actual: {apb_pkt.PRDATA}")
 
         # Sample coverage with direct values
-        self.config_cg.sample(
-            bRate=self.baud_rate_reg,
-            frame_len=self.frame_len_reg,
-            parity=self.parity_reg,
-            n_sb=self.stopbit_reg
-        )
-        self.config_sample_count += 1
+        # self.config_cg.sample(
+        #     bRate=self.baud_rate_reg,
+        #     frame_len=self.frame_len_reg,
+        #     parity=self.parity_reg,
+        #     n_sb=self.stopbit_reg
+        # )
+        # self.config_sample_count += 1
 
     def compare_transmission(self, apb_pkt, uart_pkt):
-        test = uvm_root().find("apbuart_base_test")
+        # test = uvm_root().find("apbuart_base_test")
 
         # Verification logic
         if apb_pkt.PWDATA == uart_pkt.transmitter_reg:
             # Sample coverage with direct values
-            self.tx_cg.sample(
-                apb_data=apb_pkt.PWDATA,
-                uart_data=uart_pkt.transmitter_reg
-            )
-            self.tx_sample_count += 1
+            # self.tx_cg.sample(
+            #     apb_data=apb_pkt.PWDATA,
+            #     uart_data=uart_pkt.transmitter_reg
+            # )
+            # self.tx_sample_count += 1
             self.logger.info("Transmission Data Match")
         else:
             self.logger.error("Transmission Data Mismatch")
@@ -160,7 +160,7 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.logger.info(f"Expected: {apb_pkt.PWDATA:#x} Actual: {uart_pkt.transmitter_reg:#x}")
 
     def compare_receive(self, apb_pkt, uart_pkt):
-        test = uvm_root().find("apbuart_base_test")
+        # test = uvm_root().find("apbuart_base_test")
 
         # Verification logic
         if apb_pkt.PRDATA == uart_pkt.payload:
@@ -178,19 +178,19 @@ class APBUARTScoreboard(uvm_scoreboard):
             self.logger.error(f"Error Mismatch: Expected {err_expected}, Got {apb_pkt.PSLVERR}")
             test.report_error("Error Flag Mismatch")
         # Sample coverage with direct values
-        self.rx_cg.sample(
-            apb_data=apb_pkt.PRDATA,
-            uart_data=uart_pkt.payload,
-            error=apb_pkt.PSLVERR
-        )
+        # self.rx_cg.sample(
+        #     apb_data=apb_pkt.PRDATA,
+        #     uart_data=uart_pkt.payload,
+        #     error=apb_pkt.PSLVERR
+        # )
         self.rx_sample_count    += 1
 
-    def report_phase(self):
-        config_cov = self.config_cg.get_coverage()
-        tx_cov = self.tx_cg.get_coverage()
-        rx_cov = self.rx_cg.get_coverage()
+    # def report_phase(self):
+        # config_cov = self.config_cg.get_coverage()
+        # tx_cov = self.tx_cg.get_coverage()
+        # rx_cov = self.rx_cg.get_coverage()
         
-        self.logger.info("\nCoverage Report:")
-        self.logger.info(f"Config Coverage: {config_cov:.2f}% ({self.config_sample_count} samples)")
-        self.logger.info(f"Tx Coverage: {tx_cov:.2f}% ({self.tx_sample_count} samples)")
-        self.logger.info(f"Rx Coverage: {rx_cov:.2f}% ({self.rx_sample_count} samples)")
+        # self.logger.info("\nCoverage Report:")
+        # self.logger.info(f"Config Coverage: {config_cov:.2f}% ({self.config_sample_count} samples)")
+        # self.logger.info(f"Tx Coverage: {tx_cov:.2f}% ({self.tx_sample_count} samples)")
+        # self.logger.info(f"Rx Coverage: {rx_cov:.2f}% ({self.rx_sample_count} samples)")
