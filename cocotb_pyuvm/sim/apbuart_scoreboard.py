@@ -4,19 +4,19 @@ from cocotb.triggers import Timer
 from uart_transaction import UARTTransaction
 from apb_transaction import APBTransaction
 from uart_config import uart_config
-
+import vsc
 class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
         super().__init__(name, parent)
 
         # # Create vsc variables for coverage
-        # self.vsc_baud = vsc.uint32_t(0)
-        # self.vsc_frame = vsc.uint32_t(0)
-        # self.vsc_parity = vsc.uint32_t(0)
-        # self.vsc_stopbit = vsc.uint32_t(0)
-        # self.vsc_apb_data = vsc.uint32_t(0)
-        # self.vsc_uart_data = vsc.uint32_t(0)
-        # self.vsc_rx_error = vsc.bit_t(0)
+        self.cg_bRate = vsc.uint32_t(0)
+        self.cg_frame_len = vsc.uint32_t(0)
+        self.cg_parity = vsc.uint32_t(0)
+        self.cg_n_sb = vsc.uint32_t(0)
+        self.cg_apb_data = vsc.uint32_t(0)
+        self.cg_uart_data = vsc.uint32_t(0)
+        self.cg_error = vsc.bit_t(0)
         
         # Create coverage components
         self.config_cg = ConfigCoverage()
