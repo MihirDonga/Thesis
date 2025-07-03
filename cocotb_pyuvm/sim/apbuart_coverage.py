@@ -1,6 +1,6 @@
 from pyuvm import *
 import vsc
-
+@vsc.randobj
 @vsc.covergroup
 class ConfigCoverage(object):
     def __init__(self):
