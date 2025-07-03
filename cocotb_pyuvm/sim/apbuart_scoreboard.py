@@ -46,13 +46,13 @@ class APBUARTScoreboard(uvm_scoreboard):
                 f"Configuration must be set for: {self.get_full_name()}.cfg")
             raise Exception("UART Config not found")
 
-    def write_monapb(self, pkt: APBTransaction):
+    def write_item_collected_export_monapb(self, pkt: APBTransaction):
         self.pkt_qu_monapb.append(pkt)
 
-    def write_monuart(self, pkt: UARTTransaction):
+    def write_item_collected_export_monuart(self, pkt: UARTTransaction):
         self.pkt_qu_monuart.append(pkt)
 
-    def write_drvuart(self, pkt: UARTTransaction):
+    def write_item_collected_export_drvuart(self, pkt: UARTTransaction):
         self.pkt_qu_drvuart.append(pkt)
 
     async def run_phase(self):
