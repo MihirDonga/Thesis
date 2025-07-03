@@ -7,7 +7,8 @@ from enum import Enum
 class uvm_active_passive_enum(Enum):
     UVM_ACTIVE = auto()
     UVM_PASSIVE = auto()
-
+    
+@vsc.randobj
 class uart_config(uvm_object):
     def __init__(self, name="uart_config"):
         super().__init__(name)

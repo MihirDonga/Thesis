@@ -10,6 +10,7 @@ class uvm_active_passive_enum(Enum):
     UVM_ACTIVE = auto()
     UVM_PASSIVE = auto()
 
+@vsc.randobj
 class apb_config(uvm_object):
     def __init__(self, name="apb_config"):
         super().__init__(name)

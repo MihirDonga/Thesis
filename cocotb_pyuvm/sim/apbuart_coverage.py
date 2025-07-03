@@ -1,8 +1,7 @@
 from pyuvm import *
 import vsc
-@vsc.randobj
 @vsc.covergroup
-class ConfigCoverage():
+class ConfigCoverage(object):
     def __init__(self):
         self.with_sample(dict(
                     bRate=0,
@@ -52,7 +51,7 @@ class ConfigCoverage():
                                   self.parity_cp, self.n_sb_cp])
 
 @vsc.covergroup
-class TxCoverage():
+class TxCoverage(object):
     def __init__(self):
         self.with_sample(dict(
             apb_data=0,
@@ -78,7 +77,7 @@ class TxCoverage():
         ))
 
 @vsc.covergroup
-class RxCoverage():
+class RxCoverage(object):
     def __init__(self):
         self.with_sample(dict(
             apb_data=0,

@@ -99,14 +99,6 @@ class APBUARTScoreboard(uvm_scoreboard):
     def compare_config(self, apb_pkt):
         test = uvm_root().find("apbuart_base_test")
 
-        # Sample coverage with direct values
-        self.config_cg.sample(
-            bRate=int(self.baud_rate_reg),
-            frame_len=int(self.frame_len_reg),
-            parity=int(self.parity_reg),
-            n_sb=int(self.stopbit_reg)
-        )
-        self.config_sample_count += 1
 
         # Verification logic
         if apb_pkt.PADDR == self.cfg.baud_config_addr:
@@ -141,18 +133,26 @@ class APBUARTScoreboard(uvm_scoreboard):
                 test.report_error("Stop Bits Mismatch detected in scoreboard!")
             self.logger.info(f"Expected: {self.stopbit_reg} Actual: {apb_pkt.PRDATA}")
 
+        # Sample coverage with direct values
+        self.config_cg.sample(
+            bRate=int(self.baud_rate_reg),
+            frame_len=int(self.frame_len_reg),
+            parity=int(self.parity_reg),    
+            n_sb=int(self.stopbit_reg)
+        )
+        self.config_sample_count += 1
+
     def compare_transmission(self, apb_pkt, uart_pkt):
         test = uvm_root().find("apbuart_base_test")
 
-        # Sample coverage with direct values
-        self.tx_cg.sample(
-            apb_data=int(apb_pkt.PWDATA),
-            uart_data=int(uart_pkt.transmitter_reg)
-        )
-        self.tx_sample_count += 1
-
         # Verification logic
         if apb_pkt.PWDATA == uart_pkt.transmitter_reg:
+            # Sample coverage with direct values
+            self.tx_cg.sample(
+                apb_data=int(apb_pkt.PWDATA),
+                uart_data=int(uart_pkt.transmitter_reg)
+            )
+            self.tx_sample_count += 1
             self.logger.info("Transmission Data Match")
         else:
             self.logger.error("Transmission Data Mismatch")
@@ -161,14 +161,6 @@ class APBUARTScoreboard(uvm_scoreboard):
 
     def compare_receive(self, apb_pkt, uart_pkt):
         test = uvm_root().find("apbuart_base_test")
-
-        # Sample coverage with direct values
-        self.rx_cg.sample(
-            apb_data=int(apb_pkt.PRDATA),
-            uart_data=int(uart_pkt.payload),
-            error=int(apb_pkt.PSLVERR)
-        )
-        self.rx_sample_count += 1
 
         # Verification logic
         if apb_pkt.PRDATA == uart_pkt.payload:
@@ -185,6 +177,13 @@ class APBUARTScoreboard(uvm_scoreboard):
         if apb_pkt.PSLVERR != err_expected:
             self.logger.error(f"Error Mismatch: Expected {err_expected}, Got {apb_pkt.PSLVERR}")
             test.report_error("Error Flag Mismatch")
+        # Sample coverage with direct values
+        self.rx_cg.sample(
+            apb_data=int(apb_pkt.PRDATA),
+            uart_data=int(uart_pkt.payload),
+            error=int(apb_pkt.PSLVERR)
+        )
+        self.rx_sample_count += 1
 
     def report_phase(self):
         config_cov = self.config_cg.get_coverage()
