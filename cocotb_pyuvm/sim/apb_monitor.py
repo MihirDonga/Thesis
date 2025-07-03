@@ -13,7 +13,7 @@ class APBMonitor(uvm_monitor):
         self.item_collected_port_mon = uvm_analysis_port("item_collected_port_mon", self)
         self.dut = ConfigDB().get(None, "", "dut", cocotb.top)
         self.logger.info(f"DUT found: {self.dut}")
-        if not self.dut:
+        if self.dut is None:
             self.logger.error("DUT handle not found APB_Monitor")
             raise Exception("DUTError APB_Monitor")
     async def run_phase(self):
