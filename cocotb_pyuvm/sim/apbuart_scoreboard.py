@@ -38,6 +38,11 @@ class APBUARTScoreboard(uvm_scoreboard):
 
     def build_phase(self):
         super().build_phase()
+
+        self.item_collected_export_monapb.connect(self)
+        self.item_collected_export_monuart.connect(self)
+        self.item_collected_export_drvuart.connect(self)
+
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         if self.cfg is None:
             self.logger.fatal("No cfg",
