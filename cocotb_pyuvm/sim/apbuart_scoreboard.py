@@ -9,10 +9,6 @@ class APBUARTScoreboard(uvm_scoreboard):
     def __init__(self, name, parent):
         super().__init__(name, parent)
         
-        # Analysis exports
-        self.item_collected_export_monapb = uvm_analysis_export("item_collected_export_monapb", self)
-        self.item_collected_export_monuart = uvm_analysis_export("item_collected_export_monuart", self)
-        self.item_collected_export_drvuart = uvm_analysis_export("item_collected_export_drvuart", self)
        
         # Queues for storing transactions
         self.pkt_qu_monapb = []
@@ -38,11 +34,12 @@ class APBUARTScoreboard(uvm_scoreboard):
 
     def build_phase(self):
         super().build_phase()
-
-        self.item_collected_export_monapb.register_subscriber(self)
-        self.item_collected_export_monuart.register_subscriber(self)
-        self.item_collected_export_drvuart.register_subscriber(self)
-
+        
+         # Analysis exports
+        self.item_collected_export_monapb = uvm_analysis_export("item_collected_export_monapb", self)
+        self.item_collected_export_monuart = uvm_analysis_export("item_collected_export_monuart", self)
+        self.item_collected_export_drvuart = uvm_analysis_export("item_collected_export_drvuart", self)
+       
         self.cfg = ConfigDB().get(None, "", "cfg", uart_config())
         if self.cfg is None:
             self.logger.fatal("No cfg",
