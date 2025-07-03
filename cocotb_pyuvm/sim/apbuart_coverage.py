@@ -4,10 +4,10 @@ import vsc
 class ConfigCoverage(object):
     def __init__(self):
         self.with_sample(dict(
-                    bRate=0,
-                    frame_len=0,
-                    parity=0,
-                    n_sb=0
+                    bRate=vsc.bit_t(32),
+                    frame_len=vsc.bit_t(32),
+                    parity=vsc.bit_t(32),
+                    n_sb=vsc.bit_t(32)
                 ))        
         
         # Baud rate coverpoint
@@ -54,8 +54,8 @@ class ConfigCoverage(object):
 class TxCoverage(object):
     def __init__(self):
         self.with_sample(dict(
-            apb_data=0,
-            uart_data=0
+            apb_data=vsc.bit_t(32),
+            uart_data=vsc.bit_t(32)
         ))
         
         # APB data coverage
@@ -80,9 +80,9 @@ class TxCoverage(object):
 class RxCoverage(object):
     def __init__(self):
         self.with_sample(dict(
-            apb_data=0,
-            uart_data=0,
-            error=0
+            apb_data=vsc.bit_t(32),
+            uart_data=vsc.bit_t(32),
+            error=vsc.bit_t(1)
         ))
         
         # APB data coverage (same as Tx)
