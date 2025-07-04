@@ -123,7 +123,7 @@ class apbuart_config_test(apbuart_base_test):
             self.raise_objection()
             print(f"[DEBUG] v_sqr type: {type(self.env_sq.v_sqr)}")
             print(f"[DEBUG] is uvm_sequencer? {isinstance(self.env_sq.v_sqr, uvm_sequencer)}")
-            await self.apbuart_config_sq.start(self.env_sq)
+            await self.apbuart_config_sq.start(self.env_sq.v_sqr)
             self.drop_objection()
 
         # Wait 20 time units after dropping objection before test finishes

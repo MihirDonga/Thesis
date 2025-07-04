@@ -12,8 +12,15 @@ class vseq_base(uvm_sequence):
 
     async def body(self):
         # First check if we have a virtual sequencer
-            self.apb_sqr = self.env_sq.v_sqr.apbuart_sq
-            self.uart_sqr = self.seqr.uart_sqr.v_sqr.uart_sq
+        if not hasattr(self, "sequencer"):
+            raise RuntimeError("Sequence must be started with a sequencer!")
+        
+        if not isinstance(self.sequencer, vsequencer):
+            raise RuntimeError("Virtual sequence must run on a vsequencer!")
+        
+        # Assign sub-sequencers
+        self.apb_sqr = self.sequencer.apb_sqr
+        self.uart_sqr = self.sequencer.uart_sqr
 
 class apbuart_config_seq(vseq_base):
     # def __init__(self, name="apbuart_config_seq"):
