@@ -4,8 +4,8 @@ from uart_sequence import *
 import logging
 class vseq_base(uvm_sequence):
 
-    def __init__(self, name="vseq_base"):
-        super().__init__(name)
+    def __init__(self, name="vseq_base", parent=None):
+        super().__init__(name,parent)
         self.apb_sqr = None
         self.uart_sqr = None
         self.logger = logging.getLogger(name)
@@ -23,6 +23,8 @@ class vseq_base(uvm_sequence):
             self.logger.error("Virtual sequence not connected to virtual sequencer!")
             raise RuntimeError("Virtual sequence not connected to virtual sequencer!")
 class apbuart_config_seq(vseq_base):
+    def __init__(self, name="apbuart_config_seq", parent=None):
+        super().__init__(name, parent)
 
     async def body(self):
         await super().body()
@@ -34,6 +36,8 @@ class apbuart_config_seq(vseq_base):
         self.logger.info("Sequence complete")
 
 class apbuart_singlebeat_seq(vseq_base):
+    def __init__(self, name="apbuart_singlebeat_seq", parent=None):
+        super().__init__(name, parent)
 
     async def body(self):
         await super().body()
@@ -44,6 +48,8 @@ class apbuart_singlebeat_seq(vseq_base):
         self.logger.info("Sequence complete")
 
 class apbuart_recdrv_seq(vseq_base):
+    def __init__(self, name="apbuart_recdrv_seq", parent=None):
+        super().__init__(name, parent)
 
     async def body(self):
         await super().body()
@@ -54,6 +60,8 @@ class apbuart_recdrv_seq(vseq_base):
         self.logger.info("Sequence complete")
 
 class apbuart_recreadreg_seq(vseq_base):
+    def __init__(self, name="apbuart_recreadreg_seq", parent=None):
+        super().__init__(name, parent)
 
     async def body(self):
         await super().body()
@@ -64,6 +72,8 @@ class apbuart_recreadreg_seq(vseq_base):
         self.logger.info("Sequence complete")
 
 class apbuart_frameError_seq(vseq_base):
+    def __init__(self, name="apbuart_frameError_seq", parent=None):
+        super().__init__(name, parent)
 
     async def body(self):
         await super().body()
@@ -74,6 +84,8 @@ class apbuart_frameError_seq(vseq_base):
         self.logger.info("Sequence complete")
 
 class apbuart_parityError_seq(vseq_base):
+    def __init__(self, name="apbuart_parityError_seq", parent=None):
+        super().__init__(name, parent)
 
     async def body(self):
         await super().body()
@@ -84,6 +96,8 @@ class apbuart_parityError_seq(vseq_base):
         self.logger.info("Sequence complete")
 
 class apbuart_NoError_seq(vseq_base):
+    def __init__(self, name="apbuart_NoError_seq", parent=None):
+        super().__init__(name, parent)
 
     async def body(self):
         await super().body()
