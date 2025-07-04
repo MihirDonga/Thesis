@@ -1,7 +1,7 @@
 from pyuvm import *
 from uart_config import uart_config
 from apb_config import apb_config
-from apbuart_environment import APBUARTEnv
+from apbuart_environment import *
 from cocotb.triggers import Timer
 from apbuart_vseq_base import apbuart_config_seq
 
