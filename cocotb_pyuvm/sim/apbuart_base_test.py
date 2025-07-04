@@ -102,7 +102,7 @@ class apbuart_base_test(uvm_test):
 
 class apbuart_config_test(apbuart_base_test):
     """APBUART configuration test"""
-    def __init__(self, name, parent):
+    def __init__(self, name="apbuart_config_seq", parent=None):
         super().__init__(name, parent)  # ✅ this is required!
         self.apbuart_confg_sq = None
 
