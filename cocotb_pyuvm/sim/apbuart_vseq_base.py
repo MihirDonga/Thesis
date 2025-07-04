@@ -26,6 +26,7 @@ class apbuart_config_seq(vseq_base):
 
     async def body(self):
         await super().body()
+        print(f"[DEBUG][apbuart_config_seq] p_sequencer after super().body(): {self.p_sequencer}")
         self.logger.info("Executing sequence")
         apbuart_seq = config_apbuart("config_apbuart")
         await apbuart_seq.start(self.apb_sqr)
