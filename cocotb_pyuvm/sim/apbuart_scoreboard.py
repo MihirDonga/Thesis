@@ -6,7 +6,7 @@ from apb_transaction import APBTransaction
 from uart_config import uart_config
 
 class APBUARTScoreboard(uvm_scoreboard):
-    def __init__(self, name, parent):
+    def __init__(self, name, parent=None):
         super().__init__(name, parent)
         
        
