@@ -2,6 +2,9 @@ from pyuvm import *
 from uart_config import uart_config
 from apb_config import apb_config
 from apbuart_environment import APBUARTEnv
+from cocotb.triggers import Timer
+from apbuart_vseq_base import apbuart_config_seq
+
 # from apbuart_vseq_base import apbuart_config_seq
 
 class apbuart_base_test(uvm_test):
@@ -21,8 +24,8 @@ class apbuart_base_test(uvm_test):
         self.env_sq =  APBUARTEnv.create("env_sq",self) 
         self.cfg = uart_config()
         self.apb_cfg = apb_config()
-        self.set_config_params(9600, 8, 3, 1, 1)
-        self.set_apbconfig_params(2, 1)
+        self.set_config_params(9600, 8, 3, 1, 0)
+        self.set_apbconfig_params(2, 0)
         
         ConfigDB().set(None, "*", "cfg", self.cfg)
         ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
@@ -52,9 +55,9 @@ class apbuart_base_test(uvm_test):
         self.logger.error(msg)
         self.error_count += 1
 
-    # def end_of_elaboration_phase(self, phase):
-    #     super().end_of_elaboration_phase(phase)
-    #     self.print_obj()
+    def end_of_elaboration_phase(self):
+        super().end_of_elaboration_phase()
+        self.print_obj()
 
     def report_phase(self):
         super().report_phase()
@@ -97,29 +100,29 @@ class apbuart_base_test(uvm_test):
 #         # Wait 20 time units after dropping objection before test finishes
 #         await Timer(20, "ns")
 
-# class apbuart_config_test(apbuart_base_test):
-#     """APBUART configuration test"""
+class apbuart_config_test(apbuart_base_test):
+    """APBUART configuration test"""
 
-#     def build_phase(self, phase):
-#         print(f"Entering build_phase for {self.get_name()}")
-#         super().build_phase(phase)  # Must call parent first
-#         self.apbuart_config_sq = apbuart_config_seq("apbuart_config_seq")
+    def build_phase(self):
+        print(f"Entering build_phase for {self.get_name()}")
+        super().build_phase()  # Must call parent first
+        self.apbuart_config_sq = apbuart_config_seq("apbuart_config_seq")
 
 
-#     async def run_phase(self, phase):
-#         phase.raise_objection(self)
+    async def run_phase(self):
+        self.raise_objection()
         
-#         try:
-#             # Run configuration sequence multiple times
-#             for _ in range(self.cfg.loop_time):
-#                 # Randomize configurations
-#                 self._set_uart_config(9600, 8, 3, 1, 1)
-#                 self._set_apb_config(2, 1)
+        try:
+            # Run configuration sequence multiple times
+            for _ in range(self.cfg.loop_time):
+                # Randomize configurations
+                self._set_uart_config(9600, 8, 3, 1, 1)
+                self._set_apb_config(2, 1)
                 
-#                 # Execute configuration sequence
-#                 await apbuart_config_sq.start(self.env_sq.v_sqr)
+                # Execute configuration sequence
+                await self.apbuart_config_sq.start(self.env_sq.v_sqr)
                 
-#         finally:
-#             # Ensure objection is dropped even if error occurs
-#             await Timer(20, "ns")  # Cleanup period
-#             phase.drop_objection(self)
+        finally:
+            # Ensure objection is dropped even if error occurs
+            await Timer(20, "ns")  # Cleanup period
+            self.drop_objection()
