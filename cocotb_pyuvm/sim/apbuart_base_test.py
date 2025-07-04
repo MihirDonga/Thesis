@@ -116,8 +116,8 @@ class apbuart_config_test(apbuart_base_test):
             # Run configuration sequence multiple times
             for _ in range(self.cfg.loop_time):
                 # Randomize configurations
-                self.set_uart_config(9600, 8, 3, 1, 1)
-                self.set_apb_config(2, 1)
+                self.set_config_params(9600, 8, 3, 1, 1)
+                self.set_apbconfig_params(2, 1)
                 
                 # Execute configuration sequence
                 await self.apbuart_config_sq.start(self.env_sq.v_sqr)
