@@ -1,8 +1,8 @@
 from pyuvm import *
 from uart_sequencer import UARTSequencer
 class VSequencer(uvm_sequencer):
-    def __init__(self, name):
-        super().__init__(name)
+    def __init__(self, name, parent= None):
+        super().__init__(name, parent)
         self.apb_sqr = None
         self.uart_sqr = None
 
