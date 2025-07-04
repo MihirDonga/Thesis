@@ -9,16 +9,18 @@ class vseq_base(uvm_sequence):
         self.apb_sqr = None
         self.uart_sqr = None
 
-    async def body(self):
-        # Access sub-sequencers through p_sequencer
-        # PyUVM automatically sets p_sequencer when sequence is started
-        if hasattr(self, "p_sequencer") and self.p_sequencer:
-            self.apb_sqr = getattr(self.p_sequencer, "apb_sqr", None)
-            self.uart_sqr = getattr(self.p_sequencer, "uart_sqr", None)
-        else:
-            self.logger.error("Virtual sequence not connected to virtual sequencer!")
+     async def body(self):
+        # First ensure we have p_sequencer reference
+        if not hasattr(self, "p_sequencer") or not self.p_sequencer:
             raise RuntimeError("Virtual sequence not connected to virtual sequencer!")
-
+        
+        # Safely get sequencer references
+        self.apb_sqr = getattr(self.p_sequencer, "apb_sqr", None)
+        self.uart_sqr = getattr(self.p_sequencer, "uart_sqr", None)
+        
+        if not self.apb_sqr or not self.uart_sqr:
+            raise RuntimeError("Sub-sequencers not properly connected!")
+        
 class apbuart_config_seq(vseq_base):
 
     async def body(self):
