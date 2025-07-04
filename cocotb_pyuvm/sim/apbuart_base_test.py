@@ -118,7 +118,8 @@ class apbuart_config_test(apbuart_base_test):
                 # Randomize configurations
                 self.set_config_params(9600, 8, 3, 1, 1)
                 self.set_apbconfig_params(2, 1)
-                
+                print(f"[DEBUG] v_sqr type: {type(self.env_sq.v_sqr)}")
+                print(f"[DEBUG] is uvm_sequencer? {isinstance(self.env_sq.v_sqr, uvm_sequencer)}")
                 # Execute configuration sequence
                 await self.apbuart_config_sq.start(self.env_sq.v_sqr)
                 
