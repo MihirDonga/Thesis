@@ -56,8 +56,8 @@ class apbuart_base_test(uvm_test):
     #     super().end_of_elaboration_phase(phase)
     #     self.print_obj()
 
-    def report_phase(self, phase):
-        super().report_phase(phase)
+    def report_phase(self):
+        super().report_phase()
 
         if self.error_count> 0:
             self.logger.critical(f"{self.get_name()} - -" * 39)
