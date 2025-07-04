@@ -109,24 +109,22 @@ class apbuart_config_test(apbuart_base_test):
     def build_phase(self):
         print(f"Entering build_phase for {self.get_name()}")
         super().build_phase()  # Must call parent first
-        self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_seq", self)
+        self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_seq")
 
 
     async def run_phase(self):
-        self.raise_objection()
-        
-        try:
-            # Run configuration sequence multiple times
-            for _ in range(self.cfg.loop_time):
-                # Randomize configurations
-                self.set_config_params(9600, 8, 3, 1, 1)
-                self.set_apbconfig_params(2, 1)
-                print(f"[DEBUG] v_sqr type: {type(self.env_sq.v_sqr)}")
-                print(f"[DEBUG] is uvm_sequencer? {isinstance(self.env_sq.v_sqr, uvm_sequencer)}")
-                # Execute configuration sequence
-                await self.apbuart_config_sq.start(self.env_sq.v_sqr)
-                
-        finally:
-            # Ensure objection is dropped even if error occurs
-            await Timer(20, "ns")  # Cleanup period
+        for _ in range(self.cfg.loop_time):
+            self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
+            self.logger.info(f"UART Config:\n{self.cfg}")       #prints __str__ from uart_config
+
+            self.set_apbconfig_params(2, 1)  # Slave Bus Address, Randomize Flag
+            self.logger.info(f"APB Config:\n{self.apb_cfg}")    #prints __str__ from apb_config
+
+            self.raise_objection()
+            print(f"[DEBUG] v_sqr type: {type(self.env_sq.v_sqr)}")
+            print(f"[DEBUG] is uvm_sequencer? {isinstance(self.env_sq.v_sqr, uvm_sequencer)}")
+            await self.apbuart_config_sq.start(self.env_sq.v_sqr)
             self.drop_objection()
+
+        # Wait 20 time units after dropping objection before test finishes
+        await Timer(20, "ns")

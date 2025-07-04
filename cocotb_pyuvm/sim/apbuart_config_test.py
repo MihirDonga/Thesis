@@ -1,7 +1,7 @@
 from pyuvm import *
 from cocotb.triggers import Timer
-from apbuart_base_test import apbuart_config_seq
-# from apbuart_vseq_base import apbuart_config_seq
+from apbuart_base_test import apbuart_base_test
+from apbuart_vseq_base import apbuart_config_seq
 
 class apbuart_config_test(apbuart_base_test):
 
@@ -27,6 +27,8 @@ class apbuart_config_test(apbuart_base_test):
             self.logger.info(f"APB Config:\n{self.apb_cfg}")    #prints __str__ from apb_config
 
             self.raise_objection()
+            print(f"[DEBUG] v_sqr type: {type(self.env_sq.v_sqr)}")
+            print(f"[DEBUG] is uvm_sequencer? {isinstance(self.env_sq.v_sqr, uvm_sequencer)}")
             await self.apbuart_config_sq.start(self.env_sq.v_sqr)
             self.drop_objection()
 
