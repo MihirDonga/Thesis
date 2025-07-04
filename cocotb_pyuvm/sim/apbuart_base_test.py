@@ -104,7 +104,7 @@ class apbuart_config_test(apbuart_base_test):
     """APBUART configuration test"""
     def __init__(self, name="apbuart_config_seq", parent=None):
         super().__init__(name, parent)  # ✅ this is required!
-        self.apbuart_confg_sq = None
+        self.apbuart_config_sq = None
 
     def build_phase(self):
         print(f"Entering build_phase for {self.get_name()}")
