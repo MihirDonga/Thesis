@@ -10,7 +10,7 @@ from pyuvm import *
 # from apb_config import apb_config
 # from apbuart_environment import APBUARTEnv
 # from cocotb.triggers import Timer
-from apbuart_vseq_base import apbuart_config_test
+from apbuart_base_test import apbuart_config_test
 
 # class apbuart_base_test(uvm_test):
 #     def __init__(self, name="apbuart_base_test", parent=None):
