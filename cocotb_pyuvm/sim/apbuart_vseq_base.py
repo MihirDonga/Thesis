@@ -9,20 +9,12 @@ class vseq_base(uvm_sequence):
         super().__init__(name)
         self.apb_sqr = None
         self.uart_sqr = None
-        self.logger = logging.getLogger(name)
 
     async def body(self):
         # First check if we have a virtual sequencer
-        print(f"[DEBUG] sequence name: {self.get_name()}")
-        print(f"[DEBUG] type of p_sequencer: {type(getattr(self, 'p_sequencer', None))}")
-        print(f"[DEBUG] p_sequencer is None? {getattr(self, 'p_sequencer', None) is None}")
-        if hasattr(self, "p_sequencer") and self.p_sequencer:
-            self.logger.info(f"[VSEQ_BASE] p_sequencer: {self.p_sequencer.get_full_name()}")
-            self.apb_sqr = self.env_h.v_seqr
-            self.uart_sqr = self.env_h.v_seqr
-        else:
-            self.logger.error("Virtual sequence not connected to virtual sequencer!")
-            raise RuntimeError("Virtual sequence not connected to virtual sequencer!")
+            self.apb_sqr = self.env_sq.v_sqr.apbuart_sq
+            self.uart_sqr = self.seqr.uart_sqr.v_sqr.uart_sq
+
 class apbuart_config_seq(vseq_base):
     # def __init__(self, name="apbuart_config_seq"):
     #     super().__init__(name)
