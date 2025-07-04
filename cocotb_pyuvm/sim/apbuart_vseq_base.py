@@ -1,6 +1,7 @@
 from pyuvm import *
 from apb_sequence import *
 from uart_sequence import *
+from apbuart_environment import *
 import logging
 class vseq_base(uvm_sequence):
 
@@ -17,8 +18,8 @@ class vseq_base(uvm_sequence):
         print(f"[DEBUG] p_sequencer is None? {getattr(self, 'p_sequencer', None) is None}")
         if hasattr(self, "p_sequencer") and self.p_sequencer:
             self.logger.info(f"[VSEQ_BASE] p_sequencer: {self.p_sequencer.get_full_name()}")
-            self.apb_sqr = getattr(self.p_sequencer, "apb_sqr", None)
-            self.uart_sqr = getattr(self.p_sequencer, "uart_sqr", None)
+            self.apb_sqr = self.env_h.v_seqr
+            self.uart_sqr = self.env_h.v_seqr
         else:
             self.logger.error("Virtual sequence not connected to virtual sequencer!")
             raise RuntimeError("Virtual sequence not connected to virtual sequencer!")
@@ -32,7 +33,7 @@ class apbuart_config_seq(vseq_base):
         self.logger.info("Executing sequence")
         apbuart_seq = config_apbuart.create("config_apbuart")
         await apbuart_seq.start(self.apb_sqr)
-        # await apbuart_seq.finish_item(self.apb_sqr)
+        await apbuart_seq.finish_item(self.apb_sqr)
         self.logger.info("Sequence complete")
 
 class apbuart_singlebeat_seq(vseq_base):
