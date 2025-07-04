@@ -12,8 +12,9 @@ class vseq_base(uvm_sequence):
 
     async def body(self):
         # First check if we have a virtual sequencer
-        print(f"[DEBUG] p_sequencer attribute? {hasattr(self, 'p_sequencer')}")
-        print(f"[DEBUG] p_sequencer: {getattr(self, 'p_sequencer', None)}")
+        print(f"[DEBUG] sequence name: {self.get_name()}")
+        print(f"[DEBUG] type of p_sequencer: {type(getattr(self, 'p_sequencer', None))}")
+        print(f"[DEBUG] p_sequencer is None? {getattr(self, 'p_sequencer', None) is None}")
         if hasattr(self, "p_sequencer") and self.p_sequencer:
             self.logger.info(f"[VSEQ_BASE] p_sequencer: {self.p_sequencer.get_full_name()}")
             self.apb_sqr = getattr(self.p_sequencer, "apb_sqr", None)
