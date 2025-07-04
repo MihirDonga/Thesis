@@ -9,7 +9,7 @@ class vseq_base(uvm_sequence):
         self.apb_sqr = None
         self.uart_sqr = None
 
-     async def body(self):
+    async def body(self):
         # First ensure we have p_sequencer reference
         if not hasattr(self, "p_sequencer") or not self.p_sequencer:
             raise RuntimeError("Virtual sequence not connected to virtual sequencer!")
