@@ -2,7 +2,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, RisingEdge
 from pyuvm import *
-from apbuart_config_test import apbuart_config_test  
+# from apbuart_config_test import apbuart_config_test  
 # from apbuart_config_test import apbuart_config_test
 # Simple version without interface classes - direct signal access
 # from pyuvm import *
@@ -10,7 +10,7 @@ from apbuart_config_test import apbuart_config_test
 # from apb_config import apb_config
 # from apbuart_environment import APBUARTEnv
 # from cocotb.triggers import Timer
-# # from apbuart_vseq_base import apbuart_config_seq
+from apbuart_vseq_base import apbuart_config_test
 
 # class apbuart_base_test(uvm_test):
 #     def __init__(self, name="apbuart_base_test", parent=None):
