@@ -12,8 +12,8 @@ class apbuart_base_test(uvm_test):
         self.apb_cfg = None
         self.error_count = 0  # Manual error counter
 
-    def build_phase(self, phase):
-        super().build_phase(phase)
+    def build_phase(self):
+        super().build_phase()
         self.logger.info(f"{self.get_name()} - Inside build_phase")
         
         # uvm_component, uvm_env, uvm_agent, scoreboard, sequencer	Yes (standard way)
