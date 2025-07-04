@@ -10,15 +10,19 @@ class vseq_base(uvm_sequence):
         self.uart_sqr = None
 
     async def body(self):
-        # First ensure we have p_sequencer reference
-        if not hasattr(self, "p_sequencer") or not self.p_sequencer:
+        # First check if we have a virtual sequencer
+        if not hasattr(self, "p_sequencer"):
+            print("[VSEQ] CRITICAL: p_sequencer not found!")
             raise RuntimeError("Virtual sequence not connected to virtual sequencer!")
         
-        # Safely get sequencer references
-        self.apb_sqr = getattr(self.p_sequencer, "apb_sqr", None)
-        self.uart_sqr = getattr(self.p_sequencer, "uart_sqr", None)
+        # Get sequencer references
+        self.apb_sqr = self.p_sequencer.apb_sqr
+        self.uart_sqr = self.p_sequencer.uart_sqr
         
+        # Verify connections
         if not self.apb_sqr or not self.uart_sqr:
+            print(f"[VSEQ] APB Sequencer: {self.apb_sqr}")
+            print(f"[VSEQ] UART Sequencer: {self.uart_sqr}")
             raise RuntimeError("Sub-sequencers not properly connected!")
         
 class apbuart_config_seq(vseq_base):
