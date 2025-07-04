@@ -102,9 +102,10 @@ class apbuart_base_test(uvm_test):
 
 class apbuart_config_test(apbuart_base_test):
     """APBUART configuration test"""
-    def __init__(self, name="apbuart_config_seq"):
-        super().__init__(name)  # ✅ this is required!
-        
+    def __init__(self, name, parent):
+        super().__init__(name, parent)  # ✅ this is required!
+        self.apbuart_confg_sq = None
+
     def build_phase(self):
         print(f"Entering build_phase for {self.get_name()}")
         super().build_phase()  # Must call parent first
