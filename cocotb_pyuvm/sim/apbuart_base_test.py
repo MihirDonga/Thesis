@@ -8,8 +8,8 @@ from apbuart_vseq_base import apbuart_config_seq
 # from apbuart_vseq_base import apbuart_config_seq
 
 class apbuart_base_test(uvm_test):
-    def __init__(self, name="apbuart_base_test"):
-        super().__init__(name)
+    def __init__(self, name="apbuart_base_test", parent=None):
+        super().__init__(name, parent)
         self.env_sq = None
         self.cfg = None
         self.apb_cfg = None
@@ -102,14 +102,14 @@ class apbuart_base_test(uvm_test):
 
 class apbuart_config_test(apbuart_base_test):
     """APBUART configuration test"""
-    def __init__(self, name="apbuart_config_seq"):
-        super().__init__(name)  # ✅ this is required!
+    def __init__(self, name="apbuart_config_seq", parent=None):
+        super().__init__(name, parent)  # ✅ this is required!
         self.apbuart_config_sq = None
 
     def build_phase(self):
         print(f"Entering build_phase for {self.get_name()}")
         super().build_phase()  # Must call parent first
-        self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_seq",self)
+        self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_seq")
 
 
     async def run_phase(self):

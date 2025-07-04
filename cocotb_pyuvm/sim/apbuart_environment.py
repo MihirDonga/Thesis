@@ -31,13 +31,14 @@ class APBUARTEnv(uvm_env):
         self.uart_agnt.monitor.item_collected_port_mon.connect(
             self.apbuart_scb.item_collected_export_monuart)
         
-        # Configure virtual sequencer
-        ConfigDB().set(self, "*", "apb_sqr", self.apb_agnt.sequencer)
-        ConfigDB().set(self, "*", "uart_sqr", self.uart_agnt.sequencer)
         self.v_sqr.apb_sqr = self.apb_agnt.sequencer
         self.v_sqr.uart_sqr = self.uart_agnt.sequencer
         print(f"[APBUARTEnv] APB Sequencer connected: {self.v_sqr.apb_sqr is not None}")
         print(f"[APBUARTEnv] UART Sequencer connected: {self.v_sqr.uart_sqr is not None}")
+        # Configure virtual sequencer
+        ConfigDB().set(self, "*", "apb_sqr", self.apb_agnt.sequencer)
+        ConfigDB().set(self, "*", "uart_sqr", self.uart_agnt.sequencer)
+        
     # async def final_phase(self):
     #     super().final_phase(phase)
     #     # Start coverage printing as background task
