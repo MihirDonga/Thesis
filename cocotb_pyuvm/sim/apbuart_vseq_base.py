@@ -4,8 +4,8 @@ from uart_sequence import *
 import logging
 class vseq_base(uvm_sequence):
 
-    def __init__(self, name="vseq_base", parent=None):
-        super().__init__(name,parent)
+    def __init__(self, name="vseq_base"):
+        super().__init__(name)
         self.apb_sqr = None
         self.uart_sqr = None
         self.logger = logging.getLogger(name)
