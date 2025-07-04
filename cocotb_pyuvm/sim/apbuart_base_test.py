@@ -1,10 +1,8 @@
-import pyuvm
 from pyuvm import *
 from uart_config import uart_config
 from apb_config import apb_config
 from apbuart_environment import APBUARTEnv
-from cocotb.triggers import Timer
-from apbuart_vseq_base import apbuart_config_seq
+# from apbuart_vseq_base import apbuart_config_seq
 
 class apbuart_base_test(uvm_test):
     def __init__(self, name="apbuart_base_test", parent=None):
@@ -23,9 +21,8 @@ class apbuart_base_test(uvm_test):
         self.env_sq =  APBUARTEnv.create("env_sq",self) 
         self.cfg = uart_config()
         self.apb_cfg = apb_config()
-        for _ in range(self.cfg.loop_time):
-            self.set_config_params(9600, 8, 3, 1, 1)
-            self.set_apbconfig_params(2, 1)
+        self.set_config_params(9600, 8, 3, 1, 1)
+        self.set_apbconfig_params(2, 1)
         
         ConfigDB().set(None, "*", "cfg", self.cfg)
         ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
