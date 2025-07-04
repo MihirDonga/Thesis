@@ -1,14 +1,15 @@
 from pyuvm import *
 from apb_sequence import *
 from uart_sequence import *
- 
+import logging
 class vseq_base(uvm_sequence):
 
     def __init__(self, name="vseq_base"):
         super().__init__(name)
         self.apb_sqr = None
         self.uart_sqr = None
-
+        self.logger = logging.getLogger(name)
+        
     async def body(self):
         # First check if we have a virtual sequencer
         if hasattr(self, "p_sequencer") and self.p_sequencer:
