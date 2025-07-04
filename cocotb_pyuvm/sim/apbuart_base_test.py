@@ -109,7 +109,7 @@ class apbuart_config_test(apbuart_base_test):
     def build_phase(self):
         print(f"Entering build_phase for {self.get_name()}")
         super().build_phase()  # Must call parent first
-        self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_seq")
+        self.apbuart_config_sq = apbuart_config_seq.create("apbuart_config_seq",self)
 
 
     async def run_phase(self):
