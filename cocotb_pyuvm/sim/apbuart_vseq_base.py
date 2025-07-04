@@ -1,7 +1,7 @@
 from pyuvm import *
 from apb_sequence import *
 from uart_sequence import *
-
+ 
 class vseq_base(uvm_sequence):
 
     def __init__(self, name="vseq_base"):
@@ -10,8 +10,13 @@ class vseq_base(uvm_sequence):
         self.uart_sqr = None
 
     async def body(self):
-        self.apb_sqr = self.p_sequencer.apb_sqr
-        self.uart_sqr = self.p_sequencer.uart_sqr
+        # Access sub-sequencers through p_sequencer
+        # PyUVM automatically sets p_sequencer when sequence is started
+        if hasattr(self, "p_sequencer"):
+            self.apb_sqr = self.p_sequencer.apb_sqr
+            self.uart_sqr = self.p_sequencer.uart_sqr
+        else:
+            self.uvm_fatal("VSEQ", "Virtual sequence not connected to virtual sequencer!")
 
 class apbuart_config_seq(vseq_base):
 
