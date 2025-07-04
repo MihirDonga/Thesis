@@ -8,8 +8,8 @@ from apbuart_vseq_base import apbuart_config_seq
 # from apbuart_vseq_base import apbuart_config_seq
 
 class apbuart_base_test(uvm_test):
-    def __init__(self, name="apbuart_base_test", parent=None):
-        super().__init__(name, parent)
+    def __init__(self, name="apbuart_base_test"):
+        super().__init__(name)
         self.env_sq = None
         self.cfg = None
         self.apb_cfg = None
