@@ -113,12 +113,12 @@ class APBUARTScoreboard(uvm_scoreboard):
          # Sample coverage with direct values
         try:
             if hasattr(self, 'config_cg'):
-                if self.parity_reg in [0, 1, 2, 3]:
+                if self.cfg.parity in [0, 1, 2, 3]:
                     self.config_cg.sample(
-                        self.baud_rate_reg,
-                        self.frame_len_reg,
-                        self.parity_reg,
-                        self.stopbit_reg
+                        self.cfg.bRate,
+                        self.cfg.frame_len,
+                        self.cfg.parity,
+                        self.cfg.n_sb
                     )
                 else:
                     self.logger.warning(f"Skipping coverage sample: invalid parity value {self.parity_reg}")
