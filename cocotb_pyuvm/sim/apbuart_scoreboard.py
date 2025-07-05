@@ -141,10 +141,6 @@ class APBUARTScoreboard(uvm_scoreboard):
         try:
             if hasattr(self, 'config_cg'):
                 self.config_cg.sample(
-                    bRate=self.baud_rate_reg,
-                    frame_len=self.frame_len_reg,
-                    parity=self.parity_reg,
-                    n_sb=self.stopbit_reg
                 )
                 self.config_sample_count += 1
                 self.logger.info(f"Sampled coverage with: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, parity={self.parity_reg}, n_sb={self.stopbit_reg}")
@@ -164,8 +160,6 @@ class APBUARTScoreboard(uvm_scoreboard):
         if apb_pkt.PWDATA == uart_pkt.transmitter_reg:
             # Sample coverage with direct values
             self.tx_cg.sample(
-                apb_data=apb_pkt.PWDATA,
-                uart_data=uart_pkt.transmitter_reg
             )
             self.tx_sample_count += 1
             self.logger.info("Transmission Data Match")
@@ -198,9 +192,6 @@ class APBUARTScoreboard(uvm_scoreboard):
             test.report_error("Error Flag Mismatch")
         # Sample coverage with direct values
         self.rx_cg.sample(
-            apb_data=apb_pkt.PRDATA,
-            uart_data=uart_pkt.payload,
-            error=apb_pkt.PSLVERR
         )
         self.rx_sample_count    += 1
 
