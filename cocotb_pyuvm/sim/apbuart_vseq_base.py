@@ -11,9 +11,9 @@ class vseq_base(uvm_sequence):
         self.uart_sqr = None
         self.p_sequencer = None
 
-    async def start(self, sequencer, phase=None):
+    async def start(self, sequencer):
         self.p_sequencer = sequencer  # 🔗 Manual p_sequencer binding
-        await super().start(sequencer, phase)
+        await super().start(sequencer)
         await self.body()
 
     async def body(self):
@@ -21,7 +21,7 @@ class vseq_base(uvm_sequence):
             raise TypeError("Expected VSequencer, got something else.")
         self.apb_sqr = self.p_sequencer.apb_sqr
         self.uart_sqr = self.p_sequencer.uart_sqr
-        
+
 class apbuart_config_seq(vseq_base):
     # def __init__(self, name="apbuart_config_seq"):
     #     super().__init__(name)
