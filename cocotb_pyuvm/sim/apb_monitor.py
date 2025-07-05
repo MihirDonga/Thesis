@@ -38,9 +38,9 @@ class APBMonitor(uvm_monitor):
 
             # Capture transaction data
             self.trans_collected.PWRITE = bool(self.dut.PWRITE.value)
-            self.trans_collected.PWDATA = self.dut.PWDATA.value.integer
-            self.trans_collected.PADDR = self.dut.PADDR.value.integer
-            self.trans_collected.PRDATA = self.dut.PRDATA.value.integer
+            self.trans_collected.PWDATA = self.safe_int(self.dut.PWDATA.value)
+            self.trans_collected.PADDR = self.safe_int(self.dut.PWDATA.value)
+            self.trans_collected.PRDATA = self.safe_int(self.dut.PWDATA.value)
             self.trans_collected.PREADY = bool(self.dut.PREADY.value)
             self.trans_collected.PSLVERR = bool(self.dut.PSLVERR.value)
             
