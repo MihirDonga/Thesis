@@ -113,12 +113,13 @@ class apbuart_config_test(apbuart_base_test):
 
 
     async def run_phase(self):
-        for _ in range(100):
+        for i in range(100):
+
             self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
-            self.logger.info(f"UART Config:\n{self.cfg}")       #prints __str__ from uart_config
+            self.logger.info(f"[{i+1}/100] UART Config:\n{self.cfg}")       #prints __str__ from uart_config
 
             self.set_apbconfig_params(2, 1)  # Slave Bus Address, Randomize Flag
-            self.logger.info(f"APB Config:\n{self.apb_cfg}")    #prints __str__ from apb_config
+            self.logger.info(f"[{i+1}/100] APB Config:\n{self.apb_cfg}")    #prints __str__ from apb_config
 
             self.raise_objection()
             await self.apbuart_config_sq.start(self.env_sq.v_sqr)
