@@ -50,7 +50,6 @@ module tbench_top;
     $dumpfile("dump.vcd"); 
     $dumpvars(0, tbench_top);
   end
-  time start_time, end_time;
 
   time end_time;
 
