@@ -11,7 +11,7 @@ class vseq_base(uvm_sequence):
         self.uart_sqr = None
         self.p_sequencer = None
         self.logger = logging.getLogger(name)
-        
+
     async def start(self, sequencer):
         self.p_sequencer = sequencer  # 🔗 Manual p_sequencer binding
         await super().start(sequencer)
@@ -29,7 +29,6 @@ class apbuart_config_seq(vseq_base):
 
     async def body(self):
         await super().body()
-        print(f"[DEBUG][apbuart_config_seq] p_sequencer after super().body(): {self.p_sequencer}")
         self.logger.info("Executing sequence")
         apbuart_seq = config_apbuart.create("config_apbuart")
         await apbuart_seq.start(self.apb_sqr)
