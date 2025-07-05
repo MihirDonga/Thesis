@@ -16,7 +16,7 @@ class APBUARTEnv(uvm_env):
     def build_phase(self):
         super().build_phase()
         # Create components
-        vsc.start() #Enable functional coverage collection 
+        # vsc.start() #Enable functional coverage collection 
         self.apb_agnt = APBAgent("apb_agnt",self)
         self.uart_agnt = UARTAgent("uart_agnt",self)
         self.apbuart_scb = APBUARTScoreboard("apbuart_scb",self)
