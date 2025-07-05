@@ -211,7 +211,7 @@ class APBUARTScoreboard(uvm_scoreboard):
         config_cov = self.config_cg.get_coverage()
         tx_cov = self.tx_cg.get_coverage()
         rx_cov = self.rx_cg.get_coverage()
-        self.logger.info("Parity_hit"{self.config_cg.parity_cp.get_coverage():.2f}%)
+        self.logger.info(f"Parity_hit:{self.config_cg.parity_cp.get_coverage():.2f}%")
         self.logger.info("\nCoverage Report:")
         self.logger.info(f"Config Coverage: {config_cov:.2f}% ({self.config_sample_count} samples)")
         self.logger.info(f"Tx Coverage: {tx_cov:.2f}% ({self.tx_sample_count} samples)")
