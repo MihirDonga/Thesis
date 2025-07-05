@@ -14,4 +14,4 @@ SV_UVM:
     Config Coverage: 75.35% with 200 samples
     Config Coverage: 82.52% with 400 samples
     Config Coverage: 86.40% with 800 samples
-    
+    Config Coverage: 87.38% with 1600 samples
