@@ -28,7 +28,7 @@ class uart_config(uvm_object):
         self.trans_data_addr       = 0x10
         self.receive_data_addr     = 0x14
 
-        self.loop_time             = 3200
+        self.loop_time             = 1600
 
         # UVM active/passive enum equivalent
         self.is_active = uvm_active_passive_enum.UVM_ACTIVE
