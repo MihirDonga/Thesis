@@ -50,7 +50,20 @@ module tbench_top;
     $dumpfile("dump.vcd"); 
     $dumpvars(0, tbench_top);
   end
-  
+  time start_time, end_time;
+
+  initial begin
+      start_time = $realtime;
+
+      // Wait until end of simulation
+      @(posedge uvm_top.stop_request); // or use #end-of-simulation event
+      end_time = $realtime;
+
+      $display("\n--- Simulation Real Time Stats ---");
+      $display("Start Time : %0t ns", start_time);
+      $display("End Time   : %0t ns", end_time);
+      $display("Simulated Duration : %0t ns", end_time - start_time);
+  end
 
   initial
     run_test(); // built in func...you can give test name as argument
