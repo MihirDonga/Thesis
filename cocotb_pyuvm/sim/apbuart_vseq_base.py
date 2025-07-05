@@ -10,7 +10,8 @@ class vseq_base(uvm_sequence):
         self.apb_sqr = None
         self.uart_sqr = None
         self.p_sequencer = None
-
+        self.logger = logging.getLogger(name)
+        
     async def start(self, sequencer):
         self.p_sequencer = sequencer  # 🔗 Manual p_sequencer binding
         await super().start(sequencer)
