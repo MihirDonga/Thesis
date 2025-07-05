@@ -137,7 +137,6 @@ class APBUARTScoreboard(uvm_scoreboard):
                 self.logger.error("Stop Bits Mismatch")
                 test.report_error("Stop Bits Mismatch detected in scoreboard!")
             self.logger.info(f"Expected: {self.stopbit_reg} Actual: {apb_pkt.PRDATA}")
-        print(f"DEBUG: Sampling config coverage with: {self.baud_rate_reg}, {self.frame_len_reg}, {self.parity_reg}, {self.stopbit_reg}")
         # Sample coverage with direct values
         try:
             if hasattr(self, 'config_cg'):
@@ -148,6 +147,7 @@ class APBUARTScoreboard(uvm_scoreboard):
                     n_sb=self.stopbit_reg
                 )
                 self.config_sample_count += 1
+                self.logger.info(f"Sampled coverage with: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, parity={self.parity_reg}, n_sb={self.stopbit_reg}")
         except Exception as e:
             self.logger.error(f"Failed to sample config coverage: {str(e)}")
             self.logger.error(f"Values: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, "
