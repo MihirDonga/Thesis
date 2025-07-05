@@ -16,6 +16,14 @@ class APBMonitor(uvm_monitor):
         if self.dut is None:
             self.logger.error("DUT handle not found APB_Monitor")
             raise Exception("DUTError APB_Monitor")
+        
+    # ✅ Safe conversion helper
+    def safe_int(signal_val, default=0):
+        val_str = str(signal_val)
+        if any(ch in val_str for ch in ('x', 'z', '?')):
+            return default
+        return signal_val.integer
+    
     async def run_phase(self):
         while True:
             # Wait for transaction start
@@ -27,7 +35,7 @@ class APBMonitor(uvm_monitor):
             while not (self.dut.PREADY.value or self.dut.PSLVERR.value):
                 await RisingEdge(self.dut.PCLK)
             self.trans_collected = APBTransaction()
-            
+
             # Capture transaction data
             self.trans_collected.PWRITE = bool(self.dut.PWRITE.value)
             self.trans_collected.PWDATA = self.dut.PWDATA.value.integer
