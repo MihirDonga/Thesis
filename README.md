@@ -13,4 +13,5 @@ Test run : xrun -64bit -uvm -sv -f filelist.f +UVM_TESTNAME=apbuart_parity_error
 SV_UVM:
     Config Coverage: 75.35% with 200 samples
     Config Coverage: 82.52% with 400 samples
+    Config Coverage: 86.40% with 800 samples
     
