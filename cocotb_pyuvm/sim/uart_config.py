@@ -57,7 +57,13 @@ class uart_config(uvm_object):
     def randomize(self):
         """Randomize the configuration using VSC"""
         try:
-            result = super().randomize()
+            vsc.randomize(self)
+            assert self.frame_len in [5, 6, 7, 8], f"Invalid frame_len: {self.frame_len}"
+            assert self.n_sb in [0, 1], f"Invalid n_sb: {self.n_sb}"
+            assert self.parity in [0, 1, 2, 3], f"Invalid parity: {self.parity}"
+            assert self.bRate in [4800, 9600, 14400, 19200,
+                                  38400, 57600, 115200, 128000, 63, 0], f"Invalid bRate: {self.bRate}"
+
             self.baudRateFunc()
             return result
         except Exception as e:
