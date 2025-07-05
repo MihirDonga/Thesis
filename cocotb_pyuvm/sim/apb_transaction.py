@@ -57,6 +57,9 @@ class APBTransaction(uvm_sequence_item):
             return 0
         
     def __str__(self):
-        return (f"APBTransaction: PWRITE={self.PWRITE}, PADDR=0x{self.PADDR:08x}, "
-                f"PWDATA=0x{self.PWDATA:08x}, PREADY={self.PREADY}, "
-                f"PSLVERR={self.PSLVERR}, PRDATA=0x{self.PRDATA:08x}")
+        return (f"APBTransaction: PWRITE={self.PWRITE}, "
+        f"PADDR=0x{int(self.PADDR):08x}, "
+        f"PWDATA=0x{int(self.PWDATA):08x}, "
+        f"PRDATA=0x{int(self.PRDATA):08x}, "
+        f"PREADY={self.PREADY}, PSLVERR={self.PSLVERR}")
+
