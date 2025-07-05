@@ -21,12 +21,12 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.frame_len_reg = 0
         self.parity_reg = 0
         self.stopbit_reg = 0
-
+        print("Initializing coverage groups")
         # Initialize coverage groups
         self.config_cg = ConfigCoverage()
         self.tx_cg = TxCoverage()
         self.rx_cg = RxCoverage()
-
+        print(f"Coverage groups initialized: {self.config_cg}, {self.tx_cg}, {self.rx_cg}")
         # Counters
         self.config_sample_count = 0
         self.tx_sample_count = 0
@@ -137,7 +137,7 @@ class APBUARTScoreboard(uvm_scoreboard):
                 self.logger.error("Stop Bits Mismatch")
                 test.report_error("Stop Bits Mismatch detected in scoreboard!")
             self.logger.info(f"Expected: {self.stopbit_reg} Actual: {apb_pkt.PRDATA}")
-
+        print(f"DEBUG: Sampling config coverage with: {self.baud_rate_reg}, {self.frame_len_reg}, {self.parity_reg}, {self.stopbit_reg}")
         # Sample coverage with direct values
         try:
             if hasattr(self, 'config_cg'):
