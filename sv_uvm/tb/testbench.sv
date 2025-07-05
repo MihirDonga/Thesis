@@ -51,12 +51,12 @@ module tbench_top;
     $dumpvars(0, tbench_top);
   end
 
-  time end_time;
+  // time end_time;
 
-  final begin
-    end_time = $realtime;
-    $display("\n>>>[Final Block]  Simulation time : %0t ns", end_time);
-  end
+  // final begin
+  //   end_time = $realtime;
+  //   $display("\n>>>[Final Block]  Simulation time : %0t ns", end_time);
+  // end
 
   initial
     begin
