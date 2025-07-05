@@ -57,9 +57,12 @@ class APBTransaction(uvm_sequence_item):
             return 0
         
     def __str__(self):
-        return (f"APBTransaction: PWRITE={self.PWRITE}, "
-        f"PADDR=0x{int(self.PADDR):08x}, "
-        f"PWDATA=0x{int(self.PWDATA):08x}, "
-        f"PRDATA=0x{int(self.PRDATA):08x}, "
-        f"PREADY={self.PREADY}, PSLVERR={self.PSLVERR}")
+        try:
+            return (f"APBTransaction: PWRITE={self.PWRITE}, "
+                    f"PADDR=0x{int(self.PADDR.value):08x}, "
+                    f"PWDATA=0x{int(self.PWDATA.value):08x}, "
+                    f"PRDATA=0x{int(self.PRDATA.value):08x}, "
+                    f"PREADY={self.PREADY}, PSLVERR={self.PSLVERR}")
+        except Exception as e:
+            return f"[APBTransaction] __str__ failed: {str(e)}"
 
