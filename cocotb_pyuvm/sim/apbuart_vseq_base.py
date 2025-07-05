@@ -15,7 +15,7 @@ class vseq_base(uvm_sequence):
         if not hasattr(self, "sequencer"):
             raise RuntimeError("Sequence must be started with a sequencer!")
         
-        if not isinstance(self.sequencer, vsequencer):
+        if not isinstance(self.sequencer, VSequencer):
             raise RuntimeError("Virtual sequence must run on a vsequencer!")
         
         # Assign sub-sequencers
