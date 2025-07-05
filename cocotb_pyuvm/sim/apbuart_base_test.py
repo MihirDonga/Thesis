@@ -126,4 +126,4 @@ class apbuart_config_test(apbuart_base_test):
             self.drop_objection()
 
         # Wait 20 time units after dropping objection before test finishes
-        # await Timer(20, "ns")
+        await Timer(20, "ns")
