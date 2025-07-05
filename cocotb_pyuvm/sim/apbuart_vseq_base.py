@@ -9,19 +9,19 @@ class vseq_base(uvm_sequence):
         super().__init__(name)
         self.apb_sqr = None
         self.uart_sqr = None
+        self.p_sequencer = None
+
+    async def start(self, sequencer, phase=None):
+        self.p_sequencer = sequencer  # 🔗 Manual p_sequencer binding
+        await super().start(sequencer, phase)
+        await self.body()
 
     async def body(self):
-        # First check if we have a virtual sequencer
-        if not hasattr(self, "sequencer"):
-            raise RuntimeError("Sequence must be started with a sequencer!")
+        if not isinstance(self.p_sequencer, VSequencer):
+            raise TypeError("Expected VSequencer, got something else.")
+        self.apb_sqr = self.p_sequencer.apb_sqr
+        self.uart_sqr = self.p_sequencer.uart_sqr
         
-        if not isinstance(self.sequencer, VSequencer):
-            raise RuntimeError("Virtual sequence must run on a vsequencer!")
-        
-        # Assign sub-sequencers
-        self.apb_sqr = self.sequencer.apb_sqr
-        self.uart_sqr = self.sequencer.uart_sqr
-
 class apbuart_config_seq(vseq_base):
     # def __init__(self, name="apbuart_config_seq"):
     #     super().__init__(name)
@@ -32,7 +32,7 @@ class apbuart_config_seq(vseq_base):
         self.logger.info("Executing sequence")
         apbuart_seq = config_apbuart.create("config_apbuart")
         await apbuart_seq.start(self.apb_sqr)
-        await apbuart_seq.finish_item(self.apb_sqr)
+        # await apbuart_seq.finish_item(self.apb_sqr)
         self.logger.info("Sequence complete")
 
 class apbuart_singlebeat_seq(vseq_base):
