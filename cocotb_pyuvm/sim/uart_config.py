@@ -57,9 +57,9 @@ class uart_config(uvm_object):
     def randomize(self):
         """Randomize the configuration using VSC"""
         try:
-            vsc.randomize(self)
-            self.baudRateFunc()  # Update baud rate after randomization
-            return True
+            result = super().randomize()
+            self.baudRateFunc()
+            return result
         except Exception as e:
             print(f"Randomization failed: {e}")
             return False
