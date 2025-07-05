@@ -123,6 +123,7 @@ class APBUARTScoreboard(uvm_scoreboard):
             self.logger.info(f"Expected: {self.frame_len_reg} Actual: {apb_pkt.PRDATA}")
 
         elif apb_pkt.PADDR == self.cfg.parity_config_addr:
+            self.logger.info(f"[DBG] APB WRITE to parity_reg: {apb_pkt.PRDATA}")
             if apb_pkt.PRDATA == self.parity_reg:
                 self.logger.info("Parity Match")
             else:
@@ -137,25 +138,25 @@ class APBUARTScoreboard(uvm_scoreboard):
                 self.logger.error("Stop Bits Mismatch")
                 test.report_error("Stop Bits Mismatch detected in scoreboard!")
             self.logger.info(f"Expected: {self.stopbit_reg} Actual: {apb_pkt.PRDATA}")
+
         # Sample coverage with direct values
-        try:
-            if hasattr(self, 'config_cg'):
-                if self.parity_reg in [0, 1, 2, 3]:
-                    self.config_cg.sample(
-                        self.baud_rate_reg,
-                        self.frame_len_reg,
-                        self.parity_reg,
-                        self.stopbit_reg
-                    )
-                else:
-                    self.logger.warning(f"Skipping coverage sample: invalid parity value {self.parity_reg}")
+        valid_parity = self.parity_reg in [0, 1, 2, 3]
+        valid_frame = self.frame_len_reg in [5, 6, 7, 8]
+        valid_bRate = self.baud_rate_reg in [4800, 9600, 14400, 19200, 38400, 57600, 115200, 128000, 63, 0]
+        valid_nsb   = self.stopbit_reg in [0, 1]
+        if all([valid_parity, valid_frame, valid_bRate, valid_nsb]):
+                self.config_cg.sample(
+                    self.baud_rate_reg,
+                    self.frame_len_reg,
+                    self.parity_reg,
+                    self.stopbit_reg
+                )
                 self.config_sample_count += 1
                 self.logger.info(f"Sampled coverage with: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, parity={self.parity_reg}, n_sb={self.stopbit_reg}")
-        except Exception as e:
-            self.logger.error(f"Failed to sample config coverage: {str(e)}")
-            self.logger.error(f"Values: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, "
-                            f"parity={self.parity_reg}, n_sb={self.stopbit_reg}")
-
+        else:
+                self.logger.warning(f"Skipping coverage sample due to invalid values: "
+                                f"bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, "
+                                f"parity={self.parity_reg}, n_sb={self.stopbit_reg}")
     def compare_transmission(self, apb_pkt, uart_pkt):
         test = None
         try:
