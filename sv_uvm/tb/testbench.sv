@@ -2,7 +2,7 @@
 `include "uartinterface.sv" 
 `include "apbinterface.sv"
 `include "testbench_pkg.sv"
-
+import "DPI-C" function lomgint getttimeofday_ms();
 module tbench_top;
   
   import uvm_pkg::*;
@@ -54,7 +54,7 @@ module tbench_top;
   time end_time;
 
   final begin
-    end_time = $realtime;
+    longint end_time = gettimeofday_ms();
     $display("\n>>>[Final Block]  Simulation time : %0t ns", end_time);
   end
 
