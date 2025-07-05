@@ -1,9 +1,9 @@
 from pyuvm import *
 import vsc
 
-class APBTransaction(uvm_sequence_item):
 
-    # uvm_object_utils(apb_transaction)
+class APBTransaction(uvm_sequence_item):
+ # uvm_object_utils(apb_transaction)
     
     # # Field automation (replaces uvm_field_int macros)
     # uvm_field_int('PWRITE')
