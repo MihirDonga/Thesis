@@ -57,32 +57,29 @@ class UARTMonitor(uvm_monitor):
             self.logger.error("Incorrect frame length selected")
 
     async def monitor_and_send(self):
-        self.count = 0
-
-        for i in range(self.LT):
-            # Wait for start bit (falling edge)
-            while self.dut.Tx.value == 1:
+        for _ in range(self.LT):
+            # Wait for falling edge on Tx (start bit)
+            while int(self.dut.Tx.value) == 1:
                 await RisingEdge(self.dut.PCLK)
 
             bit_time_ns = int(1e9 / self.cfg.bRate)
-            # Sample in middle of bit period
-            await Timer(bit_time_ns // 2, units='ns')     
 
-            # Sample data bits
-            for _ in range(self.cfg.frame_len):
-                await Timer(self.cfg.baud_rate * self.dut.PCLK.period)
-                self.receive_reg = (self.receive_reg << 1) | self.dut.Tx.value
-                self.count += 1
-            
-            # Sample parity bit if enabled
+            # Mid-bit sample for start bit alignment
+            await Timer(bit_time_ns // 2, units='ns')
+
+            reg = 0
+            for bit_idx in range(self.cfg.frame_len):
+                await Timer(bit_time_ns, units='ns')
+                bit_val = int(self.dut.Tx.value)
+                reg = (reg >> 1) | (bit_val << (self.cfg.frame_len - 1))
+
             if self.parity_en:
-                await Timer(self.cfg.baud_rate * self.dut.PCLK.period)
-                # parity_bit = self.dut.Tx.value
-            
-            # Sample stop bits
-            for _ in range(self.cfg.n_sb + 1):
-                await Timer(self.cfg.baud_rate * self.dut.PCLK.period)
-                # stop_bit = self.dut.Tx.value
+                await Timer(bit_time_ns, units='ns')  # Parity bit
+
+            for _ in range(self.cfg.n_sb):
+                await Timer(bit_time_ns, units='ns')
+                if int(self.dut.Tx.value) != 1:
+                    self.logger.warning("Stop bit error detected")
             
             # Store collected data
             txn = UARTTransaction()
