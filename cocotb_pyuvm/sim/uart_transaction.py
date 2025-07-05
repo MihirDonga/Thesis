@@ -10,9 +10,9 @@ class UARTTransaction(uvm_sequence_item):
         self.payload = vsc.rand_uint32_t()  # 32-bit data to be sent on DUT RX pin
         self.transmitter_reg = vsc.rand_uint32_t()  # 32-bit data monitored from DUT TX pin
         self.bad_parity = vsc.rand_bit_t()
-        self.bad_parity_frame = vsc.rand_uint8_t()
+        self.bad_parity_frame = vsc.rand_bit_t(7)
         self.sb_corr = vsc.rand_bit_t()
-        self.sb_corr_frame = vsc.rand_uint8_t()
+        self.sb_corr_frame = vsc.rand_bit_t(7)
         self.sb_corr_bit = vsc.rand_bit_t(2)
         self.start_bit = vsc.rand_bit_t()
         self.stop_bits = vsc.rand_bit_t(2)
@@ -27,30 +27,30 @@ class UARTTransaction(uvm_sequence_item):
         return (f"UARTTransaction: payload=0x{self.payload:08x}, "
                 f"bad_parity={self.bad_parity}, sb_corr={self.sb_corr}")
 
-    def _define_constraints(self):
-        """Randomize all fields with constraints"""
-        @vsc.constraint
-        def default_start_bit_c(self):
-            self.start_bit == 0
-            
-        @vsc.constraint
-        def default_stop_bits_c(self):
-            self.stop_bits == 3  # Binary 11
-            
-        @vsc.constraint
-        def corrupt_parity_frame_c(self):
-            vsc.if_then(self.bad_parity,
-                (self.bad_parity_frame[3:0] > 0))
-            
-        @vsc.constraint
-        def corrupt_sb_frame_c(self):
-            vsc.if_then(self.sb_corr,
-                (self.sb_corr_frame[3:0] > 0))
-            
-        @vsc.constraint
-        def corrupt_sb_bit_c(self):
-            vsc.if_then(self.sb_corr,
-                (self.sb_corr_bit != 0))
+    # def _define_constraints(self):
+    """Randomize all fields with constraints"""
+    @vsc.constraint
+    def default_start_bit_c(self):
+        self.start_bit == 0
+        
+    @vsc.constraint
+    def default_stop_bits_c(self):
+        self.stop_bits == 3  # Binary 11
+        
+    @vsc.constraint
+    def corrupt_parity_frame_c(self):
+        vsc.if_then(self.bad_parity,
+            (self.bad_parity_frame[3:0] > 0))
+        
+    @vsc.constraint
+    def corrupt_sb_frame_c(self):
+        vsc.if_then(self.sb_corr,
+            (self.sb_corr_frame[3:0] > 0))
+        
+    @vsc.constraint
+    def corrupt_sb_bit_c(self):
+        vsc.if_then(self.sb_corr,
+            (self.sb_corr_bit != 0))
     
     def randomize(self):
         """
