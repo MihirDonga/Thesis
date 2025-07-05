@@ -296,7 +296,7 @@
 //         error_cross: cross rx_cp, error_cp;
 //     endgroup
 
-class APBUARTscoreboard extends uvm_scoreboard;
+class apbuart_scoreboard extends uvm_scoreboard;
 	// -----------------------------------------------------------------------------------
 	//  Using the `uvm_analysis_imp_decl() macro allows the construction of two analysis 
 	//  implementation ports with corresponding, uniquely named, write methods
