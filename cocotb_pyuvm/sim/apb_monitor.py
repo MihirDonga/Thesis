@@ -1,6 +1,6 @@
 from pyuvm import *
 from cocotb.triggers import RisingEdge
-
+from apb_transaction import*
 class APBMonitor(uvm_monitor):
     def __init__(self, name, parent):
         super().__init__(name, parent)
@@ -26,6 +26,7 @@ class APBMonitor(uvm_monitor):
             # Wait for completion (PREADY or PSLVERR)
             while not (self.dut.PREADY.value or self.dut.PSLVERR.value):
                 await RisingEdge(self.dut.PCLK)
+            self.trans_collected = APBTransaction()
             
             # Capture transaction data
             self.trans_collected.PWRITE = bool(self.dut.PWRITE.value)
