@@ -99,7 +99,7 @@ class APBUARTScoreboard(uvm_scoreboard):
                 self.compare_receive(apb_pkt_mon, uart_pkt_drv)
 
     def compare_config(self, apb_pkt):
-        # test = uvm_root().find("apbuart_base_test")
+        test = uvm_root().find("apbuart_base_test")
 
 
         # Verification logic
@@ -145,7 +145,7 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.config_sample_count += 1
 
     def compare_transmission(self, apb_pkt, uart_pkt):
-        # test = uvm_root().find("apbuart_base_test")
+        test = uvm_root().find("apbuart_base_test")
 
         # Verification logic
         if apb_pkt.PWDATA == uart_pkt.transmitter_reg:
@@ -162,7 +162,7 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.logger.info(f"Expected: {apb_pkt.PWDATA:#x} Actual: {uart_pkt.transmitter_reg:#x}")
 
     def compare_receive(self, apb_pkt, uart_pkt):
-        # test = uvm_root().find("apbuart_base_test")
+        test = uvm_root().find("apbuart_base_test")
 
         # Verification logic
         if apb_pkt.PRDATA == uart_pkt.payload:
