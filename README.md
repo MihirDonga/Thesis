@@ -14,7 +14,7 @@ SV_UVM:
     Config Coverage: 75.35% with 200 samples    50
     Config Coverage: 82.52% with 400 samples    100
     Config Coverage: 86.40% with 800 samples    200
-    Config Coverage: 87.38% with 1600 samples   400
+    Config Coverage: 87.38% with 1600 samples   400     simtime : 0.38 ms
     Config Coverage: 87.50% with 3200 samples   800     simtime : 0.76 ms
     Config Coverage: 87.50% with 6400 samples   1600    simtime : 1.53 ms
     Config Coverage: 87.50% with 12800 samples  3200    simtime : 3.07 ms
