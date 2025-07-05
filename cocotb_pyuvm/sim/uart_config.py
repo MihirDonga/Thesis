@@ -33,26 +33,26 @@ class uart_config(uvm_object):
         # UVM active/passive enum equivalent
         self.is_active = uvm_active_passive_enum.UVM_ACTIVE
 
-        self._setup_constraints()
+        # self._setup_constraints()
 
-    def _setup_constraints(self):
-        # Apply constraints
-        @vsc.constraint
-        def frame_len_c(self):
-            self.frame_len.inside(vsc.rangelist(5, 6, 7, 8))
-            
-        @vsc.constraint
-        def n_sb_c(self):
-            self.n_sb.inside(vsc.rangelist(0, 1))
-            
-        @vsc.constraint
-        def parity_c(self):
-            self.parity.inside(vsc.rangelist(0, 1, 2, 3))
-            
-        @vsc.constraint
-        def bRate_c(self):
-            self.bRate.inside(vsc.rangelist(4800, 9600, 14400, 19200, 
-                             38400, 57600, 115200, 128000, 63, 0))
+    # def _setup_constraints(self):
+    # Apply constraints
+    @vsc.constraint
+    def frame_len_c(self):
+        self.frame_len.inside(vsc.rangelist(5, 6, 7, 8))
+        
+    @vsc.constraint
+    def n_sb_c(self):
+        self.n_sb.inside(vsc.rangelist(0, 1))
+        
+    @vsc.constraint
+    def parity_c(self):
+        self.parity.inside(vsc.rangelist(0, 1, 2, 3))
+        
+    @vsc.constraint
+    def bRate_c(self):
+        self.bRate.inside(vsc.rangelist(4800, 9600, 14400, 19200, 
+                            38400, 57600, 115200, 128000, 63, 0))
 
     def randomize(self):
         """Randomize the configuration using VSC"""
