@@ -63,9 +63,10 @@ class UARTMonitor(uvm_monitor):
             # Wait for start bit (falling edge)
             while self.dut.Tx.value == 1:
                 await RisingEdge(self.dut.PCLK)
-            
+
+            bit_time_ns = int(1e9 / self.cfg.bRate)
             # Sample in middle of bit period
-            await Timer(self.cfg.baud_rate // 2)     
+            await Timer(bit_time_ns // 2, units='ns')     
 
             # Sample data bits
             for _ in range(self.cfg.frame_len):
@@ -84,8 +85,9 @@ class UARTMonitor(uvm_monitor):
                 # stop_bit = self.dut.Tx.value
             
             # Store collected data
-            self.trans_collected.transmitter_reg = self.receive_reg
-            
+            txn = UARTTransaction()
+            txn.transmitter_reg = reg
+            self.item_collected_port_mon.write(txn)            
         # Send transaction to scoreboard
         self.item_collected_port_mon.write(self.trans_collected)
         self.receive_reg = 0  # Reset for next transaction
