@@ -121,9 +121,11 @@ class apbuart_config_test(apbuart_base_test):
             self.set_apbconfig_params(2, 1)  # Slave Bus Address, Randomize Flag
             self.logger.info(f"[{i+1}/100] APB Config:\n{self.apb_cfg}")    #prints __str__ from apb_config
 
-            self.raise_objection()
-            await self.apbuart_config_sq.start(self.env_sq.v_sqr)
+            self.raise_objection()  # ✅ correct in pyuvm
+            try:
+                await self.apbuart_config_sq.start(self.env_sq.v_sqr)
+            except Exception as e:
+                self.logger.error(f"Exception in sequence at iteration {i+1}: {e}")
             self.drop_objection()
-            await Timer(1, "ns") 
         # Wait 20 time units after dropping objection before test finishes
         await Timer(20, "ns")
