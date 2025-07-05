@@ -20,7 +20,7 @@ class UARTTransaction(uvm_sequence_item):
         self.payld_func = 0  # 36-bit value for calculations
         
 
-        self._define_constraints()      #constraints
+        # self._define_constraints()      #constraints
 
 
     def __str__(self):
