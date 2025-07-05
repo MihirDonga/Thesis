@@ -113,7 +113,7 @@ class apbuart_config_test(apbuart_base_test):
 
 
     async def run_phase(self):
-        for _ in range(self.cfg.loop_time):
+        for _ in range(100):
             self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
             self.logger.info(f"UART Config:\n{self.cfg}")       #prints __str__ from uart_config
 
