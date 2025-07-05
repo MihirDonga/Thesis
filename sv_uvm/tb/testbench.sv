@@ -2,7 +2,7 @@
 `include "uartinterface.sv" 
 `include "apbinterface.sv"
 `include "testbench_pkg.sv"
-import "DPI-C" function lomgint getttimeofday_ms();
+import "DPI-C" function longint getttimeofday_ms();
 module tbench_top;
   
   import uvm_pkg::*;
