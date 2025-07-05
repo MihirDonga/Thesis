@@ -18,7 +18,7 @@ class APBMonitor(uvm_monitor):
             raise Exception("DUTError APB_Monitor")
         
     # ✅ Safe conversion helper
-    def safe_int(signal_val, default=0):
+    def safe_int(self, signal_val, default=0):
         val_str = str(signal_val)
         if any(ch in val_str for ch in ('x', 'z', '?')):
             return default
