@@ -124,6 +124,6 @@ class apbuart_config_test(apbuart_base_test):
             self.raise_objection()
             await self.apbuart_config_sq.start(self.env_sq.v_sqr)
             self.drop_objection()
-
+            await Timer(1, "ns") 
         # Wait 20 time units after dropping objection before test finishes
         await Timer(20, "ns")
