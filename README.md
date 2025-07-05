@@ -36,4 +36,12 @@ cocotb_pyuvm:
                 Simulation Time: 786,100 ns = ~0.77 ms
                 Real Time:      20.34 seconds = ~0.34 minutes
 
+    Config Coverage: 88.25% (489 samples)  200
+                Simulation Time: 384,100 ns = ~0.384 ms
+                Real Time:      10.54 seconds = ~0.18 minutes
+    
+    Config Coverage: 88.25% (489 samples)  200
+                Simulation Time: 384,100 ns = ~0.384 ms
+                Real Time:      10.54 seconds = ~0.18 minutes
+
     
