@@ -60,17 +60,17 @@ class TxCoverage(object):
         
         # APB data coverage
         self.apb_cp = vsc.coverpoint(self.apb_data, bins=dict(
-            low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)]),
-            mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)]),
-            high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)]),
+            low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)])
+            mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)])
+            high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)])
             corners = vsc.bin([0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
         ))
         
         # UART data coverage
         self.uart_cp = vsc.coverpoint(self.uart_data, bins=dict(
-            low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)]),
-            mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)]),
-            high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)]),
+            low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)])
+            mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)])
+            high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)])
             corners = vsc.bin([0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
         ))
 
@@ -85,17 +85,17 @@ class RxCoverage(object):
         
         # APB data coverage (same as Tx)
         self.apb_cp = vsc.coverpoint(self.apb_data, bins=dict(
-            low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)]),
-            mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)]),
-            high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)]),
+            low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)])
+            mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)])
+            high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)])
             corners = vsc.bin([0x00000000, 0xFFFFFFFF,0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
         ))
         
         # UART data coverage (same as Tx)
         self.uart_cp = vsc.coverpoint(self.uart_data, bins=dict(
-            low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)]),
-            mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)]),
-            high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)]),
+            low = vsc.bin_array(['low'], [(0x00000000, 0x000000FF)])
+            mid = vsc.bin_array(['mid'], [(0x00000100, 0x7FFFFFFF)])
+            high = vsc.bin_array(['high'], [(0x80000000, 0xFFFFFFFF)])
             corners = vsc.bin([0x00000000, 0xFFFFFFFF,0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
         ))
         
