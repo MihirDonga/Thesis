@@ -64,15 +64,21 @@ class TxCoverage(object):
             "low": vsc.bin_array([], 0x00000000, 0x000000FF),
             "mid": vsc.bin_array([], 0x00000100, 0x7FFFFFFF),
             "high": vsc.bin_array([], 0x80000000, 0xFFFFFFFF),
-            "corners": vsc.bin_array([0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
-        })
+            "corners": vsc.bin(0x00000000),
+            "corners1": vsc.bin(0xFFFFFFFF),
+            "corners2": vsc.bin(0xAAAAAAAA),
+            "corners3": vsc.bin(0x55555555),
+            "corners4": vsc.bin(0xDEADBEEF)        })
 
         self.uart_cp = vsc.coverpoint(self.uart_data, bins={
             "low": vsc.bin_array([], 0x00000000, 0x000000FF),
             "mid": vsc.bin_array([], 0x00000100, 0x7FFFFFFF),
             "high": vsc.bin_array([], 0x80000000, 0xFFFFFFFF),
-            "corners": vsc.bin_array([0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
-        })
+            "corners": vsc.bin(0x00000000),
+            "corners1": vsc.bin(0xFFFFFFFF),
+            "corners2": vsc.bin(0xAAAAAAAA),
+            "corners3": vsc.bin(0x55555555),
+            "corners4": vsc.bin(0xDEADBEEF)        })
 
 
 @vsc.covergroup
@@ -90,15 +96,21 @@ class RxCoverage(object):
             "low": vsc.bin_array([], 0x00000000, 0x000000FF),
             "mid": vsc.bin_array([], 0x00000100, 0x7FFFFFFF),
             "high": vsc.bin_array([], 0x80000000, 0xFFFFFFFF),
-            "corners": vsc.bin_array([0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
-        })
+            "corners": vsc.bin(0x00000000),
+            "corners1": vsc.bin(0xFFFFFFFF),
+            "corners2": vsc.bin(0xAAAAAAAA),
+            "corners3": vsc.bin(0x55555555),
+            "corners4": vsc.bin(0xDEADBEEF)        })
 
         self.uart_cp = vsc.coverpoint(self.uart_data, bins={
             "low": vsc.bin_array([], 0x00000000, 0x000000FF),
             "mid": vsc.bin_array([], 0x00000100, 0x7FFFFFFF),
             "high": vsc.bin_array([], 0x80000000, 0xFFFFFFFF),
-            "corners": vsc.bin_array([0x00000000, 0xFFFFFFFF, 0xAAAAAAAA, 0x55555555, 0xDEADBEEF])
-        })
+            "corners": vsc.bin(0x00000000),
+            "corners1": vsc.bin(0xFFFFFFFF),
+            "corners2": vsc.bin(0xAAAAAAAA),
+            "corners3": vsc.bin(0x55555555),
+            "corners4": vsc.bin(0xDEADBEEF)        })
         
         # Error coverage
         self.error_cp = vsc.coverpoint(self.error, bins=dict(
