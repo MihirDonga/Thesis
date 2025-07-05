@@ -2,7 +2,6 @@
 `include "uartinterface.sv" 
 `include "apbinterface.sv"
 `include "testbench_pkg.sv"
-import "DPI-C" function longint gettimeofday_ms();
 module tbench_top;
   
   import uvm_pkg::*;
@@ -49,13 +48,6 @@ module tbench_top;
     uvm_config_db # (virtual uart_if)::set(uvm_root::get(),"*","vifuart",vifuart);
     $dumpfile("dump.vcd"); 
     $dumpvars(0, tbench_top);
-  end
-
-  time end_time;
-
-  final begin
-    longint end_time = gettimeofday_ms();
-    $display("\n>>>[Final Block]  Simulation time : %0t ns", end_time);
   end
 
   initial
