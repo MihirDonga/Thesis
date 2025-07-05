@@ -35,6 +35,8 @@ class uart_config(uvm_object):
 
         # self._setup_constraints()
 
+
+
     # def _setup_constraints(self):       
     # Apply constraints
     @vsc.constraint
