@@ -139,13 +139,19 @@ class APBUARTScoreboard(uvm_scoreboard):
             self.logger.info(f"Expected: {self.stopbit_reg} Actual: {apb_pkt.PRDATA}")
 
         # Sample coverage with direct values
-        self.config_cg.sample(
-            bRate=self.baud_rate_reg,
-            frame_len=self.frame_len_reg,
-            parity=self.parity_reg,
-            n_sb=self.stopbit_reg
-        )
-        self.config_sample_count += 1
+        try:
+            if hasattr(self, 'config_cg'):
+                self.config_cg.sample(
+                    bRate=self.baud_rate_reg,
+                    frame_len=self.frame_len_reg,
+                    parity=self.parity_reg,
+                    n_sb=self.stopbit_reg
+                )
+                self.config_sample_count += 1
+        except Exception as e:
+            self.logger.error(f"Failed to sample config coverage: {str(e)}")
+            self.logger.error(f"Values: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, "
+                            f"parity={self.parity_reg}, n_sb={self.stopbit_reg}")
 
     def compare_transmission(self, apb_pkt, uart_pkt):
         test = None
