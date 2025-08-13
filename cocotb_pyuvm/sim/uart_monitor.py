@@ -64,13 +64,14 @@ class UARTMonitor(uvm_monitor):
             while int(self.dut.Tx.value) != 1:
                 await RisingEdge(self.dut.PCLK)
 
+                reg = 0
+
                 # Wait for falling edge on Tx (start bit)
                 while int(self.dut.Tx.value) == 1:
                     await RisingEdge(self.dut.PCLK)
                 # Mid-bit sample for start bit alignment
                 await Timer(bit_time_ns // 2, units='ns')
 
-                reg = 0
                 for bit_idx in range(cfg.frame_len):
                     await Timer(bit_time_ns, units='ns')
                     bit_val = int(self.dut.Tx.value)
