@@ -73,12 +73,16 @@ class APBUARTScoreboard(uvm_scoreboard):
             if apb_pkt_mon.PWRITE == 1:
                 if apb_pkt_mon.PADDR == self.cfg.baud_config_addr:
                     self.baud_rate_reg = apb_pkt_mon.PWDATA
+                    self.logger.info(f"Updated  baud_rate_reg={self.baud_rate_reg}")
                 elif apb_pkt_mon.PADDR == self.cfg.frame_config_addr:
                     self.frame_len_reg = apb_pkt_mon.PWDATA
+                    self.logger.info(f"Updated  frame_len_reg={self.frame_len_reg}")
                 elif apb_pkt_mon.PADDR == self.cfg.parity_config_addr:
                     self.parity_reg = apb_pkt_mon.PWDATA
+                    self.logger.info(f"Updated  parity_reg={self.parity_reg}")
                 elif apb_pkt_mon.PADDR == self.cfg.stop_bits_config_addr:
                     self.stopbit_reg = apb_pkt_mon.PWDATA
+                    self.logger.info(f"Updated  stopbit_reg={self.stopbit_reg}")
 
             # Handle configuration reads
             elif apb_pkt_mon.PWRITE == 0:
