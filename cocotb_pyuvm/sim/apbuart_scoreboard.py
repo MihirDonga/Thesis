@@ -131,6 +131,7 @@ class APBUARTScoreboard(uvm_scoreboard):
         # Verification logic
         if apb_pkt.PADDR == self.cfg.baud_config_addr:
             if apb_pkt.PRDATA == self.baud_rate_reg:
+                pass
                 # self.logger.info("Baud Rate Match")
             else:
                 self.logger.error("Baud Rate Mismatch")
@@ -139,6 +140,7 @@ class APBUARTScoreboard(uvm_scoreboard):
 
         elif apb_pkt.PADDR == self.cfg.frame_config_addr:
             if apb_pkt.PRDATA == self.frame_len_reg:
+                pass
                 # self.logger.info("Frame Length Match")
             else:
                 self.logger.error("Frame Length Mismatch")
@@ -147,6 +149,7 @@ class APBUARTScoreboard(uvm_scoreboard):
 
         elif apb_pkt.PADDR == self.cfg.parity_config_addr:
             if apb_pkt.PRDATA == self.parity_reg:
+                pass
                 # self.logger.info("Parity Match")
             else:
                 self.logger.error("Parity Mismatch")
@@ -155,6 +158,7 @@ class APBUARTScoreboard(uvm_scoreboard):
 
         elif apb_pkt.PADDR == self.cfg.stop_bits_config_addr:
             if apb_pkt.PRDATA == self.stopbit_reg:
+                pass
                 # self.logger.info("Stop Bits Match")
             else:
                 self.logger.error("Stop Bits Mismatch")
