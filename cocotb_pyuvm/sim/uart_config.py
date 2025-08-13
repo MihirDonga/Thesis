@@ -18,7 +18,7 @@ class uart_config(uvm_object):
         self.parity = vsc.rand_uint32_t()
         self.bRate = vsc.rand_uint32_t()
         # To UART Monitor
-        self.baud_rate = 500
+        self.baud_rate = 100
 
         # Constants (Addresses)
         self.baud_config_addr      = 0x0
@@ -28,7 +28,7 @@ class uart_config(uvm_object):
         self.trans_data_addr       = 0x10
         self.receive_data_addr     = 0x14
 
-        self.loop_time             = 
+        self.loop_time             = 500
 
         # UVM active/passive enum equivalent
         self.is_active = uvm_active_passive_enum.UVM_ACTIVE
