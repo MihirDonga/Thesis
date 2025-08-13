@@ -63,7 +63,7 @@ class UARTMonitor(uvm_monitor):
             # Wait for falling edge on Tx (start bit)
             while int(self.dut.Tx.value) != 1:
                 await RisingEdge(self.dut.PCLK)
-
+                bit_time_ns = int(1e9 / self.cfg.bRate)
                 reg = 0
 
                 # Wait for falling edge on Tx (start bit)
