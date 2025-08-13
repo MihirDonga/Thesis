@@ -46,10 +46,9 @@ class APBMonitor(uvm_monitor):
             
             self.logger.debug(f"APB Monitor Collected Transaction:\n{self.trans_collected}")
             
-            # Send to scoreboard
-            self.item_collected_port_mon.write(self.trans_collected)
-
             # Wait for transaction completion
             while self.dut.PREADY.value:
                 await RisingEdge(self.dut.PCLK)
             
+            # Send to scoreboard
+            self.item_collected_port_mon.write(self.trans_collected)

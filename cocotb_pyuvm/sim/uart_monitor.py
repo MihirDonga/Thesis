@@ -9,6 +9,8 @@ class UARTMonitor(uvm_monitor):
         self.dut = None
         self.cfg = None
         self.trans_collected = None
+        self.count = 0
+        self.count1 = 1
         self.receive_reg = 0
         self.LT = 0
         self.parity_en = 0
@@ -37,59 +39,52 @@ class UARTMonitor(uvm_monitor):
 
     def cfg_settings(self):
         """Extract parity enable (parity_en) and loop time (LT) from config"""
-        cfg = ConfigDB().get(None, "", "cfg")
-        if not cfg:
+        if not self.cfg:
             return
             
         self.parity_en = self.cfg.parity[1]
-        if cfg.frame_len == 5:
+        if self.cfg.frame_len == 5:
             self.LT = 7
-        elif cfg.frame_len == 6:
+        elif self.cfg.frame_len == 6:
             self.LT = 6
-        elif cfg.frame_len == 7:
+        elif self.cfg.frame_len == 7:
             self.LT = 5
-        elif cfg.frame_len == 8:
+        elif self.cfg.frame_len == 8:
             self.LT = 4
-        elif cfg.frame_len == 9:
+        elif self.cfg.frame_len == 9:
             self.LT = 4
         else:
             self.logger.error("Incorrect frame length selected")
 
     async def monitor_and_send(self):
-        cfg = ConfigDB().get(None, "", "cfg")
-        bit_time_ns = int(1e9 / self.cfg.bRate)
-    
         for _ in range(self.LT):
             # Wait for falling edge on Tx (start bit)
-            while int(self.dut.Tx.value) != 1:
+            while int(self.dut.Tx.value) == 1:
                 await RisingEdge(self.dut.PCLK)
-                bit_time_ns = int(1e9 / self.cfg.bRate)
-                reg = 0
 
-                # Wait for falling edge on Tx (start bit)
-                while int(self.dut.Tx.value) == 1:
-                    await RisingEdge(self.dut.PCLK)
-                # Mid-bit sample for start bit alignment
-                await Timer(bit_time_ns // 2, units='ns')
+            bit_time_ns = int(1e9 / self.cfg.bRate)
 
-                for bit_idx in range(cfg.frame_len):
-                    await Timer(bit_time_ns, units='ns')
-                    bit_val = int(self.dut.Tx.value)
-                    reg |= (bit_val << bit_idx)
+            # Mid-bit sample for start bit alignment
+            await Timer(bit_time_ns // 2, units='ns')
 
-                if self.parity_en[1]:
-                    await Timer(bit_time_ns, units='ns')  # Parity bit
+            reg = 0
+            for bit_idx in range(self.cfg.frame_len):
+                await Timer(bit_time_ns, units='ns')
+                bit_val = int(self.dut.Tx.value)
+                reg = (reg >> 1) | (bit_val << (self.cfg.frame_len - 1))
 
-                for _ in range(cfg.n_sb):
-                    await Timer(bit_time_ns, units='ns')
-                    if int(self.dut.Tx.value) != 1:
-                        self.logger.warning("Stop bit error detected")
+            if self.parity_en:
+                await Timer(bit_time_ns, units='ns')  # Parity bit
+
+            for _ in range(self.cfg.n_sb):
+                await Timer(bit_time_ns, units='ns')
+                if int(self.dut.Tx.value) != 1:
+                    self.logger.warning("Stop bit error detected")
             
             # Store collected data
             txn = UARTTransaction()
             txn.transmitter_reg = reg
-            self.logger.info(f"[Mon] UART TX Observed:{reg:#x}")
             self.item_collected_port_mon.write(txn)            
         # Send transaction to scoreboard
-        # self.item_collected_port_mon.write(self.trans_collected)
+        self.item_collected_port_mon.write(self.trans_collected)
         self.receive_reg = 0  # Reset for next transaction
