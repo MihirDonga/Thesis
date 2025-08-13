@@ -75,7 +75,7 @@ class UARTMonitor(uvm_monitor):
                 for bit_idx in range(self.cfg.frame_len):
                     await Timer(bit_time_ns, units='ns')
                     bit_val = int(self.dut.Tx.value)
-                    reg = (reg >> 1) | (bit_val << (self.cfg.frame_len - 1))
+                    reg |= (bit_val << bit_idx)
 
                 if self.parity_en:
                     await Timer(bit_time_ns, units='ns')  # Parity bit
