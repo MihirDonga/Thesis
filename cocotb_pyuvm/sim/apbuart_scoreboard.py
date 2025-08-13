@@ -123,7 +123,7 @@ class APBUARTScoreboard(uvm_scoreboard):
                 else:
                     self.logger.warning(f"Skipping coverage sample: invalid parity value {self.parity_reg}")
                 self.config_sample_count += 1
-                self.logger.info(f"Sampled coverage with: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, parity={self.parity_reg}, n_sb={self.stopbit_reg}")
+                # self.logger.info(f"Sampled coverage with: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, parity={self.parity_reg}, n_sb={self.stopbit_reg}")
         except Exception as e:
             self.logger.error(f"Failed to sample config coverage: {str(e)}")
             self.logger.error(f"Values: bRate={self.baud_rate_reg}, frame_len={self.frame_len_reg}, "
@@ -131,35 +131,35 @@ class APBUARTScoreboard(uvm_scoreboard):
         # Verification logic
         if apb_pkt.PADDR == self.cfg.baud_config_addr:
             if apb_pkt.PRDATA == self.baud_rate_reg:
-                self.logger.info("Baud Rate Match")
+                # self.logger.info("Baud Rate Match")
             else:
                 self.logger.error("Baud Rate Mismatch")
                 test.report_error("Baud Rate Mismatch detected in scoreboard!")
-            self.logger.info(f"Expected: {self.baud_rate_reg} Actual: {apb_pkt.PRDATA}")
+            # self.logger.info(f"Expected: {self.baud_rate_reg} Actual: {apb_pkt.PRDATA}")
 
         elif apb_pkt.PADDR == self.cfg.frame_config_addr:
             if apb_pkt.PRDATA == self.frame_len_reg:
-                self.logger.info("Frame Length Match")
+                # self.logger.info("Frame Length Match")
             else:
                 self.logger.error("Frame Length Mismatch")
                 test.report_error("Frame Length Mismatch detected in scoreboard!")
-            self.logger.info(f"Expected: {self.frame_len_reg} Actual: {apb_pkt.PRDATA}")
+            # self.logger.info(f"Expected: {self.frame_len_reg} Actual: {apb_pkt.PRDATA}")
 
         elif apb_pkt.PADDR == self.cfg.parity_config_addr:
             if apb_pkt.PRDATA == self.parity_reg:
-                self.logger.info("Parity Match")
+                # self.logger.info("Parity Match")
             else:
                 self.logger.error("Parity Mismatch")
                 test.report_error("Parity Mismatch detected in scoreboard!")
-            self.logger.info(f"Expected: {self.parity_reg} Actual: {apb_pkt.PRDATA}")
+            # self.logger.info(f"Expected: {self.parity_reg} Actual: {apb_pkt.PRDATA}")
 
         elif apb_pkt.PADDR == self.cfg.stop_bits_config_addr:
             if apb_pkt.PRDATA == self.stopbit_reg:
-                self.logger.info("Stop Bits Match")
+                # self.logger.info("Stop Bits Match")
             else:
                 self.logger.error("Stop Bits Mismatch")
                 test.report_error("Stop Bits Mismatch detected in scoreboard!")
-            self.logger.info(f"Expected: {self.stopbit_reg} Actual: {apb_pkt.PRDATA}")
+            # self.logger.info(f"Expected: {self.stopbit_reg} Actual: {apb_pkt.PRDATA}")
       
 
     def compare_transmission(self, apb_pkt, uart_pkt):
@@ -217,12 +217,12 @@ class APBUARTScoreboard(uvm_scoreboard):
         config_cov = self.config_cg.get_coverage()
         tx_cov = self.tx_cg.get_coverage()
         rx_cov = self.rx_cg.get_coverage()
-        self.logger.info(f"Parity_hit:{self.config_cg.parity_cp.get_coverage():.2f}%")
+        # self.logger.info(f"Parity_hit:{self.config_cg.parity_cp.get_coverage():.2f}%")
         self.logger.info("\nCoverage Report:")
         self.logger.info(f"Config Coverage: {config_cov:.2f}% ({self.config_sample_count} samples)")
-        self.logger.info(f"Tx Coverage: {tx_cov:.2f}% ({self.tx_sample_count} samples)")
+        # self.logger.info(f"Tx Coverage: {tx_cov:.2f}% ({self.tx_sample_count} samples)")
      
-        self.logger.info(f"Rx Coverage: {rx_cov:.2f}% ({self.rx_sample_count} samples)")
+        # self.logger.info(f"Rx Coverage: {rx_cov:.2f}% ({self.rx_sample_count} samples)")
 
 class MyAPBExport(uvm_analysis_export):
     def __init__(self, name, parent):
