@@ -117,7 +117,6 @@ class apbuart_config_test(apbuart_base_test):
         self.raise_objection()  # ✅ correct in pyuvm
 
         for i in range(self.cfg.loop_time):
-            self.logger.info(f"[DBG] UART Config Randomized: parity={self.cfg.parity}")
 
             self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
             self.logger.info(f"{[i+1]}-UART Config:\n{self.cfg}")       #prints __str__ from uart_config

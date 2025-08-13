@@ -22,7 +22,6 @@ class APBUARTScoreboard(uvm_scoreboard):
         self.frame_len_reg = 0
         self.parity_reg = 0
         self.stopbit_reg = 0
-        print("Initializing coverage groups")
         # Initialize coverage groups
         self.config_cg = ConfigCoverage()
         self.tx_cg = TxCoverage()
