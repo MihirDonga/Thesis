@@ -39,10 +39,12 @@ class UARTMonitor(uvm_monitor):
 
     def cfg_settings(self):
         """Extract parity enable (parity_en) and loop time (LT) from config"""
-        if not self.cfg:
+        cfg = ConfigDB().get(None, "", "cfg")
+        if not cfg:
             return
             
         self.parity_en = self.cfg.parity[1]
+        frame_len = cfg.frame_len
         if self.cfg.frame_len == 5:
             self.LT = 7
         elif self.cfg.frame_len == 6:
