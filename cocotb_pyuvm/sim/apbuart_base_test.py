@@ -39,6 +39,7 @@ class apbuart_base_test(uvm_test):
             self.cfg.parity = parity
             self.cfg.bRate = bd_rate
             self.cfg.baudRateFunc()
+        self.logger.info(f"[DBG] UART Config Randomized: parity={self.cfg.parity}")
 
         self.logger.info(f"{self.get_name()} - UART Config after set_config_params:\n{self.cfg}")
 
@@ -63,13 +64,13 @@ class apbuart_base_test(uvm_test):
         super().report_phase()
 
         if self.error_count> 0:
-            self.logger.critical(f"{self.get_name()} - -" * 39)
+            # self.logger.critical(f"{self.get_name()} - -" * 39)
             self.logger.critical(f"{self.get_name()} - ----            TEST FAIL          ----")
-            self.logger.critical(f"{self.get_name()} - -" * 39)
+            # self.logger.critical(f"{self.get_name()} - -" * 39)
         else:
-            self.logger.critical(f"{self.get_name()} - -" * 39)
+            # self.logger.critical(f"{self.get_name()} - -" * 39)
             self.logger.critical(f"{self.get_name()} - ----           TEST PASS           ----")
-            self.logger.critical(f"{self.get_name()} - -" * 39)
+            # self.logger.critical(f"{self.get_name()} - -" * 39)
 
 # class apbuart_config_test(apbuart_base_test):
 
@@ -116,6 +117,7 @@ class apbuart_config_test(apbuart_base_test):
         self.raise_objection()  # ✅ correct in pyuvm
 
         for i in range(self.cfg.loop_time):
+            self.logger.info(f"[DBG] UART Config Randomized: parity={self.cfg.parity}")
 
             self.set_config_params(9600, 8, 3, 1, 1)  # Baud Rate, Frame Len, Parity, Stop Bit, Randomize Flag
             self.logger.info(f"{[i+1]}-UART Config:\n{self.cfg}")       #prints __str__ from uart_config
