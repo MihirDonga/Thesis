@@ -39,7 +39,7 @@ class apbuart_base_test(uvm_test):
             self.cfg.parity = parity
             self.cfg.bRate = bd_rate
             self.cfg.baudRateFunc()
-        self.logger.info(f"[DBG] UART Config Randomized: parity={self.cfg.parity}")
+        # self.logger.info(f"[DBG] UART Config Randomized: parity={self.cfg.parity}")
 
         self.logger.info(f"{self.get_name()} - UART Config after set_config_params:\n{self.cfg}")
 
