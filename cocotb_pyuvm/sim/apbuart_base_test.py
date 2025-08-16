@@ -4,9 +4,20 @@ from apb_config import apb_config
 from apbuart_environment import *
 from cocotb.triggers import Timer
 from apbuart_vseq_base import apbuart_config_seq
+from pyuvm import uvm_root
 
 # from apbuart_vseq_base import apbuart_config_seq
+def print_topology(comp=None, indent=0):
+        """
+        Recursively prints UVM topology (like SystemVerilog's uvm_top.print_topology()).
+        """
+        if comp is None:
+            comp = uvm_root().uvm_test_top
 
+        print("  " * indent + f"- {comp.get_name()} ({comp.__class__.__name__})")
+        for child in comp.children:
+            print_topology(child, indent + 1)
+            
 class apbuart_base_test(uvm_test):
     def __init__(self, name="apbuart_base_test", parent=None):
         super().__init__(name, parent)
@@ -33,8 +44,9 @@ class apbuart_base_test(uvm_test):
     def start_of_simulation_phase(self):
         super().start_of_simulation_phase()
         # Print topology before simulation
-        uvm_root().print_topology()
-        
+        print_topology()
+
+
     def set_config_params(self, bd_rate, frm_len, parity, sb, flag):
         if flag:
             self.cfg.randomize()
