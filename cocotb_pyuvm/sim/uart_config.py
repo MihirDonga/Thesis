@@ -18,7 +18,7 @@ class uart_config(uvm_object):
         self.parity = vsc.rand_uint32_t()
         self.bRate = vsc.rand_uint32_t()
         # To UART Monitor
-        self.baud_rate = 100
+        self.baud_rate = vsc.rand_uint32_t()
 
         # Constants (Addresses)
         self.baud_config_addr      = 0x0
