@@ -11,9 +11,10 @@ def print_topology(comp=None, indent=0):
     if comp is None:
         comp = uvm_root().uvm_test_top
     if comp is None:
-        print("uvm_test_top is None")
+        self.logger.info("[TOPOLOGY]", "uvm_test_top is None! Topology not initialized.", verbosity=UVM_LOW)
         return
-    print("  " * indent + f"- {comp.get_name()} ({comp.__class__.__name__})")
+    msg="  " * indent + f"{comp.get_name()} ({type(comp).__name__})"
+    uvm_root().logger.info("[TOPOLOGY]", msg, verbosity=UVM_LOW)
     for child in comp.children:
         print_topology(child, indent + 1)
 
@@ -41,6 +42,7 @@ class apbuart_base_test(uvm_test):
         ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
 
     def end_of_elaboration_phase(self):
+        super().end_of_elaboration_phase()
         # Print topology before simulation
         print_topology()
 
