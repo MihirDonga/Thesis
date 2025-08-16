@@ -13,8 +13,8 @@ def print_topology(comp=None, indent=0):
     if comp is None:
         self.logger.info("[TOPOLOGY]", "uvm_test_top is None! Topology not initialized.", verbosity=UVM_LOW)
         return
-    msg="  " * indent + f"{comp.get_name()} ({type(comp).__name__})"
-    uvm_root().logger.info("[TOPOLOGY]", msg, verbosity=UVM_LOW)
+    logger = logging.getLogger("uvm_topology")
+    logger.info(" " * indent + f"{comp.get_name()} ({type(comp).__name__})")
     for child in comp.children:
         print_topology(child, indent + 1)
 
