@@ -30,6 +30,11 @@ class apbuart_base_test(uvm_test):
         ConfigDB().set(None, "*", "cfg", self.cfg)
         ConfigDB().set(None, "*", "apb_cfg", self.apb_cfg)        
 
+    def start_of_simulation_phase(self):
+        super().start_of_simulation_phase()
+        # Print topology before simulation
+        uvm_root().print_topology()
+        
     def set_config_params(self, bd_rate, frm_len, parity, sb, flag):
         if flag:
             self.cfg.randomize()
